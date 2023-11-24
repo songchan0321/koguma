@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/koguma" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../z.utility/gradle-8.2.1" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/koguma" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
