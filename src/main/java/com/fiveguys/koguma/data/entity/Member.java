@@ -1,66 +1,66 @@
 package com.fiveguys.koguma.data.entity;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.management.relation.Role;
 import javax.persistence.*;
 
-@Data
 @Entity
-public class Member {
-    public Member() {
+@Data
+@Table(name = "members")
+@NoArgsConstructor()
 
-    }
+public class Member {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
-    @Column()
-    private String imageId;
+    @Column(name = "image_id")
+    private Long imageId;
 
-    @Column(nullable = false)
-    private String pw;
+    @Column(name = "pw")
+    private Long pw;
 
-    @Column(nullable = false)
-    private String phone;
+    @Column(name = "phone", nullable = false)
+    private Number phone;
 
-    @Column(nullable = false)
+    @Column(name = "score", nullable = false)
     private Float score;
 
-    @Column()
+    @Column(name = "role_flag")
     private Boolean roleFlag;
 
-    @Column()
+    @Column(name = "social_flag")
     private Boolean socialFlag;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "payment_account", nullable = false)
     private String paymentAccount;
 
-    @Column(nullable = false)
+    @Column(name = "payment_bank", nullable = false)
     private String paymentBank;
 
-    @Column(nullable = false)
+    @Column(name = "payment_balance", nullable = false)
     private Integer paymentBalance;
 
-    @Column(nullable = false)
+    @Column(name = "payment_pw", nullable = false)
     private String paymentPw;
 
-    @Column()
+    @Column(name = "active_flag")
     private Boolean activeFlag;
 
 
     @Builder
-    public Member(String nickname, String email, String imageId, Boolean roleFlag, String pw, String phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
-        this.nickname = nickname;
+    public Member (String nickname, String email, Long imageId, Boolean roleFlag, Long pw, Number phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
         this.email = email;
         this.imageId = imageId;
         this.roleFlag = roleFlag;
@@ -74,12 +74,13 @@ public class Member {
         this.phone = phone;
         this.score = score;
         this.socialFlag = socialFlag;
+
     }
-    public Member update(String nickname, String imageId) {
+    public MemberDTO update(String nickname, Long imageId) {
         this.nickname = nickname;
         this.imageId = imageId;
 
-        return this;
+        return new MemberDTO();
     }
 
 }
