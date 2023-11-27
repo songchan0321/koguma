@@ -5,21 +5,16 @@ import com.fiveguys.koguma.data.entity.Member;
 
 public interface MemberService {
 
-    void addMember(MemberDTO memberDTO);
 
-    void deleteMember(Long id);
+    void addMember(MemberDTO memberDTO, String nickname, Long pw, Number phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
 
-    void updateMember(Long id);
+    void deleteMember(MemberDTO memberDTO);
+    void updateMember(MemberDTO memberDTO);
+    boolean validationCheckPw(MemberDTO memberDTO, String pw);
     MemberDTO login(MemberDTO memberDTO);
-
-    public void logout();
-
-    MemberDTO getMember(Long id);
-
+    void logout();
+    MemberDTO getMember(MemberDTO memberDTO);
     MemberDTO getOtherMember(String nickname);
-    MemberDTO listMember(Long id);
-
-
-
+    void listMember(MemberDTO memberDTO);
 
 }

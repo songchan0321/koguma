@@ -33,6 +33,7 @@ public class MemberDTO {
 
     }
 
+
     public static MemberDTO toMemberDTO(Member member) {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setId(member.getId());

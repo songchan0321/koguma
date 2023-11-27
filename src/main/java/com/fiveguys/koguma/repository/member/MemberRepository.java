@@ -1,9 +1,10 @@
 package com.fiveguys.koguma.repository.member;
 
+import com.fiveguys.koguma.data.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.lang.reflect.Member;
 import java.util.Optional;
+
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -13,5 +14,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsById(Long Id);
     Optional<Member> findById(Long id);
+
 
 }
