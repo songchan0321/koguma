@@ -24,12 +24,6 @@ import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.entity.Location;
 import com.fiveguys.koguma.repository.common.LocationRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
