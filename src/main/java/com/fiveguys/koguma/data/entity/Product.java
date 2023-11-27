@@ -19,18 +19,18 @@ public class Product extends BaseTime {
     @Column(nullable = false)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "seller_id")
     @Column(nullable = false)
     private Member seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "buyer_id")
     private Member buyer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
-    @Column(nullable = false)
-    private Category category;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "category_id")
+//    @Column(nullable = false)
+//    private Category category;
     @Column(nullable = false,length=90)
     private String title;
     @Column(nullable = false,length=300)
@@ -56,11 +56,11 @@ public class Product extends BaseTime {
     private Boolean active_flag;
     private LocalDateTime buy_date;
 
-    public Product(Long id, Member seller, Member buyer, Category category, String title, String content, int price, char trade_status, String dong, Double latitude, Double longitude, int views, String category_name, Boolean active_flag, LocalDateTime buy_date) {
+    public Product(Long id, Member seller, Member buyer, String title, String content, int price, char trade_status, String dong, Double latitude, Double longitude, int views, String category_name, Boolean active_flag, LocalDateTime buy_date) {
         this.id = id;
         this.seller = seller;
         this.buyer = buyer;
-        this.category = category;
+//        this.category = category;
         this.title = title;
         this.content = content;
         this.price = price;
@@ -72,5 +72,6 @@ public class Product extends BaseTime {
         this.category_name = category_name;
         this.active_flag = active_flag;
         this.buy_date = buy_date;
+
     }
 }
