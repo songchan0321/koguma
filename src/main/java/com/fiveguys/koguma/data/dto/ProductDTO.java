@@ -1,13 +1,10 @@
 package com.fiveguys.koguma.data.dto;
 
-import com.fiveguys.koguma.data.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 
 @Builder
