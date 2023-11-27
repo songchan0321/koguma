@@ -5,7 +5,7 @@ import com.fiveguys.koguma.data.entity.MemberRelationship;
 import java.time.LocalDateTime;
 
 public class MemberRelationshipServiceImpl {
-
+/*
     @Override
     public MemberRelationship addBlock(Long sourceMemberId, String targetMemberNickname, String content, Boolean type) {
         // 차단 또는 팔로잉 로직 구현
@@ -19,4 +19,6 @@ public class MemberRelationshipServiceImpl {
 
         return relationshipRepository.save(relationship);
     }
+
+ */
 }
