@@ -1,8 +1,8 @@
 package com.fiveguys.koguma.data.entity;
 
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,13 +12,14 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location extends BaseTime{
-    @javax.persistence.Id
+
+
     @Id
     @Column(nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "member_id")
     @Column(nullable = false)
     private Member member;
 
@@ -29,23 +30,41 @@ public class Location extends BaseTime{
     private Double longitude;
 
     @Column(nullable = false)
-    private int search_range;
+    private int searchRange;
 
     @Column(nullable = false,length=20)
     private String dong;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private boolean rep_auth_location_flag;
+    private boolean repAuthLocationFlag;
 
-    public Location(Long id, Member member, Double latitude, Double longitude, int search_range, String dong, boolean rep_auth_location_flag) {
+    public Location(Long id, Member member, Double latitude, Double longitude, int searchRange, String dong, boolean repAuthLocationFlag) {
         this.id = id;
         this.member = member;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.search_range = search_range;
+        this.searchRange = searchRange;
         this.dong = dong;
-        this.rep_auth_location_flag = rep_auth_location_flag;
+        this.repAuthLocationFlag = repAuthLocationFlag;
     }
 
+    public LocationDTO toDTO(){
+        return LocationDTO.builder()
+                .id(id)
+                .memberId(member.getId())
+                .dong(dong)
+                .latitude(latitude)
+                .longitude(longitude)
+                .searchRange(searchRange)
+                .repAuthLocationFlag(repAuthLocationFlag)
+                .build();
+    }
+
+    public void setSearchRange(int newSearchRange) {
+        this.searchRange = newSearchRange;
+    }
+    public void setRepAuthLocationFlag(Boolean state){
+        this.repAuthLocationFlag = state;
+    }
 }

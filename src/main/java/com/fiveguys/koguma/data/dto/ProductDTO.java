@@ -13,19 +13,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ProductDTO {
     private Long id;
-    private Long seller_id;
-    private Long buyer_id;
-    private Long category_id;
+    private Long sellerId;
+    private Long buyerId;
+    private Long categoryId;
     private String title;
     private String content;
     private int price;
-    private char trade_status;
+    private char tradeStatus;
     private String dong;
     private Double latitude;
     private Double longitude;
     private int views;
-    private String category_name;
-    private Boolean active_flag;
+    private String categoryName;
+    private Boolean activeFlag;
     private LocalDateTime buy_date;
 
 }

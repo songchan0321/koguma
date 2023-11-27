@@ -21,6 +21,9 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.fiveguys.koguma.data.dto.LocationDTO;
+import com.fiveguys.koguma.data.entity.Location;
+import com.fiveguys.koguma.repository.common.LocationRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,69 +31,60 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService{
 
 
-    private String accessKey;
+    private LocationRepository locationRepository;
 
-    private String secretKey;
-    private CloseableHttpClient httpClient;
-
-    public LocationServiceImpl() {
-
-    }
-
-    public LocationServiceImpl(String accessKey, String secretKey) {
-        this.accessKey = "ezwltsG352nXDeTz7m7H";
-        this.secretKey = "PxZWLnZBdthl4W3bt79ItS1cb0JrKxCGorapBoMp";
-
-//        final int timeout = 10000;
-//        final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout).build();
-//        httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
-    }
-
-    @Override
     public List<LocationDTO> listLocation(Long id) {
-        return null;
+        List<Location> locations = locationRepository.findAllById(id);
+        List<LocationDTO> locationDTOList = new ArrayList<>();
+
+        for (Location location : locations){
+            LocationDTO locationDTO = location.toDTO();
+            locationDTOList.add(locationDTO);
+        }
+
+        return locationDTOList;
     }
 
-    @Override
-    public LocationDTO getLocation(Long id) {
-        return null;
+
+    @Transactional
+    public void setRepLocation(Long id) {
+        Location location = locationRepository.findById(id).orElse(null);
+        if (location != null){
+            Location beforeRepLocation = (Location) locationRepository.findByRepAuthLocationFlagIs(true);
+            beforeRepLocation.setRepAuthLocationFlag(false);
+            location.setRepAuthLocationFlag(true);
+        }
     }
 
-    @Override
-    public void updateLocation(Long id) {
+
+    public void addLocation(LocationDTO locationDTO) {
+        locationRepository.save(locationDTO.toEntity());
 
     }
 
-    @Override
-    public void addLocation(Long id) {
-
-    }
-
-    @Override
     public void deleteLocation(Long id) {
+        locationRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateSearchRange(Long id,int range) {
+        Location location = locationRepository.findById(id).orElse(null);
+        locationRepository.findById(id).orElseThrow().setSearchRange(range);
 
     }
 
-    @Override
-    public void updateSearchRange() {
-
-    }
-
-    @Override
     public LocationDTO addShareLocation() {
         return null;
     }
 
-    @Override
-    public LocationDTO getCoordinate(String ip) {
-        return null;
-    }
 
 
 //    public void location(){
