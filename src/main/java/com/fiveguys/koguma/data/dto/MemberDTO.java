@@ -33,6 +33,7 @@ public class MemberDTO {
 
     }
 
+
     public static MemberDTO toMemberDTO(Member member) {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setId(member.getId());
@@ -48,4 +49,23 @@ public class MemberDTO {
         memberDTO.setActiveFlag(member.getActiveFlag());
         return memberDTO;
     }
+    public static Member fromEntity(MemberDTO memberDTO) {
+        Member member = new Member();
+        member.setId(memberDTO.getId());
+        member.setNickname(memberDTO.getNickname());
+        member.setPw(memberDTO.getPw());
+        member.setImageId(memberDTO.getImageId());
+        member.setPhone(memberDTO.getPhone());
+        member.setScore(memberDTO.getScore());
+        member.setRoleFlag(memberDTO.getRoleFlag());
+        member.setSocialFlag(memberDTO.getSocialFlag());
+        member.setEmail(memberDTO.getEmail());
+        member.setPaymentAccount(memberDTO.getPaymentAccount());
+        member.setPaymentBank(memberDTO.getPaymentBank());
+        member.setPaymentBalance(memberDTO.getPaymentBalance());
+        member.setPaymentPw(memberDTO.getPaymentPw());
+        member.setActiveFlag(memberDTO.getActiveFlag());
+        return member;
+    }
 }
+
