@@ -6,7 +6,7 @@ import com.fiveguys.koguma.data.entity.Member;
 public interface MemberService {
 
 
-    void addMember(MemberDTO memberDTO, String nickname, Long pw, Number phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
+    void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
 
     void deleteMember(MemberDTO memberDTO);
     void updateMember(Long id, String nickname, Long imageId);
