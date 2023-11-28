@@ -38,34 +38,34 @@ class ClubServiceImplTest {
     @Test
     public void 모임_생성() throws Exception{
 
-//        //given
-//        Club club = Club.builder()
-//                .title("타이틀1")
-//                .content("내용1")
-//                .maxCapacity(1000)
-//                .latitude(37.494949)
-//                .longitude(14.1212)
-//                .dong("역삼동")
-//                .joinActiveFlag(true)
-//                .activeFlag(true)
-//                .build();
-//
-//        ClubDTO clubDTO = ClubDTO.fromEntity(club);
-//        Member member = memberRepository.findById(1L).get();
-//        MemberDTO memberDTO = MemberDTO.fromEntity(member);
-//
-//        ClubMemberDTO clubMemberDTO = ClubMemberDTO.builder()
-//                .nickName("닉네임")
-//                .clubDTO(clubDTO)
-//                .memberDTO(memberDTO)
-//                .build();
-//
-//        //when
-//        Long clubId = clubService.addClub(clubDTO, clubMemberDTO);
-//        ClubDTO findClub = clubService.getClub(clubId);
-//
-//        //then
-//        Assertions.assertThat(findClub.getId()).isEqualTo(clubId);
+        //given
+        Club club = Club.builder()
+                .title("타이틀1")
+                .content("내용1")
+                .maxCapacity(1000)
+                .latitude(37.494949)
+                .longitude(14.1212)
+                .dong("역삼동")
+                .joinActiveFlag(true)
+                .activeFlag(true)
+                .build();
+
+        ClubDTO clubDTO = ClubDTO.fromEntity(club);
+        Member member = memberRepository.findById(1L).get();
+        MemberDTO memberDTO = MemberDTO.fromEntity(member);
+
+        ClubMemberDTO clubMemberDTO = ClubMemberDTO.builder()
+                .nickName("닉네임")
+                .clubDTO(clubDTO)
+                .memberDTO(memberDTO)
+                .build();
+
+        //when
+        Long clubId = clubService.addClub(clubDTO, clubMemberDTO);
+        ClubDTO findClub = clubService.getClub(clubId);
+
+        //then
+        Assertions.assertThat(findClub.getId()).isEqualTo(clubId);
     }
 
 
