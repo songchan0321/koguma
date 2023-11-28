@@ -27,16 +27,16 @@ public class ClubMeetUp extends BaseTime{
     @Column(nullable = false, length = 900)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "max_capacity", nullable = false)
     private Integer maxCapacity;
 
-    @Column(nullable = false)
+    @Column(name = "meet_date", nullable = false)
     private LocalDateTime meetDate;
 
-    @Column(nullable = false, length = 90)
+    @Column(name = "roadAddr", nullable = false, length = 90)
     private String roadAddr;
 
-    @Column(nullable = false)
+    @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag;
 
     @Builder
