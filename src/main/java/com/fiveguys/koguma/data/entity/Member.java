@@ -26,10 +26,10 @@ public class Member {
     private Long imageId;
 
     @Column(name = "pw")
-    private Long pw;
+    private String pw;
 
     @Column(name = "phone", nullable = false)
-    private Number phone;
+    private String phone;
 
     @Column(name = "score", nullable = false)
     private Float score;
@@ -60,7 +60,7 @@ public class Member {
 
 
     @Builder
-    public Member (String nickname, String email, Long imageId, Boolean roleFlag, Long pw, Number phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
+    public Member (String nickname, String email, Long imageId, Boolean roleFlag, String pw, String phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
         this.email = email;
         this.imageId = imageId;
         this.roleFlag = roleFlag;
