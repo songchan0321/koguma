@@ -37,13 +37,12 @@ public class MemberRelationship {
 
 
     @Builder
-    public MemberRelationship memberRelationship(Member sourceMemberId, Member targetMemberId, String content, Boolean type) {
+    public MemberRelationship (Member sourceMemberId, Member targetMemberId, String content, Boolean type) {
         this.sourceMemberId = sourceMemberId;
         this.targetMemberId = targetMemberId;
         this.content = content;
         this.type = type;
 
-        return null;
     }
 }
 
