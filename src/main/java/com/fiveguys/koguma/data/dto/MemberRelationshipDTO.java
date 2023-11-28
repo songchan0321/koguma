@@ -27,15 +27,13 @@ public class MemberRelationshipDTO {
     public static MemberRelationshipDTO fromEntity(MemberRelationship memberRelationship){
         MemberRelationshipDTO memberRelationshipDTO = new MemberRelationshipDTO();
         memberRelationshipDTO.setId(memberRelationship.getId());
-        memberRelationshipDTO.setSourceMemberId(memberRelationship.getSourceMemberId());
-        memberRelationshipDTO.setTargetMemberId(memberRelationship.getTargetMemberId());
+
         memberRelationshipDTO.setContent(memberRelationship.getContent());
         memberRelationshipDTO.setType(memberRelationship.getType());
 
+        return memberRelationshipDTO;
     }
 
-    public MemberRelationship toEntity(){
-        memberR
-    }
+
 
 }
