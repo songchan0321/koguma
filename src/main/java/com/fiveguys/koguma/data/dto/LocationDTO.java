@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class LocationDTO {
     private Long id;
-    private Long memberId;
+    private MemberDTO memberDTO;
     private Double latitude;
     private Double longitude;
     private int searchRange;
@@ -25,12 +25,23 @@ public class LocationDTO {
     public Location toEntity() {
         return Location.builder()
                 .id(id)
-                .member(Member.builder().build())
+//                .member(memberDTO)
                 .dong(dong)
                 .latitude(latitude)
                 .longitude(longitude)
                 .searchRange(searchRange)
                 .repAuthLocationFlag(repAuthLocationFlag)
+                .build();
+    }
+    public static LocationDTO fromEntity(Location location){
+        return LocationDTO.builder()
+                .id(location.getId())
+//                .memberDTO(location.getMember().toDTO())
+                .dong(location.getDong())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .searchRange(location.getSearchRange())
+                .repAuthLocationFlag(location.isRepAuthLocationFlag())
                 .build();
     }
 }
