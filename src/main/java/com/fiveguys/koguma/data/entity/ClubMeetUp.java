@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.data.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,7 @@ public class ClubMeetUp extends BaseTime{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "club_id", nullable = false)
+    @JoinColumn(name = "club_id", nullable = false)
     private Club club;
 
     @Column(nullable = false, length = 72)
@@ -37,5 +38,19 @@ public class ClubMeetUp extends BaseTime{
 
     @Column(nullable = false)
     private Boolean activeFlag;
+
+    @Builder
+    public ClubMeetUp(Long id, Club club, String title, String content,
+                      Integer maxCapacity, LocalDateTime meetDate, String roadAddr, Boolean activeFlag){
+        this.id = id;
+        this.club = club;
+        this.title = title;
+        this.content = content;
+        this.maxCapacity = maxCapacity;
+        this.meetDate = meetDate;
+        this.roadAddr = roadAddr;
+        this.activeFlag = activeFlag;
+    }
+
 
 }

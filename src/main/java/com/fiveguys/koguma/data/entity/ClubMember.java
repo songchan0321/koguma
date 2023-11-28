@@ -2,6 +2,7 @@ package com.fiveguys.koguma.data.entity;
 
 import com.fiveguys.koguma.data.dto.ClubMemberDTO;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,10 +30,32 @@ public class ClubMember extends BaseTime{
     private String nickName;
 
     @Column(nullable = false)
-    private boolean memberRole;
+    private String content;
 
     @Column(nullable = false)
-    private boolean activeFlag;
+    private Boolean memberRole;
 
+    @Column(nullable = false)
+    private Boolean activeFlag;
+
+
+    @Builder
+    public ClubMember(Long id, Club club, Member member, String nickName, String content, Boolean memberRole){
+        this.id = id;
+        this.club = club;
+        this.member = member;
+        this.nickName = nickName;
+        this.content = content;
+        this.memberRole = memberRole;
+    }
+
+   public void updateClubMemberRole(){
+        this.memberRole = false;
+    }
+
+   public void updateClubMember(String nickName, String content){
+        this.nickName = nickName;
+        this.content = content;
+   }
 
 }
