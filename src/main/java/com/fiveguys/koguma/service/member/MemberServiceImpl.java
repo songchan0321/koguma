@@ -87,14 +87,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDTO getMember(MemberDTO memberDTO) {
-        return MemberDTO.toMemberDTO(memberRepository.findById(memberDTO.getId())
+        return MemberDTO.fromEntity(memberRepository.findById(memberDTO.getId())
                 .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다.")));
     }
 
     @Override
     public MemberDTO getOtherMember(String nickname) {
         Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
-        return optionalMember.map(member -> MemberDTO.toMemberDTO((Member) member)).orElse(null);
+        return optionalMember.map(member -> MemberDTO.fromEntity((Member) member)).orElse(null);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElse(null);
 
         if (existingMember != null && !existingMember.getId().equals(id)) {
-            throw new RuntimeException("이미 사용 중인 닉네임입니다!");
+            throw new RuntimeException("이미 사용 중인 닉네임입니다.");
         }
 
         member.setNickname(nickname);
@@ -115,6 +115,13 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
     }
+
+    @Override
+    public void updateMember(MemberDTO memberDTO) {
+
+        memberRepository.save(memberDTO.toEntity());
+    }
+
     @Override
     public void listMember(MemberDTO memberDTO) {
 

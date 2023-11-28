@@ -34,7 +34,7 @@ public class MemberDTO {
     }
 
 
-    public static MemberDTO toMemberDTO(Member member) {
+    public static MemberDTO fromEntity(Member member) {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setId(member.getId());
         memberDTO.setEmail(member.getEmail());
@@ -49,22 +49,23 @@ public class MemberDTO {
         memberDTO.setActiveFlag(member.getActiveFlag());
         return memberDTO;
     }
-    public static Member fromEntity(MemberDTO memberDTO) {
+
+    public Member toEntity() {
         Member member = new Member();
-        member.setId(memberDTO.getId());
-        member.setNickname(memberDTO.getNickname());
-        member.setPw(memberDTO.getPw());
-        member.setImageId(memberDTO.getImageId());
-        member.setPhone(memberDTO.getPhone());
-        member.setScore(memberDTO.getScore());
-        member.setRoleFlag(memberDTO.getRoleFlag());
-        member.setSocialFlag(memberDTO.getSocialFlag());
-        member.setEmail(memberDTO.getEmail());
-        member.setPaymentAccount(memberDTO.getPaymentAccount());
-        member.setPaymentBank(memberDTO.getPaymentBank());
-        member.setPaymentBalance(memberDTO.getPaymentBalance());
-        member.setPaymentPw(memberDTO.getPaymentPw());
-        member.setActiveFlag(memberDTO.getActiveFlag());
+        member.setId(id);
+        member.setNickname(nickname);
+        member.setPw(pw);
+        member.setImageId(imageId);
+        member.setPhone(phone);
+        member.setScore(score);
+        member.setRoleFlag(roleFlag);
+        member.setSocialFlag(socialFlag);
+        member.setEmail(email);
+        member.setPaymentAccount(paymentAccount);
+        member.setPaymentBank(paymentBank);
+        member.setPaymentBalance(paymentBalance);
+        member.setPaymentPw(paymentPw);
+        member.setActiveFlag(activeFlag);
         return member;
     }
 }

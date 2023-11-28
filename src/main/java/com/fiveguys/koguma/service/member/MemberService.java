@@ -10,11 +10,15 @@ public interface MemberService {
 
     void deleteMember(MemberDTO memberDTO);
     void updateMember(Long id, String nickname, Long imageId);
+    void updateMember(MemberDTO memberDTO);
     boolean validationCheckPw(MemberDTO memberDTO, String pw);
     MemberDTO login(MemberDTO memberDTO);
     void logout();
     MemberDTO getMember(MemberDTO memberDTO);
     MemberDTO getOtherMember(String nickname);
+
+
+
     void listMember(MemberDTO memberDTO);
 
 }
