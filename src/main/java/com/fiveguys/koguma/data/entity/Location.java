@@ -9,13 +9,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-
 @Table(name = "locations")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location extends BaseTime{
 
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
@@ -29,13 +28,13 @@ public class Location extends BaseTime{
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false)
+    @Column(name="search_range", nullable = false)
     private int searchRange;
 
     @Column(nullable = false,length=20)
     private String dong;
 
-    @Column(nullable = false)
+    @Column(name="rep_auth_location_flag",nullable = false)
     private boolean repAuthLocationFlag;
 
     @Builder
