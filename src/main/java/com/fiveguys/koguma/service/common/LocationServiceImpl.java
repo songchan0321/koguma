@@ -1,24 +1,8 @@
 package com.fiveguys.koguma.service.common;
 
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.entity.Location;
@@ -33,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class LocationServiceImpl implements LocationService{
 
 
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
 
     public List<LocationDTO> listLocation(Long id) {
         List<Location> locations = locationRepository.findAllById(id);
         List<LocationDTO> locationDTOList = new ArrayList<>();
 
         for (Location location : locations){
-            LocationDTO locationDTO = location.toDTO();
+            LocationDTO locationDTO = LocationDTO.fromEntity(location);
             locationDTOList.add(locationDTO);
         }
 
@@ -59,9 +43,10 @@ public class LocationServiceImpl implements LocationService{
     }
 
 
-    public void addLocation(LocationDTO locationDTO) {
+    public Location addLocation(LocationDTO locationDTO) {
         locationRepository.save(locationDTO.toEntity());
 
+        return null;
     }
 
     public void deleteLocation(Long id) {
