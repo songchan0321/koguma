@@ -22,11 +22,11 @@ public class MemberRelationship {
 
 
     @ManyToOne
-    @Column(name = "source_member_id")
+    @JoinColumn(name = "source_member_id")
     private Member sourceMemberId;
 
     @ManyToOne
-    @Column(name = "target_member_id")
+    @JoinColumn(name = "target_member_id")
     private Member targetMemberId;
 
     @Column(name = "content")
