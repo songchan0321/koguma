@@ -8,7 +8,7 @@ import java.util.List;
 public interface LocationService {
 
     List<LocationDTO> listLocation(Long id);
-    Location addLocation(LocationDTO locationDTO);
+    void addLocation(LocationDTO locationDTO) throws Exception;
 
     void deleteLocation(Long id);
     void updateSearchRange(Long id,int range);

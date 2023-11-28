@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class ProductServiceImpl implements ProductService{
 
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
 
     @Override

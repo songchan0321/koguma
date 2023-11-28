@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Table(name = "members")
 @NoArgsConstructor()
 
-public class Member {
+public class Member extends BaseTime{
 
     @Id
     @Column(name = "id")
@@ -26,10 +26,10 @@ public class Member {
     private Long imageId;
 
     @Column(name = "pw")
-    private Long pw;
+    private String pw;
 
     @Column(name = "phone", nullable = false)
-    private Number phone;
+    private String phone;
 
     @Column(name = "score", nullable = false)
     private Float score;
@@ -43,16 +43,16 @@ public class Member {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "payment_account", nullable = false)
+    @Column(name = "payment_account")
     private String paymentAccount;
 
-    @Column(name = "payment_bank", nullable = false)
+    @Column(name = "payment_bank")
     private String paymentBank;
 
-    @Column(name = "payment_balance", nullable = false)
+    @Column(name = "payment_balance")
     private Integer paymentBalance;
 
-    @Column(name = "payment_pw", nullable = false)
+    @Column(name = "payment_pw")
     private String paymentPw;
 
     @Column(name = "active_flag")
@@ -60,7 +60,7 @@ public class Member {
 
 
     @Builder
-    public Member (String nickname, String email, Long imageId, Boolean roleFlag, Long pw, Number phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
+    public Member (String nickname, String email, Long imageId, Boolean roleFlag, String pw, String phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
         this.email = email;
         this.imageId = imageId;
         this.roleFlag = roleFlag;
@@ -76,6 +76,4 @@ public class Member {
         this.socialFlag = socialFlag;
 
     }
-
-
 }
