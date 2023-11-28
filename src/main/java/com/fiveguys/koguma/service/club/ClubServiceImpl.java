@@ -49,7 +49,7 @@ public class ClubServiceImpl implements ClubService{
                 .orElseThrow(() -> new IllegalArgumentException("해당 모임이 없습니다."));
 
         // DTO -> Entity return
-        return ClubDTO.fromDTO(club);
+        return ClubDTO.fromEntity(club);
     }
 
     @Override

@@ -45,10 +45,10 @@ public class ClubMeetUpDTO {
                 .build();
     }
 
-    public static ClubMeetUpDTO fromDTO(ClubMeetUp entity){
+    public static ClubMeetUpDTO fromEntity(ClubMeetUp entity){
         return ClubMeetUpDTO.builder()
                 .id(entity.getId())
-                .clubDTO(ClubDTO.fromDTO(entity.getClub()))
+                .clubDTO(ClubDTO.fromEntity(entity.getClub()))
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .maxCapacity(entity.getMaxCapacity())

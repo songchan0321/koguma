@@ -34,10 +34,10 @@ public class ClubMemberDTO {
                 .build();
     }
 
-    public static ClubMemberDTO fromDTO(ClubMember entity){
+    public static ClubMemberDTO fromEntity(ClubMember entity){
         return ClubMemberDTO.builder()
                 .id(entity.getId())
-                .clubDTO(ClubDTO.fromDTO(entity.getClub()))
+                .clubDTO(ClubDTO.fromEntity(entity.getClub()))
                 //.memberDTO
                 .nickName(entity.getNickName())
                 .memberRole(entity.getMemberRole())

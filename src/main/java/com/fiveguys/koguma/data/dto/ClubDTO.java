@@ -29,7 +29,7 @@ public class ClubDTO {
                 .build();
     }
 
-    public static ClubDTO fromDTO(Club entity){
+    public static ClubDTO fromEntity(Club entity){
         return ClubDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
