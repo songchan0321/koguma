@@ -40,8 +40,6 @@ public class MemberServiceImpl implements MemberService {
         if (existingMember != null) {
             throw new RuntimeException("이미 사용 중인 닉네임입니다.");
         }
-        //Member member = memberRepository.findById(memberDTO.getId())
-        //        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
         memberDTO.setNickname(memberDTO.getNickname());
         memberRepository.save(memberDTO.toEntity());

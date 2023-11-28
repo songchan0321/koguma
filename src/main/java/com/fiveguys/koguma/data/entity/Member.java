@@ -76,6 +76,4 @@ public class Member extends BaseTime{
         this.socialFlag = socialFlag;
 
     }
-
-
 }
