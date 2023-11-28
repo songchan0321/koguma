@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 public class MemberDTO {
     private Long id;
     private String nickname;
-    private Long pw;
+    private String pw;
     private Long imageId;
-    private Number phone;
+    private String phone;
     private Float score;
     private Boolean roleFlag;
     private Boolean socialFlag;
