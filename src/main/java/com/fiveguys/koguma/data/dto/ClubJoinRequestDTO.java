@@ -1,6 +1,8 @@
 package com.fiveguys.koguma.data.dto;
 
+import com.fiveguys.koguma.data.entity.Club;
 import com.fiveguys.koguma.data.entity.ClubMeetUp;
+import com.fiveguys.koguma.data.entity.ClubMemberJoinRequest;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,6 +27,27 @@ public class ClubJoinRequestDTO {
         this.content = content;
         this.activeFlag = activeFlag;
         this.regDate = regDate;
+    }
+
+    public ClubMemberJoinRequest toEntity(){
+        return ClubMemberJoinRequest.builder()
+                .id(this.id)
+                .member(memberDTO.toEntity())
+                .club(clubDTO.toEntity())
+                .content(this.content)
+                .activeFlag(this.activeFlag)
+                .build();
+    }
+
+    public static ClubJoinRequestDTO fromEntity(ClubMemberJoinRequest entity){
+        return ClubJoinRequestDTO.builder()
+                .id(entity.getId())
+                .memberDTO(MemberDTO.fromEntity(entity.getMember()))
+                .clubDTO(ClubDTO.fromEntity(entity.getClub()))
+                .content(entity.getContent())
+                .activeFlag(entity.getActiveFlag())
+                .regDate(entity.getRegDate())
+                .build();
     }
 
 
