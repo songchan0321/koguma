@@ -1,10 +1,11 @@
 package com.fiveguys.koguma.data.dto;
 
+import com.fiveguys.koguma.data.entity.Location;
+import com.fiveguys.koguma.data.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
-import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 
 @Builder
@@ -13,11 +14,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class LocationDTO {
     private Long id;
-    private Long member_id;
+    private Long memberId;
     private Double latitude;
     private Double longitude;
-    private int search_range;
+    private int searchRange;
     private String dong;
-    private boolean rep_auth_location_flag;
+    private boolean repAuthLocationFlag;
     private LocalDateTime regDate;
+
+    public Location toEntity() {
+        return Location.builder()
+                .id(id)
+                .member(Member.builder().build())
+                .dong(dong)
+                .latitude(latitude)
+                .longitude(longitude)
+                .searchRange(searchRange)
+                .repAuthLocationFlag(repAuthLocationFlag)
+                .build();
+    }
 }

@@ -7,13 +7,10 @@ import java.util.List;
 public interface LocationService {
 
     List<LocationDTO> listLocation(Long id);
-    LocationDTO getLocation(Long id);
-    void updateLocation(Long id);
-    void addLocation(Long id);
+    void addLocation(LocationDTO locationDTO);
 
     void deleteLocation(Long id);
-    void updateSearchRange();
+    void updateSearchRange(Long id,int range);
     LocationDTO addShareLocation();
     //LocationFilter();
-    LocationDTO getCoordinate(String ip);
 }

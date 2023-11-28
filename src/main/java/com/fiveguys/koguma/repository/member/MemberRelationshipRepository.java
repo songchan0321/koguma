@@ -1,4 +1,9 @@
 package com.fiveguys.koguma.repository.member;
 
-public class MemberRelationshipRepository {
+import com.fiveguys.koguma.data.entity.MemberRelationship;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+
+public interface MemberRelationshipRepository extends JpaRepository<MemberRelationship, Long>{
+
 }
