@@ -76,11 +76,6 @@ public class Member {
         this.socialFlag = socialFlag;
 
     }
-    public MemberDTO update(String nickname, Long imageId) {
-        this.nickname = nickname;
-        this.imageId = imageId;
 
-        return new MemberDTO();
-    }
 
 }
