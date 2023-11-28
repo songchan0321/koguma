@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
+
+@Table(name = "locations")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location extends BaseTime{
 
@@ -19,8 +20,7 @@ public class Location extends BaseTime{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "member_id",nullable = false)
     private Member member;
 
     @Column(nullable = false)
@@ -36,9 +36,9 @@ public class Location extends BaseTime{
     private String dong;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
     private boolean repAuthLocationFlag;
 
+    @Builder
     public Location(Long id, Member member, Double latitude, Double longitude, int searchRange, String dong, boolean repAuthLocationFlag) {
         this.id = id;
         this.member = member;
@@ -49,17 +49,6 @@ public class Location extends BaseTime{
         this.repAuthLocationFlag = repAuthLocationFlag;
     }
 
-    public LocationDTO toDTO(){
-        return LocationDTO.builder()
-                .id(id)
-                .memberId(member.getId())
-                .dong(dong)
-                .latitude(latitude)
-                .longitude(longitude)
-                .searchRange(searchRange)
-                .repAuthLocationFlag(repAuthLocationFlag)
-                .build();
-    }
 
     public void setSearchRange(int newSearchRange) {
         this.searchRange = newSearchRange;
