@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Table(name = "members")
 @NoArgsConstructor()
 
-public class Member {
+public class Member extends BaseTime{
 
     @Id
     @Column(name = "id")
@@ -43,16 +43,16 @@ public class Member {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "payment_account", nullable = false)
+    @Column(name = "payment_account")
     private String paymentAccount;
 
-    @Column(name = "payment_bank", nullable = false)
+    @Column(name = "payment_bank")
     private String paymentBank;
 
-    @Column(name = "payment_balance", nullable = false)
+    @Column(name = "payment_balance")
     private Integer paymentBalance;
 
-    @Column(name = "payment_pw", nullable = false)
+    @Column(name = "payment_pw")
     private String paymentPw;
 
     @Column(name = "active_flag")
