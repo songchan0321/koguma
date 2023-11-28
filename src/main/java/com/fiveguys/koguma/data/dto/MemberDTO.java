@@ -42,6 +42,8 @@ public class MemberDTO {
         memberDTO.setNickname(member.getNickname());
         memberDTO.setImageId(member.getImageId());
         memberDTO.setPhone(member.getPhone());
+        memberDTO.setRoleFlag(member.getRoleFlag());
+        memberDTO.setSocialFlag(member.getSocialFlag());
         memberDTO.setPaymentAccount(member.getPaymentAccount());
         memberDTO.setPaymentBank(member.getPaymentBank());
         memberDTO.setPaymentBalance(member.getPaymentBalance());
