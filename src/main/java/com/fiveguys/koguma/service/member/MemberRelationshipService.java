@@ -1,9 +1,11 @@
 package com.fiveguys.koguma.service.member;
 
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
+import com.fiveguys.koguma.data.entity.Member;
+
 public interface MemberRelationshipService {
 
-    void addBlock(MemberRelationshipDTO memberRelationshipDTO, Long sourceMemberId, Long targetMemberId, String content);
+    void addBlock(MemberRelationshipDTO memberRelationshipDTO, Member sourceMemberId, Member targetMemberId, String content);
 
     void deleteBlock(MemberRelationshipDTO memberRelationshipDTO);
     void listBlock(MemberRelationshipDTO memberRelationshipDTO);
