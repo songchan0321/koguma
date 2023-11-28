@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.data.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClubMemberJoinRequest extends BaseTime{
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,4 +29,15 @@ public class ClubMemberJoinRequest extends BaseTime{
 
     @Column(nullable = false)
     private Boolean activeFlag;
+
+    @Builder
+    public ClubMemberJoinRequest(Long id, Member member, Club club, String content,
+                                 Boolean activeFlag){
+        this.id = id;
+        this.member = member;
+        this.club = club;
+        this.content = content;
+        this.activeFlag = activeFlag;
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.fiveguys.koguma.data.entity;
 
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,17 +8,17 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "categoriese")
+@Table(name = "club_post_category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category {
+public class ClubPostCategory {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String categoryName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", nullable = false)
+    private Club club;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CategoryType categoryType;
+    @Column(nullable = false, length = 15)
+    private String name;
 }
