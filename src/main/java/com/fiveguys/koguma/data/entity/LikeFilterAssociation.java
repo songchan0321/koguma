@@ -8,21 +8,24 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "club_member_meet_up_joins")
+@Table(name = "like_filter_associations")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClubMemberMeetUpJoin extends BaseTime{
+public class LikeFilterAssociation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_meet_up_id", nullable = false)
-    private ClubMeetUp clubMeetUp;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false)
-    private Boolean activeFlag;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+
 }
