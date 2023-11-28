@@ -30,7 +30,9 @@ public class ClubMemberDTO {
         return ClubMember.builder()
                 .id(this.id)
                 .club(clubDTO.toEntity())
-                //.member(memberDTO.toEntity())
+                .member(memberDTO.toEntity())
+                .nickName(this.nickName)
+                .memberRole(false)
                 .build();
     }
 
@@ -38,7 +40,7 @@ public class ClubMemberDTO {
         return ClubMemberDTO.builder()
                 .id(entity.getId())
                 .clubDTO(ClubDTO.fromEntity(entity.getClub()))
-                //.memberDTO
+                .memberDTO(MemberDTO.fromEntity(entity.getMember()))
                 .nickName(entity.getNickName())
                 .memberRole(entity.getMemberRole())
                 .build();

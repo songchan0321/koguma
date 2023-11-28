@@ -4,6 +4,8 @@ import com.fiveguys.koguma.data.entity.Club;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ClubDTO {
 
@@ -11,13 +13,38 @@ public class ClubDTO {
     private String title;
     private String content;
     private Integer maxCapacity;
+    private Double latitude;
+    private Double longitude;
+    private String dong;
+    private Boolean joinActiveFlag;
+    private Boolean activeFlag;
+    private List<CategoryDTO> categoryDTOS;
 
     @Builder
-    public ClubDTO(Long id, String title, String content, Integer maxCapacity){
+    public ClubDTO(Long id, String title, String content, Integer maxCapacity,
+                   Double latitude, Double longitude, String dong,
+                   Boolean joinActiveFlag, Boolean activeFlag){
         this.id = id;
         this.title = title;
         this.content = content;
         this.maxCapacity = maxCapacity;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.dong = dong;
+        this.joinActiveFlag = joinActiveFlag;
+        this.activeFlag = activeFlag;
+    }
+
+    public ClubDTO(Club club){
+        this.id = club.getId();
+        this.title = club.getTitle();
+        this.content = club.getContent();
+        this.maxCapacity = club.getMaxCapacity();
+        this.latitude = club.getLatitude();
+        this.longitude = club.getLongitude();
+        this.dong = club.getDong();
+        this.joinActiveFlag = club.isJoinActiveFlag();
+        this.activeFlag = club.isActiveFlag();
     }
 
     public Club toEntity(){
@@ -26,6 +53,11 @@ public class ClubDTO {
                 .title(this.title)
                 .content(this.content)
                 .maxCapacity(this.maxCapacity)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
+                .dong(this.dong)
+                .joinActiveFlag(this.joinActiveFlag)
+                .activeFlag(this.activeFlag)
                 .build();
     }
 
@@ -35,6 +67,11 @@ public class ClubDTO {
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .maxCapacity(entity.getMaxCapacity())
+                .latitude(entity.getLatitude())
+                .longitude(entity.getLongitude())
+                .dong(entity.getDong())
+                .joinActiveFlag(entity.isJoinActiveFlag())
+                .activeFlag(entity.isActiveFlag())
                 .build();
     }
 

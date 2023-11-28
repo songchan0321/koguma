@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "club_member_join_requests")
+@Table(name = "member_club_join_requests")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClubMemberJoinRequest extends BaseTime{
 
@@ -27,7 +27,7 @@ public class ClubMemberJoinRequest extends BaseTime{
     @Column(nullable = false, length = 60)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "flag", nullable = false)
     private Boolean activeFlag;
 
     @Builder

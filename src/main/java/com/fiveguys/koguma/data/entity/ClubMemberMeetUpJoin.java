@@ -23,6 +23,6 @@ public class ClubMemberMeetUpJoin extends BaseTime{
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false)
+    @Column
     private Boolean activeFlag;
 }
