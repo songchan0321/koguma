@@ -47,6 +47,7 @@ public class MemberDTO {
         memberDTO.setPaymentBalance(member.getPaymentBalance());
         memberDTO.setPaymentPw(member.getPaymentPw());
         memberDTO.setActiveFlag(member.getActiveFlag());
+        memberDTO.setScore(member.getScore());
         return memberDTO;
     }
 
