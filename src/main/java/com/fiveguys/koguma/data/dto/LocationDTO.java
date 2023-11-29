@@ -8,13 +8,13 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.Column;
 import java.time.LocalDateTime;
 
+
+@Data
 @Builder
-@Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class LocationDTO {
     private Long id;
-    private Long memberId;
+    private MemberDTO memberDTO;
     private Double latitude;
     private Double longitude;
     private int searchRange;
@@ -22,15 +22,27 @@ public class LocationDTO {
     private boolean repAuthLocationFlag;
     private LocalDateTime regDate;
 
+
     public Location toEntity() {
         return Location.builder()
                 .id(id)
-                .member(Member.builder().build())
+                .member(memberDTO.toEntity())
                 .dong(dong)
                 .latitude(latitude)
                 .longitude(longitude)
                 .searchRange(searchRange)
                 .repAuthLocationFlag(repAuthLocationFlag)
+                .build();
+    }
+    public static LocationDTO fromEntity(Location location){
+        return LocationDTO.builder()
+                .id(location.getId())
+                .memberDTO(MemberDTO.fromEntity(location.getMember()))
+                .dong(location.getDong())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .searchRange(location.getSearchRange())
+                .repAuthLocationFlag(location.isRepAuthLocationFlag())
                 .build();
     }
 }

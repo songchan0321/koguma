@@ -1,13 +1,15 @@
 package com.fiveguys.koguma.service.member;
 
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberRelationship;
+import com.fiveguys.koguma.data.entity.MemberRelationshipType;
 import com.fiveguys.koguma.repository.member.MemberRelationshipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.util.Optional;
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,45 +19,67 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
 
     private final MemberRelationshipRepository memberRelationshipRepository;
     @Override
-    public void addBlock(MemberRelationshipDTO memberRelationshipDTO, Long sourceMemberId, Long targetMemberId, String content) {
+    public void addBlock(MemberRelationshipDTO memberRelationshipDTO, Member sourceMemberId, Member targetMemberId, String content) {
+
+        memberRelationshipDTO.setSourceMemberId(sourceMemberId);
         memberRelationshipDTO.setTargetMemberId(targetMemberId);
         memberRelationshipDTO.setContent(content);
+        memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
 
-        //relationship.setSourceMember(memberRepository.findById(sourceMemberId)
-        //        .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다.")));
-        //relationship.setTargetMember(memberRepository.findByNickname(targetMemberNickname));
 
-        //memberRelationshipRepository.save(addBlock);
+        memberRelationshipDTO.setSourceMemberId(memberRelationshipDTO.getSourceMemberId());
+        memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
     }
 
     @Override
     public void deleteBlock(MemberRelationshipDTO memberRelationshipDTO) {
+        memberRelationshipDTO.setSourceMemberId(null);
+        memberRelationshipDTO.setTargetMemberId(null);
+        memberRelationshipDTO.setContent(null);
+        memberRelationshipDTO.setMemberRelationshipType(null);
+
+        memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
 
     }
 
     @Override
-    public void listBlock(MemberRelationshipDTO memberRelationshipDTO){
+    public List<MemberRelationshipDTO> listBlock() {
+        List<MemberRelationship> memberRelationships = memberRelationshipRepository.findAll();
+        return memberRelationships.stream()
+                .map(MemberRelationshipDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public MemberRelationshipDTO getBlock(Long id){
+        return MemberRelationshipDTO.fromEntity(memberRelationshipRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다.")));
 
     }
 
     @Override
-    public void getBlock(Long id){
+    public void addFollowing(MemberRelationshipDTO memberRelationshipDTO, Member sourceMemberId, Member targetMemberId){
+        memberRelationshipDTO.setSourceMemberId(sourceMemberId);
+        memberRelationshipDTO.setTargetMemberId(targetMemberId);
+        memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.Following);
+
+        memberRelationshipDTO.setSourceMemberId(memberRelationshipDTO.getSourceMemberId());
+        memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
 
     }
 
     @Override
-    public void addFollowing(MemberRelationshipDTO memberRelationshipDTO){
+    public void deleteFollowing(MemberRelationshipDTO memberRelationshipDTO){
 
     }
 
     @Override
-    public void deleteFollowing(Long id, String nickname){
-
-    }
-
-    @Override
-    public void listFollowing(Long id, String nickname){
-
+    public List<MemberRelationshipDTO> listFollowing() {
+        List<MemberRelationship> memberRelationships = memberRelationshipRepository.findAll();
+        return memberRelationships.stream()
+                .map(MemberRelationshipDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
 

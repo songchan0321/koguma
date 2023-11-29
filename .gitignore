@@ -27,6 +27,10 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.DS_Store
+application-mysql.properties
+application-ncloud.properties
+application-secret.properties
 
 ### NetBeans ###
 /nbproject/private/

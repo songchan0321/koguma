@@ -5,32 +5,31 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product extends BaseTime {
 
-    @Id
+@Table(name = "products")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Product {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "seller_id",nullable = false)
     private Member seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private Member buyer;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "category_id")
-//    @Column(nullable = false)
-//    private Category category;
+    @Column(name = "category_id",nullable = false)
+    private Long categoryId;
     @Column(nullable = false,length=90)
     private String title;
     @Column(nullable = false,length=300)
@@ -39,8 +38,8 @@ public class Product extends BaseTime {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
-    private char trade_status;
+    @Column(name = "trade_status",nullable = false)
+    private ProductStateType tradeStatus;
     @Column(nullable = false,length=20)
     private String dong;
     @Column(nullable = false)
@@ -50,28 +49,45 @@ public class Product extends BaseTime {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int views;
-    @Column(nullable = false,length=15)
-    private String category_name;
-    @Column(nullable = false)
-    private Boolean active_flag;
-    private LocalDateTime buy_date;
+    @Column(name = "category_name",nullable = false,length=15)
+    private String categoryName;
+    @Column(name = "active_flag", nullable = false)
+    private Boolean activeFlag;
+    @Column(name = "buy_date")
+    private LocalDateTime buyDate;
 
-    public Product(Long id, Member seller, Member buyer, String title, String content, int price, char trade_status, String dong, Double latitude, Double longitude, int views, String category_name, Boolean active_flag, LocalDateTime buy_date) {
+    @CreatedDate
+    @Column(name = "reg_date")
+    private LocalDateTime regDate;
+    @PrePersist
+    public void onPrePersist() {
+        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.regDate = parsedCreateDate;
+    }
+
+    @Builder
+    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate) {
         this.id = id;
         this.seller = seller;
         this.buyer = buyer;
-//        this.category = category;
+        this.categoryId = categoryId;
         this.title = title;
         this.content = content;
         this.price = price;
-        this.trade_status = trade_status;
+        this.tradeStatus = tradeStatus;
         this.dong = dong;
         this.latitude = latitude;
         this.longitude = longitude;
         this.views = views;
-        this.category_name = category_name;
-        this.active_flag = active_flag;
-        this.buy_date = buy_date;
-
+        this.categoryName = categoryName;
+        this.activeFlag = activeFlag;
+        this.buyDate = buyDate;
+    }
+    public void appendView(int views){
+        this.views = views+1;
+    }
+    public void resetRegDate(){
+        onPrePersist();
     }
 }

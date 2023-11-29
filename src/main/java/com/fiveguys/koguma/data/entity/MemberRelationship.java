@@ -1,6 +1,5 @@
 package com.fiveguys.koguma.data.entity;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,39 +10,37 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "member_relationships")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor()
 
-public class MemberRelationship {
+public class MemberRelationship extends BaseTime {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne
-    @Column(name = "source_member_id")
+    @JoinColumn(name = "source_member_id")
     private Member sourceMemberId;
 
     @ManyToOne
-    @Column(name = "target_member_id")
+    @JoinColumn(name = "target_member_id")
     private Member targetMemberId;
 
     @Column(name = "content")
     private String content;
 
-    @Column(name = "type")
-    private Boolean type;
+    @Enumerated(EnumType.STRING)
+    private MemberRelationshipType memberRelationshipType;
 
 
     @Builder
-    public MemberRelationship memberRelationship(Member sourceMemberId, Member targetMemberId, String content, Boolean type) {
+    public MemberRelationship (Member sourceMemberId, Member targetMemberId, String content, MemberRelationshipType memberRelationshipType) {
         this.sourceMemberId = sourceMemberId;
         this.targetMemberId = targetMemberId;
         this.content = content;
-        this.type = type;
+        this.memberRelationshipType = memberRelationshipType;
 
-        return null;
     }
 }
 

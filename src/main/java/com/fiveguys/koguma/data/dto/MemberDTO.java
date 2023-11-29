@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 public class MemberDTO {
     private Long id;
     private String nickname;
-    private Long pw;
+    private String pw;
     private Long imageId;
-    private Number phone;
+    private String phone;
     private Float score;
     private Boolean roleFlag;
     private Boolean socialFlag;
@@ -34,7 +34,7 @@ public class MemberDTO {
     }
 
 
-    public static MemberDTO toMemberDTO(Member member) {
+    public static MemberDTO fromEntity(Member member) {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setId(member.getId());
         memberDTO.setEmail(member.getEmail());
@@ -42,29 +42,33 @@ public class MemberDTO {
         memberDTO.setNickname(member.getNickname());
         memberDTO.setImageId(member.getImageId());
         memberDTO.setPhone(member.getPhone());
+        memberDTO.setRoleFlag(member.getRoleFlag());
+        memberDTO.setSocialFlag(member.getSocialFlag());
         memberDTO.setPaymentAccount(member.getPaymentAccount());
         memberDTO.setPaymentBank(member.getPaymentBank());
         memberDTO.setPaymentBalance(member.getPaymentBalance());
         memberDTO.setPaymentPw(member.getPaymentPw());
         memberDTO.setActiveFlag(member.getActiveFlag());
+        memberDTO.setScore(member.getScore());
         return memberDTO;
     }
-    public static Member fromEntity(MemberDTO memberDTO) {
+
+    public Member toEntity() {
         Member member = new Member();
-        member.setId(memberDTO.getId());
-        member.setNickname(memberDTO.getNickname());
-        member.setPw(memberDTO.getPw());
-        member.setImageId(memberDTO.getImageId());
-        member.setPhone(memberDTO.getPhone());
-        member.setScore(memberDTO.getScore());
-        member.setRoleFlag(memberDTO.getRoleFlag());
-        member.setSocialFlag(memberDTO.getSocialFlag());
-        member.setEmail(memberDTO.getEmail());
-        member.setPaymentAccount(memberDTO.getPaymentAccount());
-        member.setPaymentBank(memberDTO.getPaymentBank());
-        member.setPaymentBalance(memberDTO.getPaymentBalance());
-        member.setPaymentPw(memberDTO.getPaymentPw());
-        member.setActiveFlag(memberDTO.getActiveFlag());
+        member.setId(id);
+        member.setNickname(nickname);
+        member.setPw(pw);
+        member.setImageId(imageId);
+        member.setPhone(phone);
+        member.setScore(score);
+        member.setRoleFlag(roleFlag);
+        member.setSocialFlag(socialFlag);
+        member.setEmail(email);
+        member.setPaymentAccount(paymentAccount);
+        member.setPaymentBank(paymentBank);
+        member.setPaymentBalance(paymentBalance);
+        member.setPaymentPw(paymentPw);
+        member.setActiveFlag(activeFlag);
         return member;
     }
 }

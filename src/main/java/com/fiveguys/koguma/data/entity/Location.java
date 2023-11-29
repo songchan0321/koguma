@@ -9,18 +9,17 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
+@Table(name = "locations")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location extends BaseTime{
 
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "member_id",nullable = false)
     private Member member;
 
     @Column(nullable = false)
@@ -29,16 +28,16 @@ public class Location extends BaseTime{
     @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false)
+    @Column(name="search_range", nullable = false)
     private int searchRange;
 
     @Column(nullable = false,length=20)
     private String dong;
 
-    @Column(nullable = false)
-    @ColumnDefault("0")
+    @Column(name="rep_auth_location_flag",nullable = false)
     private boolean repAuthLocationFlag;
 
+    @Builder
     public Location(Long id, Member member, Double latitude, Double longitude, int searchRange, String dong, boolean repAuthLocationFlag) {
         this.id = id;
         this.member = member;
@@ -49,17 +48,6 @@ public class Location extends BaseTime{
         this.repAuthLocationFlag = repAuthLocationFlag;
     }
 
-    public LocationDTO toDTO(){
-        return LocationDTO.builder()
-                .id(id)
-                .memberId(member.getId())
-                .dong(dong)
-                .latitude(latitude)
-                .longitude(longitude)
-                .searchRange(searchRange)
-                .repAuthLocationFlag(repAuthLocationFlag)
-                .build();
-    }
 
     public void setSearchRange(int newSearchRange) {
         this.searchRange = newSearchRange;
