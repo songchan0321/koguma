@@ -24,11 +24,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
-        //Long rawPassword = memberDTO.getPw(); // 사용자가 입력한 비밀번호
-        //String encodedPassword = passwordEncoder.encode(rawPassword); // 비밀번호 해싱
+        //Long rawPw = memberDTO.getPw(); // 사용자가 입력한 비밀번호
+        //String encodedPw = passwordEncoder.encode(rawPw); // 비밀번호 해싱
         memberDTO.setNickname(nickname);
         memberDTO.setPw(pw);
-        //memberDTO.setPw(encodedPassword);
+        //memberDTO.setPw(encodedPw);
         memberDTO.setPhone(phone);
         memberDTO.setScore(36.5F);
         memberDTO.setEmail(email);
@@ -37,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
         memberDTO.setActiveFlag(true);
 
         // 닉네임 중복 체크
-        Member existingMember = memberRepository.findByNickname(memberDTO.getNickname())
+        Member existingMember = memberRepository.findByNicknameAndActiveFlag(memberDTO.getNickname(), memberDTO.getActiveFlag())
                 .orElse(null);
 
         if (existingMember != null) {
@@ -53,11 +53,12 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(MemberDTO memberDTO) {
 
         memberDTO.setActiveFlag(false);
+        memberRepository.save(memberDTO.toEntity());
     }
 
     @Override
-    public MemberDTO login(String nickname, String pw) {
-        Member member = memberRepository.findByNickname(nickname)
+    public MemberDTO login(String nickname, String pw, Boolean activeFlag) {
+        Member member = memberRepository.findByNicknameAndActiveFlag(nickname, activeFlag)
                 .orElseThrow(() -> new RuntimeException("해당 닉네임의 회원이 존재하지 않습니다."));
 
 
@@ -86,10 +87,6 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
-    public boolean validationCheckPw(MemberDTO memberDTO, String pw) {
-        return false;
-    }
 
     @Override
     public MemberDTO getMember(Long id) {
@@ -98,18 +95,25 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDTO getOtherMember(String nickname) {
-        Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
-        return optionalMember.map(member -> MemberDTO.fromEntity((Member) member)).orElse(null);
+    public MemberDTO getOtherMember(Long id) {
+        Member otherMember = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다."));
+
+        // 다른 회원의 경우 닉네임과 사진만 반환
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setNickname(otherMember.getNickname());
+        memberDTO.setImageId(otherMember.getImageId());
+
+        return memberDTO;
     }
 
     @Override
-    public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId) {
+    public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId, Boolean activeFlag) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다."));
 
         // 닉네임 중복 체크
-        Member existingMember = memberRepository.findByNickname(nickname)
+        Member existingMember = memberRepository.findByNicknameAndActiveFlag(nickname, activeFlag)
                 .orElse(null);
 
         if (existingMember != null && !existingMember.getId().equals(id)) {
