@@ -18,7 +18,25 @@ public interface ClubService {
 
     public void updateClub(ClubDTO clubDTO);
 
+    public Long addJoinRequestClub(ClubJoinRequestDTO clubJoinRequestDTO);
+
+    public ClubJoinRequestDTO getClubJoinRequest(Long clubJoinRequestId);
+
+    public List<ClubJoinRequestDTO> listClubJoinRequest(Long clubId);
+
+    public Long acceptJoinRequest(Long clubJoinRequestId);
+
+    public void rejectJoinRequest(Long cmJoinRequestId);
+
+    public void deleteJoinRequest(Long cmJoinRequestId);
+
     public Long addClubMember(ClubMemberDTO clubMemberDTO);
 
-    public Long addJoinRequestClub(ClubJoinRequestDTO clubJoinRequestDTO);
+    public ClubMemberDTO getClubMember(Long clubMemberId);
+
+    public List<ClubMemberDTO> listClubMember(Long clubId);
+
+    public void updateClubMember(ClubMemberDTO clubMemberDTO);
+
+    public void changeClubLeader(Long currentLeaderId, Long newLeaderId);
 }

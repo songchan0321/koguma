@@ -19,12 +19,14 @@ public class ClubDTO {
     private String dong;
     private Boolean joinActiveFlag;
     private Boolean activeFlag;
+    private String categoryName;
     private CategoryDTO categoryDTO;
 
     @Builder
     public ClubDTO(Long id, String title, String content, Integer maxCapacity,
                    Double latitude, Double longitude, String dong,
-                   Boolean joinActiveFlag, Boolean activeFlag, CategoryDTO categoryDTO){
+                   Boolean joinActiveFlag, Boolean activeFlag,
+                   String categoryName, CategoryDTO categoryDTO){
         this.id = id;
         this.title = title;
         this.content = content;
@@ -34,6 +36,7 @@ public class ClubDTO {
         this.dong = dong;
         this.joinActiveFlag = joinActiveFlag;
         this.activeFlag = activeFlag;
+        this.categoryName = categoryName;
         this.categoryDTO = categoryDTO;
     }
 
@@ -47,6 +50,7 @@ public class ClubDTO {
         this.dong = club.getDong();
         this.joinActiveFlag = club.isJoinActiveFlag();
         this.activeFlag = club.isActiveFlag();
+        this.categoryName = club.getCategoryName();
         this.categoryDTO = CategoryDTO.fromDTO(club.getCategory());
     }
 
@@ -61,6 +65,7 @@ public class ClubDTO {
                 .dong(this.dong)
                 .joinActiveFlag(this.joinActiveFlag)
                 .activeFlag(this.activeFlag)
+                .categoryName(this.categoryName)
                 .category(categoryDTO.toEntity())
                 .build();
     }
@@ -76,6 +81,7 @@ public class ClubDTO {
                 .dong(entity.getDong())
                 .joinActiveFlag(entity.isJoinActiveFlag())
                 .activeFlag(entity.isActiveFlag())
+                .categoryName(entity.getCategoryName())
                 .categoryDTO(CategoryDTO.fromDTO(entity.getCategory()))
                 .build();
     }

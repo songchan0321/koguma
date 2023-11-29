@@ -42,6 +42,9 @@ public class Club extends BaseTime{
     @Column(name = "active_flag", nullable = false)
     private boolean activeFlag;
 
+    @Column(name = "category_name", nullable = false)
+    private String categoryName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -49,7 +52,8 @@ public class Club extends BaseTime{
     @Builder
     public Club(Long id,String title, String content, Integer maxCapacity,
                 Double latitude, Double longitude, String dong, Boolean joinActiveFlag, Boolean activeFlag,
-                Category category){
+                Category category, String categoryName){
+        this.id = id;
         this.title = title;
         this.content = content;
         this.maxCapacity = maxCapacity;
@@ -58,6 +62,7 @@ public class Club extends BaseTime{
         this.dong = dong;
         this.joinActiveFlag = joinActiveFlag;
         this.activeFlag = activeFlag;
+        this.categoryName = categoryName;
         this.category = category;
     }
 

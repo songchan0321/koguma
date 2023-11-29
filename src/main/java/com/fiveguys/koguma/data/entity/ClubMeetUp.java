@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "club_meet_ups")
+@Table(name = "meet_up")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClubMeetUp extends BaseTime{
 
@@ -33,7 +33,7 @@ public class ClubMeetUp extends BaseTime{
     @Column(name = "meet_date", nullable = false)
     private LocalDateTime meetDate;
 
-    @Column(name = "roadAddr", nullable = false, length = 90)
+    @Column(name = "road_addr", nullable = false, length = 90)
     private String roadAddr;
 
     @Column(name = "active_flag", nullable = false)
@@ -50,6 +50,15 @@ public class ClubMeetUp extends BaseTime{
         this.meetDate = meetDate;
         this.roadAddr = roadAddr;
         this.activeFlag = activeFlag;
+    }
+
+    public void updateClubMeetUp(String title, String content, Integer maxCapacity,
+                                 LocalDateTime meetDate, String roadAddr){
+        this.title = title;
+        this.content = content;
+        this.maxCapacity = maxCapacity;
+        this.meetDate = meetDate;
+        this.roadAddr = roadAddr;
     }
 
 
