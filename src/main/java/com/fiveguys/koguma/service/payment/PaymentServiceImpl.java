@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.service.payment;
 
+import com.fiveguys.koguma.data.dto.ChatroomDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
 import com.fiveguys.koguma.data.dto.PaymentHistoryDTO;
@@ -8,9 +9,15 @@ import com.fiveguys.koguma.data.entity.PaymentHistoryType;
 import com.fiveguys.koguma.repository.payment.PaymentHistoryRepository;
 import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +31,9 @@ public class PaymentServiceImpl implements PaymentService{
         memberDTO.setPaymentAccount(account);
         memberDTO.setPaymentBank(bank);
         memberDTO.setPaymentBalance(0);
-        // password 암호화 안함
+        // password 암호화 해야함
         memberDTO.setPaymentPw(password);
-//        memberService.updateMember(memberDTO);
+        memberService.updateMember(memberDTO);
     }
 
     @Override
@@ -35,60 +42,80 @@ public class PaymentServiceImpl implements PaymentService{
         memberDTO.setPaymentBank(null);
         memberDTO.setPaymentBalance(null);
         memberDTO.setPaymentPw(null);
-//        memberService.updateMember(memberDTO);
+        memberService.updateMember(memberDTO);
     }
 
     @Override
-    public void addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info) {
-
+    public PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info) {
+        PaymentHistoryDTO paymentHistoryDTO = PaymentHistoryDTO.builder()
+                .type(type)
+                .price(point)
+                .info(info)
+                .memberDTO(memberDTO)
+                .build();
+        PaymentHistory paymentHistory = paymentHistoryDTO.toEntity();
+        return PaymentHistoryDTO.fromEntity(paymentHistoryRepository.save(paymentHistory));
     }
 
     @Override
-    public void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, Integer point) {
+    public void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point) {
         senderDTO.setPaymentBalance(senderDTO.getPaymentBalance() - point);
         receiverDTO.setPaymentBalance(senderDTO.getPaymentBalance() + point);
-//        memberService.updateMember(senderDTO);
-//        memberService.updateMember(receiverDTO);
-        this.ad
+        memberService.updateMember(senderDTO);
+        memberService.updateMember(receiverDTO);
+        this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, chatRoomDTO.getProductDTO().getTitle());
+        this.addPaymentHistory(receiverDTO, PaymentHistoryType.TRANSFER, point, chatRoomDTO.getProductDTO().getTitle());
     }
 
     @Override
-    public void chargePoint(MemberDTO memberDTO, Integer point) {
-
+    public PaymentHistoryDTO chargePoint(MemberDTO memberDTO, Integer point) {
+        memberDTO.setPaymentBalance(memberDTO.getPaymentBalance() + point);
+        memberService.updateMember(memberDTO);
+        return this.addPaymentHistory(memberDTO, PaymentHistoryType.CHARGE, point, "카카오 페이");
     }
 
     @Override
-    public void requestRefundPoint(MemberDTO memberDTO, Integer point) {
-
+    public PaymentHistoryDTO requestRefundPoint(MemberDTO memberDTO, Integer point) {
+        memberDTO.setPaymentBalance(memberDTO.getPaymentBalance() - point);
+        memberService.updateMember(memberDTO);
+        return this.addPaymentHistory(memberDTO, PaymentHistoryType.REFUND_REQUEST, -1 * point, memberDTO.getPaymentBank() + " " + memberDTO.getPaymentAccount());
     }
 
     @Override
     public void successRefundPoint(PaymentHistoryDTO paymentHistoryDTO) {
-
+        this.updatePaymentHistory(paymentHistoryDTO, PaymentHistoryType.REFUND_SUCCESS);
     }
 
     @Override
     public boolean validatePaymentPw(MemberDTO memberDTO, String password) {
-        return false;
-    }
-
-    @Override
-    public void addPaymentHistory(PaymentHistoryDTO paymentHistoryDTO) {
-
+        return memberDTO.getPaymentPw().equals(password);
     }
 
     @Override
     public void deletePaymentHistory(PaymentHistoryDTO paymentHistoryDTO) {
-
+        if(paymentHistoryDTO.getType().equals(PaymentHistoryType.REFUND_REQUEST)) {
+            paymentHistoryDTO.getMemberDTO().setPaymentBalance(paymentHistoryDTO.getMemberDTO().getPaymentBalance() - paymentHistoryDTO.getPrice());
+            memberService.updateMember(paymentHistoryDTO.getMemberDTO());
+        }
+        paymentHistoryRepository.deleteById(paymentHistoryDTO.getId());
     }
 
     @Override
-    public void updatePaymentHistory(PaymentHistoryDTO paymentHistoryDTO) {
-
+    public PaymentHistoryDTO getPaymentHistory(Long id) {
+        PaymentHistoryDTO paymentHistoryDTO = PaymentHistoryDTO.fromEntity(paymentHistoryRepository.findById(id).orElseThrow());
+        return paymentHistoryDTO;
     }
 
     @Override
-    public void listPaymentHistory(MemberDTO memberDTO) {
+    public void updatePaymentHistory(PaymentHistoryDTO paymentHistoryDTO, PaymentHistoryType type) {
+        paymentHistoryDTO.setType(type);
+        PaymentHistory paymentHistory = paymentHistoryDTO.toEntity();
+        paymentHistoryRepository.save(paymentHistory);
+    }
 
+    @Override
+    public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, PaymentHistoryType type) {
+        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(type), pageable).toList();
+//        return paymentHistoryRepository.findAllByMember(memberDTO.toEntity(), PaymentHistorySpecifications.hasType(type), pageable).toList();
     }
 }

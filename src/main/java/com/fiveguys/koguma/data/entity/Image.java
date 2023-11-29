@@ -23,7 +23,10 @@ public class Image extends BaseTime{
     @Column(name = "img_type", nullable = false)
     private ImageType imageType;
 
+    @Column(name = "reg_image_flag")
     private Boolean regImageFlag;
+
+    @Column(name = "active_flag")
     private Boolean activeFlag;
 
     @ManyToOne(fetch = FetchType.LAZY)

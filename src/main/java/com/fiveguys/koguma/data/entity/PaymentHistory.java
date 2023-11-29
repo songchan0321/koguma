@@ -16,7 +16,8 @@ public class PaymentHistory extends BaseTime {
     private Long id;
 
     @Column(name = "payment_type", nullable = false)
-    private String paymentType;
+    @Enumerated(EnumType.STRING)
+    private PaymentHistoryType type;
 
     @Column(name = "price", nullable = false)
     private int price;
@@ -24,7 +25,7 @@ public class PaymentHistory extends BaseTime {
     @Column(name = "info", nullable = false, length = 90)
     private String info;
     @ManyToOne
-    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     // Constructors, getters, and setters

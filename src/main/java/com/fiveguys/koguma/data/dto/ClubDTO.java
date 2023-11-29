@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.data.dto;
 
+import com.fiveguys.koguma.data.entity.Category;
 import com.fiveguys.koguma.data.entity.Club;
 import lombok.Builder;
 import lombok.Data;
@@ -18,12 +19,12 @@ public class ClubDTO {
     private String dong;
     private Boolean joinActiveFlag;
     private Boolean activeFlag;
-    private List<CategoryDTO> categoryDTOS;
+    private CategoryDTO categoryDTO;
 
     @Builder
     public ClubDTO(Long id, String title, String content, Integer maxCapacity,
                    Double latitude, Double longitude, String dong,
-                   Boolean joinActiveFlag, Boolean activeFlag){
+                   Boolean joinActiveFlag, Boolean activeFlag, CategoryDTO categoryDTO){
         this.id = id;
         this.title = title;
         this.content = content;
@@ -33,6 +34,7 @@ public class ClubDTO {
         this.dong = dong;
         this.joinActiveFlag = joinActiveFlag;
         this.activeFlag = activeFlag;
+        this.categoryDTO = categoryDTO;
     }
 
     public ClubDTO(Club club){
@@ -45,6 +47,7 @@ public class ClubDTO {
         this.dong = club.getDong();
         this.joinActiveFlag = club.isJoinActiveFlag();
         this.activeFlag = club.isActiveFlag();
+        this.categoryDTO = CategoryDTO.fromDTO(club.getCategory());
     }
 
     public Club toEntity(){
@@ -58,6 +61,7 @@ public class ClubDTO {
                 .dong(this.dong)
                 .joinActiveFlag(this.joinActiveFlag)
                 .activeFlag(this.activeFlag)
+                .category(categoryDTO.toEntity())
                 .build();
     }
 
@@ -72,6 +76,7 @@ public class ClubDTO {
                 .dong(entity.getDong())
                 .joinActiveFlag(entity.isJoinActiveFlag())
                 .activeFlag(entity.isActiveFlag())
+                .categoryDTO(CategoryDTO.fromDTO(entity.getCategory()))
                 .build();
     }
 
