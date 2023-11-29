@@ -26,16 +26,16 @@ public class ClubMember extends BaseTime{
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false, length = 60)
+    @Column(name = "nickname", nullable = false, length = 60)
     private String nickName;
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "member_role", nullable = false)
     private Boolean memberRole;
 
-    @Column(nullable = false)
+    @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag;
 
 

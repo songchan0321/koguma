@@ -24,7 +24,7 @@ public class Club extends BaseTime{
     @Column(nullable = false, length = 900)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "max_capacity", nullable = false)
     private Integer maxCapacity;
 
     @Column(nullable = false)
@@ -36,17 +36,27 @@ public class Club extends BaseTime{
     @Column(nullable = false,length=20)
     private String dong;
 
-    @Column(nullable = false)
+    @Column(name = "join_active_flag", nullable = false)
     private boolean joinActiveFlag;
 
-    @Column(nullable = false)
+    @Column(name = "active_flag", nullable = false)
     private boolean activeFlag;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @Builder
-    public Club(Long id,String title, String content, Integer maxCapacity){
+    public Club(Long id,String title, String content, Integer maxCapacity,
+                Double latitude, Double longitude, String dong, Boolean joinActiveFlag, Boolean activeFlag){
         this.title = title;
         this.content = content;
         this.maxCapacity = maxCapacity;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.dong = dong;
+        this.joinActiveFlag = joinActiveFlag;
+        this.activeFlag = activeFlag;
     }
 
         /*
