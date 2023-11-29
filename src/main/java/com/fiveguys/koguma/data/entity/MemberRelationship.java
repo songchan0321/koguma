@@ -11,15 +11,14 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "member_relationships")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor()
 
-public class MemberRelationship {
+public class MemberRelationship extends BaseTime {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToOne
     @JoinColumn(name = "source_member_id")

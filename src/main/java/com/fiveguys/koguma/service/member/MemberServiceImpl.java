@@ -6,8 +6,11 @@ import com.fiveguys.koguma.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +19,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-
+    private final HttpSession httpSession;
 
 
     @Override
@@ -53,36 +56,44 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDTO login(MemberDTO memberDTO) {
-        Optional<Member> findByNickname = memberRepository.findByNickname(memberDTO.getNickname());
-        if (findByNickname.isPresent()) {
-            Member member = (Member) findByNickname.get();
-            String encodedPassword = member.getPw();
-            //if (passwordEncoder.matches(memberDTO.getPw(), encodedPassword)){
-                //return MemberDTO.toMemberDTO(member);
-            //} else {
-                //return null;
-           // }
-        } else {
-            return null;
-        }
+    public MemberDTO login(String nickname, String pw) {
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new RuntimeException("해당 닉네임의 회원이 존재하지 않습니다."));
 
-        return memberDTO;
+
+        if (validationCheckPw(pw, member.getPw())) {
+            httpSession.setAttribute("loggedInMember", MemberDTO.fromEntity(member));
+            return MemberDTO.fromEntity(member);
+        } else {
+
+            throw new RuntimeException("패스워드가 일치하지 않습니다.");
+        }
     }
+
+    @Override
+    public boolean validationCheckPw(String rawPw, String encodedPw) {
+
+        return rawPw.equals(encodedPw);
+    }
+
 
     @Override
     public void logout() {
+        MemberDTO loggedInMember = (MemberDTO) httpSession.getAttribute("loggedInMember");
+        if (loggedInMember != null) {
 
+            httpSession.removeAttribute("loggedInMember");
+        }
     }
 
     @Override
-    public boolean validationCheckPw(MemberDTO memberDTO, String pw){
+    public boolean validationCheckPw(MemberDTO memberDTO, String pw) {
         return false;
     }
 
     @Override
-    public MemberDTO getMember(MemberDTO memberDTO) {
-        return MemberDTO.fromEntity(memberRepository.findById(memberDTO.getId())
+    public MemberDTO getMember(Long id) {
+        return MemberDTO.fromEntity(memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다.")));
     }
 
@@ -93,7 +104,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateMember(Long id, String nickname, Long imageId) {
+    public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다."));
 
@@ -108,7 +119,7 @@ public class MemberServiceImpl implements MemberService {
         member.setNickname(nickname);
         member.setImageId(imageId);
 
-        memberRepository.save(member);
+        memberRepository.save(memberDTO.toEntity());
     }
 
     @Override
@@ -118,7 +129,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void listMember(MemberDTO memberDTO) {
-
+    public List<MemberDTO> listMember() {
+        List<Member> members = memberRepository.findAll();
+        return members.stream()
+                .map(MemberDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 }
