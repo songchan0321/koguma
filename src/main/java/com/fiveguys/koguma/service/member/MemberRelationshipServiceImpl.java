@@ -1,13 +1,11 @@
 package com.fiveguys.koguma.service.member;
 
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
-import com.fiveguys.koguma.data.entity.MemberRelationship;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.member.MemberRelationshipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.util.Optional;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +15,7 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
 
     private final MemberRelationshipRepository memberRelationshipRepository;
     @Override
-    public void addBlock(MemberRelationshipDTO memberRelationshipDTO, Long sourceMemberId, Long targetMemberId, String content) {
+    public void addBlock(MemberRelationshipDTO memberRelationshipDTO, Member sourceMemberId, Member targetMemberId, String content) {
         memberRelationshipDTO.setTargetMemberId(targetMemberId);
         memberRelationshipDTO.setContent(content);
 
@@ -26,6 +24,8 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         //relationship.setTargetMember(memberRepository.findByNickname(targetMemberNickname));
 
         //memberRelationshipRepository.save(addBlock);
+        memberRelationshipDTO.setTargetMemberId(memberRelationshipDTO.getTargetMemberId());
+        memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
     }
 
     @Override
