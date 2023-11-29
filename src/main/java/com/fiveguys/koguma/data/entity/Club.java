@@ -48,7 +48,8 @@ public class Club extends BaseTime{
 
     @Builder
     public Club(Long id,String title, String content, Integer maxCapacity,
-                Double latitude, Double longitude, String dong, Boolean joinActiveFlag, Boolean activeFlag){
+                Double latitude, Double longitude, String dong, Boolean joinActiveFlag, Boolean activeFlag,
+                Category category){
         this.title = title;
         this.content = content;
         this.maxCapacity = maxCapacity;
@@ -57,6 +58,7 @@ public class Club extends BaseTime{
         this.dong = dong;
         this.joinActiveFlag = joinActiveFlag;
         this.activeFlag = activeFlag;
+        this.category = category;
     }
 
         /*

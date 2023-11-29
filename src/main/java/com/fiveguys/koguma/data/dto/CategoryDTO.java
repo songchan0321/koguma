@@ -27,4 +27,12 @@ public class CategoryDTO {
                 .build();
     }
 
+    public static CategoryDTO fromDTO(Category entity){
+        return CategoryDTO.builder()
+                .id(entity.getId())
+                .name(entity.getCategoryName())
+                .categoryType(entity.getCategoryType())
+                .build();
+    }
+
 }
