@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "categoriese")
+@Table(name = "categories")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
 
