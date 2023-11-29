@@ -11,19 +11,34 @@ public class ClubMemberDTO {
     private Long id;
     private ClubDTO clubDTO;
     private MemberDTO memberDTO;
-    private String nickName;
+    private String nickname;
+    private String content;
     private Boolean memberRole;
+    private Boolean activeFlag;
 
 
     @Builder
     public ClubMemberDTO(Long id, ClubDTO clubDTO,
-                         MemberDTO memberDTO, String nickName, Boolean memberRole){
+                         MemberDTO memberDTO, String nickname, String content,
+                         Boolean memberRole, Boolean activeFlag){
 
         this.id = id;
         this.clubDTO = clubDTO;
         this.memberDTO = memberDTO;
-        this.nickName = nickName;
+        this.nickname = nickname;
+        this.content = content;
         this.memberRole = memberRole;
+        this.activeFlag = activeFlag;
+    }
+
+    public ClubMemberDTO(ClubMember clubMember){
+        this.id = clubMember.getId();
+        this.clubDTO = ClubDTO.fromEntity(clubMember.getClub());
+        this.memberDTO = MemberDTO.fromEntity(clubMember.getMember());
+        this.nickname = clubMember.getNickname();
+        this.content = clubMember.getContent();
+        this.memberRole = clubMember.getMemberRole();
+        this.activeFlag = clubMember.getActiveFlag();
     }
 
     public ClubMember toEntity(){
@@ -31,8 +46,10 @@ public class ClubMemberDTO {
                 .id(this.id)
                 .club(clubDTO.toEntity())
                 .member(memberDTO.toEntity())
-                .nickName(this.nickName)
-                .memberRole(false)
+                .nickname(this.nickname)
+                .content(this.content)
+                .memberRole(this.memberRole)
+                .activeFlag(this.activeFlag)
                 .build();
     }
 
@@ -41,8 +58,10 @@ public class ClubMemberDTO {
                 .id(entity.getId())
                 .clubDTO(ClubDTO.fromEntity(entity.getClub()))
                 .memberDTO(MemberDTO.fromEntity(entity.getMember()))
-                .nickName(entity.getNickName())
+                .nickname(entity.getNickname())
+                .content(entity.getContent())
                 .memberRole(entity.getMemberRole())
+                .activeFlag(entity.getActiveFlag())
                 .build();
     }
 

@@ -17,6 +17,7 @@ public enum CategoryType {
 
     private final String name;
 
+
 //    @JsonCreator
 //    public static Category parsing(String inputValue) {
 //        return Stream.of(CategoryType.values())

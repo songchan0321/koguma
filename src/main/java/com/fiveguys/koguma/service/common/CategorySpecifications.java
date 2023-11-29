@@ -17,7 +17,7 @@ public class CategorySpecifications {
             List<Predicate> predicates = new ArrayList<>();
             Arrays.stream(CategoryType.values()).forEach((categoryType) ->{
                 if(categoryType.equals(categoryType)){
-                    predicates.add(criteriaBuilder.equal(root.get("type"), type));
+                    predicates.add(criteriaBuilder.equal(root.get("categoryType"), type));
                 }
             });
          return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

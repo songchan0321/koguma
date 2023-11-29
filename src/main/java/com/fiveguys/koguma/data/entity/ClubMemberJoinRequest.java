@@ -24,6 +24,9 @@ public class ClubMemberJoinRequest extends BaseTime{
     @JoinColumn(name = "club_id")
     private Club club;
 
+    @Column(name = "nickname", nullable = false, length = 60)
+    private String nickname;
+
     @Column(nullable = false, length = 60)
     private String content;
 
@@ -31,11 +34,12 @@ public class ClubMemberJoinRequest extends BaseTime{
     private Boolean activeFlag;
 
     @Builder
-    public ClubMemberJoinRequest(Long id, Member member, Club club, String content,
+    public ClubMemberJoinRequest(Long id, Member member, Club club, String nickname, String content,
                                  Boolean activeFlag){
         this.id = id;
         this.member = member;
         this.club = club;
+        this.nickname = nickname;
         this.content = content;
         this.activeFlag = activeFlag;
     }
