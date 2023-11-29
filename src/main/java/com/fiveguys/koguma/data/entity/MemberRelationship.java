@@ -1,6 +1,5 @@
 package com.fiveguys.koguma.data.entity;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,16 +30,16 @@ public class MemberRelationship extends BaseTime {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "type")
-    private Boolean type;
+    @Enumerated(EnumType.STRING)
+    private MemberRelationshipType memberRelationshipType;
 
 
     @Builder
-    public MemberRelationship (Member sourceMemberId, Member targetMemberId, String content, Boolean type) {
+    public MemberRelationship (Member sourceMemberId, Member targetMemberId, String content, MemberRelationshipType memberRelationshipType) {
         this.sourceMemberId = sourceMemberId;
         this.targetMemberId = targetMemberId;
         this.content = content;
-        this.type = type;
+        this.memberRelationshipType = memberRelationshipType;
 
     }
 }

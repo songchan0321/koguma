@@ -2,6 +2,7 @@ package com.fiveguys.koguma.data.dto;
 
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberRelationship;
+import com.fiveguys.koguma.data.entity.MemberRelationshipType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +21,12 @@ public class MemberRelationshipDTO  {
     public String content;
     public boolean type;
     public LocalDateTime regDate;
+    private MemberRelationshipType memberRelationshipType;
 
     public MemberRelationshipDTO() {
 
     }
+
 
     public static MemberRelationshipDTO fromEntity(MemberRelationship memberRelationship){
         MemberRelationshipDTO memberRelationshipDTO = new MemberRelationshipDTO();
@@ -31,7 +34,7 @@ public class MemberRelationshipDTO  {
         memberRelationshipDTO.setSourceMemberId(memberRelationship.getSourceMemberId());
         memberRelationshipDTO.setTargetMemberId(memberRelationship.getTargetMemberId());
         memberRelationshipDTO.setContent(memberRelationship.getContent());
-        memberRelationshipDTO.setType(memberRelationship.getType());
+        memberRelationshipDTO.setMemberRelationshipType(memberRelationship.getMemberRelationshipType());
         return memberRelationshipDTO;
 
     }
@@ -42,7 +45,7 @@ public class MemberRelationshipDTO  {
         memberRelationship.setSourceMemberId(sourceMemberId);
         memberRelationship.setTargetMemberId(targetMemberId);
         memberRelationship.setContent(content);
-        memberRelationship.setType(type);
+        memberRelationship.setMemberRelationshipType(memberRelationshipType);
         return memberRelationship;
     }
 

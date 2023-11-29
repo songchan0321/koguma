@@ -9,14 +9,15 @@ public interface MemberService {
 
     void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
     void deleteMember(MemberDTO memberDTO);
-    void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId);
+    void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId, Boolean activeFlag);
     void updateMember(MemberDTO memberDTO);
-    boolean validationCheckPw(MemberDTO memberDTO, String pw);
-    MemberDTO login(String nickname, String pw);
+    MemberDTO login(String nickname, String pw, Boolean activeFlag);
     boolean validationCheckPw(String rawPw, String encodedPw);
     void logout();
     MemberDTO getMember(Long id);
-    MemberDTO getOtherMember(String nickname);
+    MemberDTO getOtherMember(Long id);
     List<MemberDTO> listMember();
+
+
 }
 
