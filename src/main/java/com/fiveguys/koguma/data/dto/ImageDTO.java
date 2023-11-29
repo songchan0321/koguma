@@ -7,6 +7,7 @@ import com.fiveguys.koguma.data.entity.Product;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -18,9 +19,10 @@ public class ImageDTO {
     private Boolean activeFlag;
     private ProductDTO productDTO;
     private ClubDTO clubDTO;
+    private LocalDateTime regDate;
 
     @Builder
-    public ImageDTO(Long id, String URL, ImageType imageType, Boolean regImageFlag, Boolean activeFlag, ProductDTO productDTO, ClubDTO clubDTO) {
+    public ImageDTO(Long id, String URL, ImageType imageType, Boolean regImageFlag, Boolean activeFlag, ProductDTO productDTO, ClubDTO clubDTO, LocalDateTime regDate) {
         this.id = id;
         this.URL = URL;
         this.imageType = imageType;
@@ -28,7 +30,9 @@ public class ImageDTO {
         this.activeFlag = activeFlag;
         this.productDTO = productDTO;
         this.clubDTO = clubDTO;
+        this.regDate = regDate;
     }
+
     public static ImageDTO fromEntity(Image image){
         return ImageDTO.builder()
                 .id(image.getId())
@@ -38,6 +42,7 @@ public class ImageDTO {
                 .activeFlag(image.getActiveFlag())
                 .imageType(image.getImageType())
                 .regImageFlag(image.getRegImageFlag())
+                .regDate(image.getRegDate())
                 .build();
     }
 

@@ -15,4 +15,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> findAllById(Long id);
 
     List<Location> findAllByMemberId(Long id);
+
+
+    Location findByMemberIdAndRepAuthLocationFlag(Long id,boolean flag);
 }
