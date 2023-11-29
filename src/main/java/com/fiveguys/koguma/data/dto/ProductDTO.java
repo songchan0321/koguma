@@ -2,16 +2,14 @@ package com.fiveguys.koguma.data.dto;
 
 import com.fiveguys.koguma.data.entity.Location;
 import com.fiveguys.koguma.data.entity.Product;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fiveguys.koguma.data.entity.ProductStateType;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 
-@Getter
-@NoArgsConstructor
+@Builder
+@Data
 public class ProductDTO {
     private Long id;
     private MemberDTO sellerDTO;
@@ -20,17 +18,19 @@ public class ProductDTO {
     private String title;
     private String content;
     private int price;
-    private char tradeStatus;
+    private ProductStateType tradeStatus;
     private String dong;
     private Double latitude;
     private Double longitude;
     private int views;
     private String categoryName;
     private Boolean activeFlag;
+    private LocalDateTime regDate;
     private LocalDateTime buyDate;
 
+
     @Builder
-    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, char tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate) {
+    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate) {
         this.id = id;
         this.sellerDTO = sellerDTO;
         this.buyerDTO = buyerDTO;
@@ -45,14 +45,16 @@ public class ProductDTO {
         this.views = views;
         this.categoryName = categoryName;
         this.activeFlag = activeFlag;
+        this.regDate = regDate;
         this.buyDate = buyDate;
     }
+
 
     public Product toEntity(){
         return Product.builder()
                 .id(id)
-//                .seller(sellerDTO.toEntity())
-//                .buyer(buyerDTO.toEntity())
+                .seller(sellerDTO.toEntity())
+                .buyer(buyerDTO.toEntity())
                 .categoryId(categoryId)
                 .title(title)
                 .content(content)
@@ -70,8 +72,8 @@ public class ProductDTO {
     public static ProductDTO fromEntity(Product product){
         return ProductDTO.builder()
                 .id(product.getId())
-//                .buyerDTO(product.getBuyer().toDTO())
-//                .sellerDTO(product.getSeller().toDTO())
+                .buyerDTO(MemberDTO.fromEntity(product.getBuyer()))
+                .sellerDTO(MemberDTO.fromEntity(product.getSeller()))
                 .categoryId(product.getCategoryId())
                 .title(product.getTitle())
                 .content(product.getContent())
@@ -83,7 +85,9 @@ public class ProductDTO {
                 .views(product.getViews())
                 .categoryName(product.getCategoryName())
                 .activeFlag(product.getActiveFlag())
+                .regDate(product.getRegDate())
                 .buyDate(product.getBuyDate())
                 .build();
     }
+
 }

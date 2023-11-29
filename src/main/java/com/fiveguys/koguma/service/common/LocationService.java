@@ -1,17 +1,20 @@
 package com.fiveguys.koguma.service.common;
 
 import com.fiveguys.koguma.data.dto.LocationDTO;
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Location;
 
 import java.util.List;
 
 public interface LocationService {
 
-    List<LocationDTO> listLocation(Long id);
+    List<LocationDTO> listLocation(Long memberId);
+    LocationDTO getLocation(Long locationId);
     void addLocation(LocationDTO locationDTO) throws Exception;
-
-    void deleteLocation(Long id);
-    void updateSearchRange(Long id,int range);
-    LocationDTO addShareLocation();
+    void deleteLocation(MemberDTO memberDTO, Long id) throws Exception;
+    void updateSearchRange(LocationDTO locationDTO,int range);
+    LocationDTO addShareLocation(Long latitude,Long longitude);
+    LocationDTO getMemberRepLocation(Long memberId);
+    void setRepLocation(Long memberId,Long locationId);
     //LocationFilter();
 }

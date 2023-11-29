@@ -5,18 +5,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
 
 @Table(name = "products")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product extends BaseTime {
+public class Product {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,7 +28,7 @@ public class Product extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private Member buyer;
-    @Column(nullable = false)
+    @Column(name = "category_id",nullable = false)
     private Long categoryId;
     @Column(nullable = false,length=90)
     private String title;
@@ -36,8 +38,8 @@ public class Product extends BaseTime {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
-    private char tradeStatus;
+    @Column(name = "trade_status",nullable = false)
+    private ProductStateType tradeStatus;
     @Column(nullable = false,length=20)
     private String dong;
     @Column(nullable = false)
@@ -47,14 +49,25 @@ public class Product extends BaseTime {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int views;
-    @Column(nullable = false,length=15)
+    @Column(name = "category_name",nullable = false,length=15)
     private String categoryName;
-    @Column(nullable = false)
+    @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag;
+    @Column(name = "buy_date")
     private LocalDateTime buyDate;
 
+    @CreatedDate
+    @Column(name = "reg_date")
+    private LocalDateTime regDate;
+    @PrePersist
+    public void onPrePersist() {
+        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.regDate = parsedCreateDate;
+    }
+
     @Builder
-    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, char tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate) {
+    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate) {
         this.id = id;
         this.seller = seller;
         this.buyer = buyer;
@@ -70,5 +83,11 @@ public class Product extends BaseTime {
         this.categoryName = categoryName;
         this.activeFlag = activeFlag;
         this.buyDate = buyDate;
+    }
+    public void appendView(int views){
+        this.views = views+1;
+    }
+    public void resetRegDate(){
+        onPrePersist();
     }
 }

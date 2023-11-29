@@ -7,6 +7,7 @@ import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.common.LocationRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.service.common.LocationService;
+import com.fiveguys.koguma.service.member.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 
 @SpringBootTest
+@Transactional
 public class LocationApplicationTests {
 
     @Autowired
@@ -30,30 +32,19 @@ public class LocationApplicationTests {
     private LocationRepository locationRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private MemberService memberService;
 
 
 
 
     @Test
     @DisplayName("위치 등록 테스트")
-    @Transactional
+
     public void addLocation() throws Exception {
 
-        Member member1 = Member.builder()
-                .pw("sungyuun")
-                .nickname("ㅁ")
-                .email("ㅁ")
-                .phone("01001213")
-                .score(36.5F)
-                .roleFlag(true)
-                .socialFlag(true)
-                .activeFlag(true)
-                .build();
-
-        Member mem = memberRepository.save(member1);
+        MemberDTO memberDTO = memberService.getMember(6L);
         locationService.addLocation(LocationDTO.builder()
-                        .memberDTO(MemberDTO.fromEntity(mem))
+                        .memberDTO(memberDTO)
                         .dong("인헌동")
                         .latitude(37.4923615)
                         .longitude(127.0292881)
@@ -75,11 +66,42 @@ public class LocationApplicationTests {
     @DisplayName("위치 삭제 테스트")
     @Transactional
     public void deleteLocation() throws Exception {
+
+        MemberDTO memberDTO = memberService.getMember(6L);
+
         Optional<Location> beforeLocation = locationRepository.findById(1L);
-        locationService.deleteLocation(1L);
+        locationService.deleteLocation(memberDTO,1L);
         Optional<Location> afterLocation = locationRepository.findById(1L);
-        System.out.println("ad");
         Assertions.assertThat(beforeLocation).isEqualTo(afterLocation);
+    }
+    @Test
+    @DisplayName("위치 조회 테스트")
+    @Transactional
+    public void getLocation() throws Exception {
+        LocationDTO locationDTO = locationService.getLocation(1L);
+        System.out.println(locationDTO.toString());
+    }
+    @Test
+    @DisplayName("대표 위치 변경 테스트")
+    public void setRepLocation() throws Exception {
+        locationService.setRepLocation(4L,2L);
+    }
+    @Test
+    @DisplayName("검색 범위 테스트")
+    @Transactional
+    public void updateSearchRange() throws Exception {
+        LocationDTO locationDTO = locationService.getLocation(1L);
+        System.out.println(locationDTO.toString());
+        locationService.updateSearchRange(locationDTO,4);
+
+        System.out.println(locationService.getLocation(1L).toString());
+    }
+    @Test
+    @DisplayName("멤버 대표 테스트")
+    @Transactional
+    public void getMemberRepLocation() throws Exception {
+        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+        System.out.println(locationDTO.toString());
     }
 }
 
