@@ -60,7 +60,7 @@ public class PaymentServiceImpl implements PaymentService{
     @Override
     public void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point) {
         senderDTO.setPaymentBalance(senderDTO.getPaymentBalance() - point);
-        receiverDTO.setPaymentBalance(senderDTO.getPaymentBalance() + point);
+        receiverDTO.setPaymentBalance(receiverDTO.getPaymentBalance() + point);
         memberService.updateMember(senderDTO);
         memberService.updateMember(receiverDTO);
         this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, chatRoomDTO.getProductDTO().getTitle());
@@ -115,7 +115,11 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, PaymentHistoryType type) {
-        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(type), pageable).toList();
-//        return paymentHistoryRepository.findAllByMember(memberDTO.toEntity(), PaymentHistorySpecifications.hasType(type), pageable).toList();
+        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(memberDTO, type), pageable).toList();
+    }
+
+    @Override
+    public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable) {
+        return this.listPaymentHistory(memberDTO, pageable, null);
     }
 }

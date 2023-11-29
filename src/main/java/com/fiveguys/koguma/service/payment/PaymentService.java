@@ -13,7 +13,7 @@ public interface PaymentService {
     void addPayment(MemberDTO memberDTO, String account, String bank, String password);
     void deletePayment(MemberDTO memberDTO);
     PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info);
-    void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO   chatRoomDTO, Integer point);
+    void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point);
     PaymentHistoryDTO chargePoint(MemberDTO memberDTO, Integer point);
     PaymentHistoryDTO requestRefundPoint(MemberDTO memberDTO, Integer point);
     void successRefundPoint(PaymentHistoryDTO paymentHistoryDTO);
@@ -22,4 +22,5 @@ public interface PaymentService {
     void updatePaymentHistory(PaymentHistoryDTO paymentHistoryDTO, PaymentHistoryType type);
     PaymentHistoryDTO getPaymentHistory(Long id);
     List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, PaymentHistoryType type);
+    List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable);
 }
