@@ -13,8 +13,6 @@ public class PostDTO {
     private MemberDTO memberDTO;
     private CategoryDTO categoryDTO;
     private String categoryName;
-    private ClubPostCategoryDTO clubPostCategoryDTO;
-    private String clubPostCategoryName;
     private String title;
     private String content;
     private Boolean postType;
@@ -27,15 +25,12 @@ public class PostDTO {
 
     @Builder
     public PostDTO(Long id, MemberDTO memberDTO, CategoryDTO categoryDTO, String categoryName,
-                   ClubPostCategoryDTO clubPostCategoryDTO, String clubPostCategoryName,
-                   String title, String content, Boolean postType, Double latitude,
+                                      String title, String content, Boolean postType, Double latitude,
                    Double longitude, String dong, int views, Boolean activeFlag){
         this.id = id;
         this.memberDTO = memberDTO;
         this.categoryDTO = categoryDTO;
         this.categoryName = categoryName;
-        this.clubPostCategoryDTO = clubPostCategoryDTO;
-        this.clubPostCategoryName = clubPostCategoryName;
         this.title = title;
         this.content = content;
         this.postType = postType;
@@ -47,6 +42,9 @@ public class PostDTO {
 
     }
 
+    public PostDTO() {
+
+    }
 
 
     public Post toEntity(){
@@ -55,8 +53,6 @@ public class PostDTO {
                 .member(memberDTO.toEntity())
                 .category(categoryDTO.toEntity())
                 .categoryName(this.categoryName)
-                .clubPostCategory(clubPostCategoryDTO.toEntity())
-                .clubPostCategoryName(this.clubPostCategoryName)
                 .title(this.title)
                 .content(this.content)
                 .postType(this.postType)
@@ -76,8 +72,6 @@ public class PostDTO {
                 .memberDTO(MemberDTO.fromEntity(post.getMember()))
                 .categoryDTO(CategoryDTO.fromDTO(post.getCategory()))
                 .categoryName(post.getCategoryName())
-                .clubPostCategoryDTO(ClubPostCategoryDTO.fromEntity(post.getClubPostCategory()))
-                .clubPostCategoryName(post.getClubPostCategoryName())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .postType(post.getPostType())

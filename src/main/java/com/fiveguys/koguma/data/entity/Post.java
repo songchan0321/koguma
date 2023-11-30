@@ -28,13 +28,6 @@ public class Post extends BaseTime{
     @Column(name = "category_name", length = 15)
     private String categoryName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_category_id")
-    private ClubPostCategory clubPostCategory;
-
-    @Column(name = "club_category_name",length = 15)
-    private String clubPostCategoryName;
-
     @Column(nullable = false, length = 90)
     private String title;
 
@@ -63,15 +56,12 @@ public class Post extends BaseTime{
 
     @Builder
     public Post(Long id, Member member, Category category, String categoryName,
-                ClubPostCategory clubPostCategory, String clubPostCategoryName, String title,
-                String content, Boolean postType, Double latitude, Double longitude, String dong,
+                String title, String content, Boolean postType, Double latitude, Double longitude, String dong,
                 int views, Boolean activeFlag){
         this.id = id;
         this.member = member;
         this.category = category;
         this.categoryName = categoryName;
-        this.clubPostCategory = clubPostCategory;
-        this.clubPostCategoryName = clubPostCategoryName;
         this.title = title;
         this.content = content;
         this.postType = postType;

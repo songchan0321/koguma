@@ -8,43 +8,53 @@ public class CommentDTO {
     private Long id;
     private PostDTO postDTO;
     private MemberDTO memberDTO;
-    private CommentDTO commentDTO;
+    private CommentDTO parentCommentDTO;
     private String content;
     private Boolean activeFlag;
 
 
     @Builder
     public CommentDTO(Long id, PostDTO postDTO, MemberDTO memberDTO,
-                      CommentDTO commentDTO, String content, Boolean activeFlag){
+                      CommentDTO parentcommentDTO, String content, Boolean activeFlag){
         this.id = id;
         this.postDTO = postDTO;
         this.memberDTO = memberDTO;
-        this.commentDTO = commentDTO;
+        this.parentCommentDTO = parentcommentDTO;
         this.content = content;
         this.activeFlag = activeFlag;
     }
 
     public Comment toEntity(){
-        return Comment.builder()
+        Comment comment = Comment.builder()
                 .id(this.id)
                 .post(postDTO.toEntity())
                 .member(memberDTO.toEntity())
-                .comment(commentDTO.toEntity())
                 .content(this.content)
                 .activeFlag(this.activeFlag)
                 .build();
+
+        //부모 댓글 참조 설정
+        if(this.parentCommentDTO != null){
+            comment.setParentComment(this.parentCommentDTO.toEntity());
+        }
+
+        return comment;
     }
 
-    public static CommentDTO fromEntity(Comment comment){
-        return CommentDTO.builder()
+    public static CommentDTO fromEntity(Comment comment) {
+        CommentDTO commentDTO = CommentDTO.builder()
                 .id(comment.getId())
                 .postDTO(PostDTO.fromEntity(comment.getPost()))
                 .memberDTO(MemberDTO.fromEntity(comment.getMember()))
-                .commentDTO(CommentDTO.fromEntity(comment.getComment()))
                 .content(comment.getContent())
                 .activeFlag(comment.getActiveFlag())
                 .build();
 
+        //부도 댓글 참조 설정
+        if (comment.getParentcomment() != null) {
+            commentDTO.setParentCommentDTO(CommentDTO.fromEntity(comment.getParentcomment()));
+        }
+        return commentDTO;
     }
 
 
