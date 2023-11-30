@@ -14,11 +14,11 @@ public interface PostService {
 
     List<PostDTO> listPostByMember(MemberDTO memberDTO);
 
-    Long addPost(PostDTO postDTO, MemberDTO memberDTO);
+    void addPost(PostDTO postDTO);
 
-    PostDTO getPost(PostDTO postDTO);
+    PostDTO getPost(Long id);
 
-    PostDTO updatePost(PostDTO postDTO, MemberDTO memberDTO);
+    void updatePost(PostDTO postDTO);
 
     void deletePost(PostDTO postDTO, MemberDTO memberDTO);
 
@@ -35,6 +35,6 @@ public interface PostService {
     List<PostDTO> listKeywordSearch(PostDTO postDTO);
 
     //조회수 증가 메서드
-    int increaseViews(PostDTO postDTO);
+    void increaseViews(Long id);
 
 }

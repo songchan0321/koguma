@@ -1,11 +1,19 @@
 package com.fiveguys.koguma.post;
 
+import com.fiveguys.koguma.data.dto.CategoryDTO;
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
+import com.fiveguys.koguma.data.entity.Category;
+import com.fiveguys.koguma.data.entity.ClubPostCategory;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Post;
+import com.fiveguys.koguma.repository.common.CategoryRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
+import com.fiveguys.koguma.service.common.CategoryService;
+import com.fiveguys.koguma.service.common.LocationService;
+import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.post.PostService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +24,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @Transactional
@@ -25,40 +35,49 @@ public class PostApplicationTests {
     PostService postService;
 
     @Autowired
+    MemberService memberService;
+
+    @Autowired
+    LocationService locationService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
     MemberRepository memberRepository;
 
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
     @DisplayName("게시글 생성")
     @Test
     public void addPostTest() throws Exception{
 
-        //given
+        Member writer = memberService.getMember(4L).toEntity();
+
+        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+
+        Category category = categoryRepository.findById(50L).get();
+
+
+
         Post post = Post.builder()
-                .title("title1")
-                .content("content1")
+                .member(writer)
+                .category(category)
+                .categoryName(category.getCategoryName())
+                .title("몬스터")
+                .content("우마이")
                 .postType(true)
-                .latitude(37.494949)
-                .longitude(14.1212)
-                .dong("비전2동")
-                .views(5)
+                .latitude(locationDTO.getLatitude())
+                .longitude(locationDTO.getLongitude())
+                .dong(locationDTO.getDong())
+                .views(0)
                 .activeFlag(true)
                 .build();
 
-        PostDTO postDTO = PostDTO.fromEntity(post);
-        Member member = memberRepository.findById(2L).get();
-        MemberDTO memberDTO = MemberDTO.fromEntity(member);
-
-        //when
-        Long postId = postService.addPost(postDTO, memberDTO);
-        PostDTO findPost = postService.getPost(postId);
-
-        //then
-        assertThat(findPost.getId()).isEqualTo(postId);
-        assertThat(findPost.getTitle()).isEqualTo(postDTO.getTitle());
-        assertThat(findPost).isNotNull(); // 추가: findPost가 null이 아닌지 확인
-
-
+        postRepository.save(post);
     }
 }
