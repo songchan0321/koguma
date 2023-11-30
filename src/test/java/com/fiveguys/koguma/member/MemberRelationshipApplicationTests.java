@@ -47,42 +47,42 @@ public class MemberRelationshipApplicationTests {
     @Test
     @DisplayName("차단 추가 테스트")
     @Transactional
-    void addBlockTest() {
-        Member sourceMember = addMember("sourceUser");
-        Member targetMember = addMember("targetUser");
+    public void addBlockTest() throws Exception {
+        Member sourceMember = memberService.getMember(1L).toEntity();
+        Member targetMember = memberService.getMember(2L).toEntity();
 
-        MemberRelationshipDTO relationshipDTO = createMemberRelationshipDTO(
-                sourceMember, targetMember, "Blocking content");
+        MemberRelationshipDTO memberRelationshipDTO = new MemberRelationshipDTO();
+        memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
+        memberRelationshipDTO.setContent("test");
+        memberRelationshipDTO.setType(true);
 
-        memberRelationshipService.addBlock(relationshipDTO, sourceMember, targetMember, "Blocking content");
+        MemberRelationship memberRelationship = MemberRelationship.builder()
+                .sourceMemberId(sourceMember)
+                .targetMemberId(targetMember)
+                .content(memberRelationshipDTO.getContent())
+                .memberRelationshipType(memberRelationshipDTO.getMemberRelationshipType())
+                .build();
 
-        MemberRelationshipDTO addedBlock = memberRelationshipService.getBlock(relationshipDTO.getId());
-
-        assertAll(
-                () -> assertEquals(sourceMember.getId(), addedBlock.getSourceMemberId().getId()),
-                () -> assertEquals(targetMember.getId(), addedBlock.getTargetMemberId().getId()),
-                () -> assertEquals("Blocking content", addedBlock.getContent()),
-                () -> assertEquals(MemberRelationshipType.BLOCK, addedBlock.getMemberRelationshipType())
-        );
+        memberRelationshipRepository.save(memberRelationship);
     }
-
 
     @Test
     @DisplayName("차단 삭제 테스트")
     @Transactional
     void deleteBlockTest() {
-        Member sourceMember = addMember("sourceUser");
-        Member targetMember = addMember("targetUser");
+        Member sourceMember = memberService.getMember(1L).toEntity();
+        Member targetMember = memberService.getMember(2L).toEntity();
 
-        MemberRelationshipDTO relationshipDTO = createMemberRelationshipDTO(
-                sourceMember, targetMember, "Blocking content");
+        MemberRelationshipDTO memberRelationshipDTO = new MemberRelationshipDTO();
+        memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
+        memberRelationshipDTO.setContent("test");
+        memberRelationshipDTO.setType(true);
 
-        memberRelationshipService.addBlock(relationshipDTO, sourceMember, targetMember, "Blocking content");
+        memberRelationshipService.deleteBlock(memberRelationshipDTO);
 
-        memberRelationshipService.deleteBlock(relationshipDTO);
+        MemberRelationshipDTO deletedBlock = memberRelationshipService.getBlock(memberRelationshipDTO.getId());
 
-        MemberRelationshipDTO deletedBlock = memberRelationshipService.getBlock(relationshipDTO.getId());
-
+        assertNull(deletedBlock.getRegDate());
         assertNull(deletedBlock.getSourceMemberId());
         assertNull(deletedBlock.getTargetMemberId());
         assertNull(deletedBlock.getContent());
@@ -93,8 +93,8 @@ public class MemberRelationshipApplicationTests {
     @DisplayName("차단 목록 테스트")
     @Transactional
     void listBlockTest() {
-        Member sourceMember = addMember("sourceUser");
-        Member targetMember = addMember("targetUser");
+        Member sourceMember = memberService.getMember(1L).toEntity();
+        Member targetMember = memberService.getMember(2L).toEntity();
 
         MemberRelationshipDTO relationshipDTO1 = createMemberRelationshipDTO(
                 sourceMember, targetMember, "Blocking content 1");

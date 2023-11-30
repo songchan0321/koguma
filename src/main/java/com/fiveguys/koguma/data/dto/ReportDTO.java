@@ -21,6 +21,8 @@ public class ReportDTO {
     private Integer reportNumber;
     private String answerTitle;
     private String answerContent;
+    private String categoryName;
+    private Long categoryId;
 
 
     public ReportDTO() {
@@ -35,6 +37,8 @@ public class ReportDTO {
         reportDTO.setReportNumber(report.getReportNumber());
         reportDTO.setAnswerTitle(report.getAnswerTitle());
         reportDTO.setAnswerContent(report.getAnswerContent());
+        reportDTO.setCategoryId(report.getCategoryId());
+        reportDTO.setCategoryName(String.valueOf(report.getCategoryId()));
 
         return reportDTO;
     }
@@ -48,7 +52,8 @@ public class ReportDTO {
         report.setReportNumber(reportNumber);
         report.setAnswerTitle(answerTitle);
         report.setReportContent(answerContent);
+        report.setCategoryId(categoryId);
+        report.setCategoryName(categoryName);
         return report;
     }
 }
-

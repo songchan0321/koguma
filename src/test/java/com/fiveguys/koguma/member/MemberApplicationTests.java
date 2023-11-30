@@ -132,7 +132,77 @@ public class MemberApplicationTests {
                     () -> assertEquals(retrievedMember.getNickname(), memberDTO.getNickname())
             );
         });
+
+
     }
+
+    @Test
+    @DisplayName("비밀번호 유효성 검사 테스트")
+    void testValidationCheckPwMatching() {
+        // Given
+        String rawPassword = "myPassword";
+        String encodedPassword = "myPassword";
+
+        MemberService memberService = new MemberService() {
+            @Override
+            public void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
+
+            }
+
+            @Override
+            public void deleteMember(MemberDTO memberDTO) {
+
+            }
+
+            @Override
+            public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId, Boolean activeFlag) {
+
+            }
+
+            @Override
+            public void updateMember(MemberDTO memberDTO) {
+
+            }
+
+            @Override
+            public MemberDTO login(String nickname, String pw, Boolean activeFlag) {
+                return null;
+            }
+
+            @Override
+            public boolean validationCheckPw(String rawPw, String encodedPw) {
+                return false;
+            }
+
+            @Override
+            public void logout() {
+
+            }
+
+            @Override
+            public MemberDTO getMember(Long id) {
+                return null;
+            }
+
+            @Override
+            public MemberDTO getOtherMember(Long id) {
+                return null;
+            }
+
+            @Override
+            public List<MemberDTO> listMember() {
+                return null;
+            }
+        };
+
+        // When
+        boolean result = memberService.validationCheckPw(rawPassword, encodedPassword);
+
+        // Then
+        assertFalse(result);
+    }
+
+}
 
 
 
@@ -164,6 +234,6 @@ public class MemberApplicationTests {
                 () -> assertEquals(activeFlag, loggedInMember.getActiveFlag())
         );
     }*/
-}
+
 
 

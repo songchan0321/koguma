@@ -22,13 +22,9 @@ public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
 
     @Override
-    public void addReport(ReportDTO reportDTO, Member reporterId, String reportId, String reportTitle, String reportContent){
-        reportDTO.setReporterId(reporterId);
-        reportDTO.setReportTitle(reportTitle);
-        reportDTO.setReportContent(reportContent);
+    public void addReport(ReportDTO reportDTO){
 
         reportRepository.save(reportDTO.toEntity());
-
     }
     @Override
     public void deleteReport(Long id) {
@@ -70,6 +66,7 @@ public class ReportServiceImpl implements ReportService {
 
         reportRepository.save(reportDTO.toEntity());
     }
+
 
 
 

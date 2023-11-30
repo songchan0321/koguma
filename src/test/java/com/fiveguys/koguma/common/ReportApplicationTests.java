@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
+
 public class ReportApplicationTests {
 
     @Autowired
@@ -27,19 +27,25 @@ public class ReportApplicationTests {
 
     @Test
     @DisplayName("신고 추가 테스트")
-    void addReportTest() {
+    @Transactional
+    public void addReportTest() throws Exception {
         // Given
-        Member reporterId = addMember("reporterUser");
+        Member reporterId = memberService.getMember(1L).toEntity();
         String reportTitle = "Test Report Title";
         String reportContent = "Test Report Content";
+        Long categoryId = Long.valueOf("회원");
+        String categoryName = "회원";
+
 
         ReportDTO reportDTO = new ReportDTO();
         reportDTO.setReporterId(reporterId);
         reportDTO.setReportTitle(reportTitle);
         reportDTO.setReportContent(reportContent);
-
+        reportDTO.setCategoryId(categoryId);
+        reportDTO.setCategoryName(categoryName);
         // When
-        reportService.addReport(reportDTO, reporterId, "reportId", reportTitle, reportContent);
+        reportService.addReport(reportDTO);
+
 
         // Then
         ReportDTO addedReport = reportService.getReport(reportDTO.getId());
@@ -52,7 +58,8 @@ public class ReportApplicationTests {
 
     @Test
     @DisplayName("신고 삭제 테스트")
-    void deleteReportTest() {
+    @Transactional
+    public void deleteReportTest() {
         // Given
         Member reporterId = addMember("reporterUser");
         String reportTitle = "Test Report Title";
@@ -62,7 +69,7 @@ public class ReportApplicationTests {
         reportDTO.setReporterId(reporterId);
         reportDTO.setReportTitle(reportTitle);
         reportDTO.setReportContent(reportContent);
-        reportService.addReport(reportDTO, reporterId, "reportId", reportTitle, reportContent);
+        reportService.addReport(reportDTO);
 
         // When
         reportService.deleteReport(reportDTO.getId());
@@ -73,7 +80,8 @@ public class ReportApplicationTests {
 
     @Test
     @DisplayName("특정 회원의 신고 목록 조회 테스트")
-    void listReportTest() {
+    @Transactional
+    public void listReportTest() {
         // Given
         Member reporterId = addMember("reporterUser");
         Member otherMember = addMember("otherUser");
@@ -85,13 +93,13 @@ public class ReportApplicationTests {
         reportDTO1.setReporterId(reporterId);
         reportDTO1.setReportTitle(reportTitle);
         reportDTO1.setReportContent(reportContent);
-        reportService.addReport(reportDTO1, reporterId, "reportId", reportTitle, reportContent);
+        reportService.addReport(reportDTO1);
 
         ReportDTO reportDTO2 = new ReportDTO();
         reportDTO2.setReporterId(otherMember);
         reportDTO2.setReportTitle(reportTitle);
         reportDTO2.setReportContent(reportContent);
-        reportService.addReport(reportDTO2, otherMember, "reportId", reportTitle, reportContent);
+        reportService.addReport(reportDTO2);
 
         // When
         List<ReportDTO> reportList = reportService.listReport(reporterId.getId());
