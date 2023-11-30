@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class Post extends BaseTime{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,14 +25,14 @@ public class Post extends BaseTime{
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(length = 15)
+    @Column(name = "category_name", length = 15)
     private String categoryName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_category_id")
     private ClubPostCategory clubPostCategory;
 
-    @Column(length = 15)
+    @Column(name = "club_category_name",length = 15)
     private String clubPostCategoryName;
 
     @Column(nullable = false, length = 90)
@@ -41,7 +41,7 @@ public class Post extends BaseTime{
     @Column(nullable = false, length = 1500)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "post_type",nullable = false)
     private Boolean postType;
 
     private Double latitude;
@@ -54,16 +54,16 @@ public class Post extends BaseTime{
     @Column(nullable = false)
     private int views = 0;
 
-    @Column(nullable = false)
+    @Column(name = "active_flag",nullable = false)
     private Boolean activeFlag;
 
-    public void increaseViews(){
+    public void increaseViews(int views){
         this.views++;
     }
 
     @Builder
     public Post(Long id, Member member, Category category, String categoryName,
-                ClubPostCategory clubPostCategory, String clubCategoryName, String title,
+                ClubPostCategory clubPostCategory, String clubPostCategoryName, String title,
                 String content, Boolean postType, Double latitude, Double longitude, String dong,
                 int views, Boolean activeFlag){
         this.id = id;
@@ -71,7 +71,7 @@ public class Post extends BaseTime{
         this.category = category;
         this.categoryName = categoryName;
         this.clubPostCategory = clubPostCategory;
-        this.clubPostCategoryName = clubCategoryName;
+        this.clubPostCategoryName = clubPostCategoryName;
         this.title = title;
         this.content = content;
         this.postType = postType;
