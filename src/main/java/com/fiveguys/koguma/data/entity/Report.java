@@ -21,8 +21,8 @@ public class Report extends BaseTime {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reporter_nickname",nullable = false)
-    private Member reporterNickname;
+    @JoinColumn(name = "reporter_id",nullable = false)
+    private Member reporterId;
 
     @Column(name = "report_title", nullable = false)
     private String reportTitle;
@@ -40,9 +40,9 @@ public class Report extends BaseTime {
     private String answerContent;
 
     @Builder
-    public Report(Long id, Member reporterNickname, String reportTitle, String reportContent, Integer reportNumber, String answerTitle, String answerContent) {
+    public Report(Long id, Member reporterId, String reportTitle, String reportContent, Integer reportNumber, String answerTitle, String answerContent) {
         this.id = id;
-        this.reporterNickname = reporterNickname;
+        this.reporterId = reporterId;
         this.reportTitle = reportTitle;
         this.reportContent = reportContent;
         this.reportNumber = reportNumber;

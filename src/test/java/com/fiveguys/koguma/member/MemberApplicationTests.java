@@ -80,7 +80,7 @@ public class MemberApplicationTests {
 
         MemberDTO originalMember = memberService.getMember(memberId);
 
-        // deleteMember 메서드 호출
+
         memberService.deleteMember(originalMember);
 
         MemberDTO deletedMember = memberService.getMember(memberId);
@@ -92,7 +92,7 @@ public class MemberApplicationTests {
     @DisplayName("회원 목록 추가 테스트")
     @Transactional
 
-    public void addMembersForTest() {
+    public void addMemberTest() {
         String[] nicknames = {"user1", "user2", "user3"};
         String[] passwords = {"password1", "password2", "password3"};
         String[] phones = {"010-1111-1111", "010-2222-2222", "010-3333-3333"};
@@ -119,7 +119,7 @@ public class MemberApplicationTests {
     @Transactional
     public void listMemberTest() throws Exception {
 
-        addMembersForTest();
+        addMemberTest();
 
         List<MemberDTO> memberList = memberService.listMember();
 

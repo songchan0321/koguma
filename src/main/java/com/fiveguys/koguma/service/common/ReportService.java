@@ -6,10 +6,10 @@ import com.fiveguys.koguma.data.entity.Member;
 import java.util.List;
 public interface ReportService {
 
-    void addReport(ReportDTO reportDTO, Member reporterNickname, String reportId, String reportContent);
-    void deleteReport(ReportDTO reportDTO);
+    void addReport(ReportDTO reportDTO, Member reporterId, String reportTitle, String reportId, String reportContent);
+    void deleteReport(Long id);
     ReportDTO getReport(Long id);
-    List<ReportDTO> listReport();
+    List<ReportDTO> listReport(Long id);
     List<ReportDTO> listAllReport();
     void addAnswer(ReportDTO reportDTO, String answerTitle, String answerContent);
 

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReportDTO {
     private Long id;
-    private Member reporterNickname;
+    private Member reporterId;
     private String reportTitle;
     private String reportContent;
     private Integer reportNumber;
@@ -29,7 +29,7 @@ public class ReportDTO {
     public static ReportDTO fromEntity(Report report) {
         ReportDTO reportDTO = new ReportDTO();
         reportDTO.setId(report.getId());
-        reportDTO.setReporterNickname(report.getReporterNickname());
+        reportDTO.setReporterId(report.getReporterId());
         reportDTO.setReportTitle(report.getReportTitle());
         reportDTO.setReportContent(report.getReportContent());
         reportDTO.setReportNumber(report.getReportNumber());
@@ -42,7 +42,7 @@ public class ReportDTO {
     public Report toEntity() {
         Report report = new Report();
         report.setId(id);
-        report.setReporterNickname(reporterNickname);
+        report.setReporterId(reporterId);
         report.setReportTitle(reportTitle);
         report.setReportContent(reportContent);
         report.setReportNumber(reportNumber);
