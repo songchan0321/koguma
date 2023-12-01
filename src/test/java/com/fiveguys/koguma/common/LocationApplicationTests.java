@@ -35,8 +35,6 @@ public class LocationApplicationTests {
     private MemberService memberService;
 
 
-
-
     @Test
     @DisplayName("위치 등록 테스트")
 

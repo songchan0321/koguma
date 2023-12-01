@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface ProductService {
     void addProduct(ProductDTO productDTO);
-    Page<ProductDTO> listProduct(Long memberId);
+    Page<Product> listProduct(Long memberId,int page, int size);
     ProductDTO getProduct(Long productId);
     void updateProduct(ProductDTO productDTO);
 
@@ -20,8 +20,7 @@ public interface ProductService {
 
     void raiseProduct(Long productId) throws Exception;
 
-    void addLikeProduct(Long productId);
+    void isOwnProduct(Long memberId, Long sellerId) throws Exception;
 
-    void deleteLikeProduct(long productId);
 
 }

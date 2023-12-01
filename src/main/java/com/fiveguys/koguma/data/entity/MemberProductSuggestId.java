@@ -18,16 +18,16 @@ import java.io.Serializable;
 public class MemberProductSuggestId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="products",nullable = false)
-    private Product product_id;
+    @JoinColumn(name="product_id",nullable = false)
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="members",nullable = false)
-    private Member member_id;
+    @JoinColumn(name="member_id",nullable = false)
+    private Member member;
 
     @Builder
-    public MemberProductSuggestId(Product product_id, Member member_id) {
-        this.product_id = product_id;
-        this.member_id = member_id;
+    public MemberProductSuggestId(Product product, Member member) {
+        this.product = product;
+        this.member = member;
     }
 }

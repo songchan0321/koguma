@@ -29,9 +29,11 @@ public class ProductServiceImpl implements ProductService{
         productRepository.save(productDTO.toEntity());
     }
 
-    public Page<ProductDTO> listProduct(Long memberId) {
-        return null;
-    }
+    public Page<Product> listProduct(Long memberId,int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
+    };
+
 
     public ProductDTO getProduct(Long productId) {              //시큐리티 본인 확인 대상
         Product product = productRepository.findById(productId).orElseThrow(()->new NoResultException("해당 상품의 정보가 존재하지 않습니다."));
@@ -63,30 +65,38 @@ public class ProductServiceImpl implements ProductService{
 
     }
 
+    @Transactional
     public void raiseProduct(Long productId) throws Exception {
+
         Product product = productRepository.findById(productId).orElseThrow(()->new IllegalArgumentException("해당 상품의 정보가 없습니다"));
+
         String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 //        Period day = Period.between(product.getRegDate().toLocalDate(), parsedCreateDate.toLocalDate());
 
         Duration time = Duration.between(product.getRegDate().toLocalTime(), parsedCreateDate.toLocalTime());
 
-        long leftHour = 24-time.toSeconds()/3600;
+        long leftHour = 24-time.toSeconds()/3600-1;
         long leftMinute = 60-time.toSeconds()%3600/60;
         long leftSecond = 60-time.toSeconds()%3600%60;
+        System.out.println(leftHour + "시" + leftMinute + "분" + leftSecond);
         if (leftHour>=24){
             product.resetRegDate();
         }
         else{
-            throw new Exception("끌어올리기 가능 시간까지" + leftHour + "시" + leftMinute + "분" + leftSecond + "초 남았습니다.");
+            throw new Exception("끌어올리기 가능 시간까지" + leftHour + "시간" + leftMinute + "분" + leftSecond + "초 남았습니다.");
         }
     }
 
-    public void addLikeProduct(Long productId) {
+    public void addLikeProduct(Long memberId, Long productId) { //시큐리티 적용 대상
 
     }
 
-    public void deleteLikeProduct(long productId) {
+    public void deleteLikeProduct(Long memberId, Long productId) { //시큐리티 적용 대상
 
+    }
+    public void isOwnProduct(Long memberId, Long sellerId) throws Exception {
+        if (!sellerId.equals(memberId))
+            throw new Exception("상품에 대한 권한이 없습니다");
     }
 }

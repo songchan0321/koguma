@@ -19,15 +19,15 @@ public class ReviewId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id",nullable = false)
-    private Member memberId;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id",nullable = false)
-    private Product productId;
+    private Product product;
 
     @Builder
-    public ReviewId(Member memberId, Product productId) {
-        this.memberId = memberId;
-        this.productId = productId;
+    public ReviewId(Member member, Product product) {
+        this.member = member;
+        this.product = product;
     }
 }

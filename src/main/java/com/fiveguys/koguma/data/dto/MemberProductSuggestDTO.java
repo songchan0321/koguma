@@ -33,8 +33,8 @@ public class MemberProductSuggestDTO {
     public MemberProductSuggest toEntity(){
         return MemberProductSuggest.builder()
                 .id(MemberProductSuggestId.builder()
-                        .member_id(id.getMember_id())
-                        .product_id(id.getProduct_id())
+                        .member(id.getMember())
+                        .product(id.getProduct())
                         .build())
                 .price(price)
                 .build();

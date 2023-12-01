@@ -37,8 +37,8 @@ public class ReviewDTO {
     public Review toEntity(){
         return Review.builder()
                 .id(ReviewId.builder()
-                        .memberId(id.getMemberId())
-                        .productId(id.getProductId())
+                        .member(id.getMember())
+                        .product(id.getProduct())
                         .build())
                 .rating(rating)
                 .content(content)

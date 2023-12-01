@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -67,7 +70,7 @@ public class Product {
     }
 
     @Builder
-    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate) {
+    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate, LocalDateTime regDate) {
         this.id = id;
         this.seller = seller;
         this.buyer = buyer;
@@ -83,11 +86,19 @@ public class Product {
         this.categoryName = categoryName;
         this.activeFlag = activeFlag;
         this.buyDate = buyDate;
+        this.regDate = regDate;
     }
+
+
+
+
+
     public void appendView(int views){
         this.views = views+1;
     }
     public void resetRegDate(){
-        onPrePersist();
+        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.regDate = parsedCreateDate;
     }
 }
