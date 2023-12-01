@@ -2,15 +2,19 @@ package com.fiveguys.koguma.service.club;
 
 import com.fiveguys.koguma.data.dto.ClubDTO;
 import com.fiveguys.koguma.data.dto.ClubMeetUpDTO;
+import com.fiveguys.koguma.data.dto.ClubMemberMeetUpJoinDTO;
 import com.fiveguys.koguma.data.entity.ClubMeetUp;
+import com.fiveguys.koguma.data.entity.ClubMember;
+import com.fiveguys.koguma.data.entity.ClubMemberMeetUpJoin;
 import com.fiveguys.koguma.repository.club.ClubMeetUpRepository;
+import com.fiveguys.koguma.repository.club.ClubMemberMeetUpJoinRepository;
+import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.repository.club.ClubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,9 +23,11 @@ import java.util.stream.Collectors;
 public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
     private final ClubService clubService;
-
-    private final ClubMeetUpRepository clubMeetUpRepository;
     private final ClubRepository clubRepository;
+    private final ClubMemberRepository clubMemberRepository;
+    private final ClubMeetUpRepository clubMeetUpRepository;
+    private final ClubMemberMeetUpJoinRepository clubMemberMeetUpJoinRepository;
+
 
 
     @Override
@@ -67,15 +73,47 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
     @Override
     public void deleteClubMeetUp(Long clubMeetUpId) {
-
+        clubMeetUpRepository.deleteById(clubMeetUpId);
     }
 
     @Override
     public Long joinClubMeetUp(Long clubMeetUpId, Long clubMemberId) {
 
+        ClubMember clubMember = clubMemberRepository.findById(clubMemberId)
+                .orElseThrow(() -> new IllegalArgumentException("모임원이 없습니다."));
 
+        ClubMeetUp clubMeetUp = clubMeetUpRepository.findById(clubMeetUpId)
+                .orElseThrow(() -> new IllegalArgumentException("모임 일정이 없습니다."));
 
+        ClubMemberMeetUpJoin clubMemberMeetUpJoin = ClubMemberMeetUpJoin.createClubMemberMeetUpJoin(clubMeetUp, clubMember);
 
-        return null;
+        clubMemberMeetUpJoinRepository.save(clubMemberMeetUpJoin);
+
+        return clubMemberMeetUpJoin.getId();
     }
+
+    @Override
+    public void cancel(Long meetUpId, Long clubMemberId) {
+
+        ClubMemberMeetUpJoin joinMember = clubMemberMeetUpJoinRepository.findByMeetUpJoinMember(meetUpId, clubMemberId);
+
+        joinMember.joinCancel();
+    }
+
+    @Override
+    public List<ClubMemberMeetUpJoinDTO> listClubMeetUpMember(Long meetUpId) {
+
+        List<ClubMemberMeetUpJoin> joinMembers = clubMemberMeetUpJoinRepository.findAllByClubMeetUpId(meetUpId);
+
+        return joinMembers.stream()
+                .map((j)-> ClubMemberMeetUpJoinDTO.fromEntity(j))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteMeetupJoinMember(Long meetUpId, Long joinMemberId, Long leaderId) {
+
+    }
+
+
 }

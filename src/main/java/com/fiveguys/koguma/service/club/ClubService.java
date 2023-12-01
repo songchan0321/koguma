@@ -39,4 +39,5 @@ public interface ClubService {
     public void updateClubMember(ClubMemberDTO clubMemberDTO);
 
     public void changeClubLeader(Long currentLeaderId, Long newLeaderId);
+
 }

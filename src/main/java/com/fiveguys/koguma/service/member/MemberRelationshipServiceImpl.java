@@ -26,8 +26,6 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         memberRelationshipDTO.setContent(content);
         memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
 
-
-        memberRelationshipDTO.setSourceMemberId(memberRelationshipDTO.getSourceMemberId());
         memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
     }
 
@@ -37,6 +35,7 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         memberRelationshipDTO.setTargetMemberId(null);
         memberRelationshipDTO.setContent(null);
         memberRelationshipDTO.setMemberRelationshipType(null);
+        memberRelationshipDTO.setType(false);
 
         memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
 
@@ -64,13 +63,17 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         memberRelationshipDTO.setTargetMemberId(targetMemberId);
         memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.Following);
 
-        memberRelationshipDTO.setSourceMemberId(memberRelationshipDTO.getSourceMemberId());
         memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
 
     }
 
     @Override
     public void deleteFollowing(MemberRelationshipDTO memberRelationshipDTO){
+        memberRelationshipDTO.setSourceMemberId(null);
+        memberRelationshipDTO.setTargetMemberId(null);
+        memberRelationshipDTO.setMemberRelationshipType(null);
+
+        memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
 
     }
 

@@ -6,9 +6,11 @@ import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.repository.club.ClubRepository;
 import com.fiveguys.koguma.repository.common.CategoryRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
+import com.fiveguys.koguma.repository.product.ProductRepository;
 import com.fiveguys.koguma.service.common.CategoryService;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
+import com.fiveguys.koguma.service.product.ProductService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,13 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
 class ClubServiceImplTest {
 
     @Autowired
@@ -39,12 +42,32 @@ class ClubServiceImplTest {
     CategoryRepository categoryRepository;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    LocationService locationService;
+    @Autowired
+    ProductRepository productRepository;
 
 
-    @BeforeAll
-    public static void setUp(){
+
+
+    @Test
+    public void 멤버닉네임() throws Exception{
+        //given
+        Member member = memberRepository.findById(2L).get();
+
+        System.out.println("member = " + member.getNickname());
+
+        MemberDTO memberDTO = MemberDTO.fromEntity(member);
+
+        System.out.println("memberDTO = " + memberDTO);
+
+
+        //when
+
+        //then
     }
-
 
     //@Test
     public void 카테고리_추가() throws Exception{
@@ -345,6 +368,70 @@ class ClubServiceImplTest {
         Assertions.assertThat(demoteCM.getMemberRole()).isEqualTo(false);
         Assertions.assertThat(newLeader.getMemberRole()).isEqualTo(true);
     }
+
+
+
+//    public Product generateRandomProduct() {
+//
+//
+//        Member seller = memberService.getMember(4L).toEntity();
+//        //Member buyer = memberService.getMember(5L).toEntity();
+//        Member buyer = memberService.getMember(5L).toEntity();
+//        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+//
+//
+//        Random random = new Random();
+//
+//        double minLatitude = 37.40;
+//        double maxLatitude = 37.49;
+//        double randomLatitude = round(minLatitude + (maxLatitude - minLatitude) * random.nextDouble(), 6);
+//
+//        double minLongitude = 127.00;
+//        double maxLongitude = 127.09;
+//        double randomLongitude = round(minLongitude + (maxLongitude - minLongitude) * random.nextDouble(), 6);
+//
+//
+//        return Product.builder()
+//                .seller(seller)
+//                .buyer(buyer)
+//                .dong(locationDTO.getDong())
+//                .latitude(randomLatitude)
+//                .longitude(randomLongitude)
+//                .categoryId(20L)
+//                .title("17곡 곡물 그대로")
+//                .content("맛있음")
+//                .tradeStatus(ProductStateType.SALE)
+//                .views(0)
+//                .price(3000)
+//                .categoryName("식품")
+//                .activeFlag(false)
+//                .build();
+//    }
+//
+//    public double round(double value, int decimalPlaces) {
+//        String pattern = "#." + "0".repeat(decimalPlaces);
+//        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+//        return Double.parseDouble(decimalFormat.format(value));
+//    }
+//
+//
+//    @BeforeAll
+//    public static void setUp(){
+//    }
+//
+//
+//    @Test
+//    public void 도전() throws Exception{
+//
+//
+//        int numberOfProducts = 300; // Change this value based on how many products you want to generate
+//        for (int i = 0; i < numberOfProducts; i++) {
+//            Product product = generateRandomProduct();
+//            productRepository.save(product);
+//            System.out.println("Product " + (i + 1) + ": " + product);
+//        }
+//
+//    }
 
 
 }
