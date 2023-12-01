@@ -14,7 +14,8 @@ import javax.persistence.*;
 public class Comment extends BaseTime{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,7 +28,7 @@ public class Comment extends BaseTime{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private Comment comment;
+    private Comment parentcomment;
 
     @Column(nullable = false)
     private String content;
@@ -38,14 +39,16 @@ public class Comment extends BaseTime{
 
     @Builder
     public Comment(Long id, Post post, Member member,
-                   Comment comment, String content, Boolean activeFlag){
+                   Comment parentcomment, String content, Boolean activeFlag){
         this.id = id;
         this.post = post;
         this.member = member;
-        this.comment = comment;
+        this.parentcomment = parentcomment;
         this.content = content;
         this.activeFlag = activeFlag;
     }
 
 
+    public void setParentComment(Comment entity) {
+    }
 }
