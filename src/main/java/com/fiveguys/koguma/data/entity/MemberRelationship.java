@@ -31,6 +31,7 @@ public class MemberRelationship extends BaseTime {
     private String content;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "member_relation_type")
     private MemberRelationshipType memberRelationshipType;
 
 

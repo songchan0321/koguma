@@ -80,7 +80,7 @@ public class MemberApplicationTests {
 
         MemberDTO originalMember = memberService.getMember(memberId);
 
-        // deleteMember 메서드 호출
+
         memberService.deleteMember(originalMember);
 
         MemberDTO deletedMember = memberService.getMember(memberId);
@@ -92,7 +92,7 @@ public class MemberApplicationTests {
     @DisplayName("회원 목록 추가 테스트")
     @Transactional
 
-    public void addMembersForTest() {
+    public void addMemberTest() {
         String[] nicknames = {"user1", "user2", "user3"};
         String[] passwords = {"password1", "password2", "password3"};
         String[] phones = {"010-1111-1111", "010-2222-2222", "010-3333-3333"};
@@ -119,7 +119,7 @@ public class MemberApplicationTests {
     @Transactional
     public void listMemberTest() throws Exception {
 
-        addMembersForTest();
+        addMemberTest();
 
         List<MemberDTO> memberList = memberService.listMember();
 
@@ -132,7 +132,77 @@ public class MemberApplicationTests {
                     () -> assertEquals(retrievedMember.getNickname(), memberDTO.getNickname())
             );
         });
+
+
     }
+
+    @Test
+    @DisplayName("비밀번호 유효성 검사 테스트")
+    void testValidationCheckPwMatching() {
+        // Given
+        String rawPassword = "myPassword";
+        String encodedPassword = "myPassword";
+
+        MemberService memberService = new MemberService() {
+            @Override
+            public void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
+
+            }
+
+            @Override
+            public void deleteMember(MemberDTO memberDTO) {
+
+            }
+
+            @Override
+            public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId, Boolean activeFlag) {
+
+            }
+
+            @Override
+            public void updateMember(MemberDTO memberDTO) {
+
+            }
+
+            @Override
+            public MemberDTO login(String nickname, String pw, Boolean activeFlag) {
+                return null;
+            }
+
+            @Override
+            public boolean validationCheckPw(String rawPw, String encodedPw) {
+                return false;
+            }
+
+            @Override
+            public void logout() {
+
+            }
+
+            @Override
+            public MemberDTO getMember(Long id) {
+                return null;
+            }
+
+            @Override
+            public MemberDTO getOtherMember(Long id) {
+                return null;
+            }
+
+            @Override
+            public List<MemberDTO> listMember() {
+                return null;
+            }
+        };
+
+        // When
+        boolean result = memberService.validationCheckPw(rawPassword, encodedPassword);
+
+        // Then
+        assertFalse(result);
+    }
+
+}
 
 
 
@@ -164,6 +234,6 @@ public class MemberApplicationTests {
                 () -> assertEquals(activeFlag, loggedInMember.getActiveFlag())
         );
     }*/
-}
+
 
 

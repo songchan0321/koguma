@@ -18,18 +18,16 @@ public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
 
     @Override
-    public CategoryDTO getCategory() {
-        return null;
+    public CategoryDTO getCategory(Long id) {
+        return CategoryDTO.fromDTO(categoryRepository.findById(id).get());
     }
 
     @Override
     public List<CategoryDTO> listCategory(CategoryType categoryType) {
         List<Category> categories = categoryRepository.findAll(CategorySpecifications.hasType(categoryType));
 
-        List<CategoryDTO> categoryDTOS = categories.stream()
+        return  categories.stream()
                 .map((c) -> new CategoryDTO(c))
                 .collect(Collectors.toList());
-
-        return categoryDTOS;
     }
 }

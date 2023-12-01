@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -18,46 +19,54 @@ import java.util.stream.Collectors;
 
 public class ReportServiceImpl implements ReportService {
 
-
-
     private final ReportRepository reportRepository;
 
     @Override
-    public void addReport(ReportDTO reportDTO, Member reporterNickname, String reportId, String reportContent){
+    public void addReport(ReportDTO reportDTO){
 
+        reportRepository.save(reportDTO.toEntity());
     }
     @Override
-    public void deleteReport(ReportDTO reportDTO){
+    public void deleteReport(Long id) {
 
+        Optional<Report> reportOptional = reportRepository.findById(id);
+
+        if (reportOptional.isPresent()) {
+            Report report = reportOptional.get();
+            reportRepository.delete(report);
+        }
     }
 
     @Override
     public ReportDTO getReport(Long id){
-
-        return null;
+        return ReportDTO.fromEntity(reportRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 신고가 존재하지 않습니다.")));
     }
 
     @Override
-    public List<ReportDTO> listReport(){
-
-        return null;
+    public List<ReportDTO> listReport(Long id) {
+        List<Report> reports = reportRepository.findByReporterId(id);
+        return reports.stream()
+                .map(ReportDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ReportDTO> listAllReport(){
-        /*  List<Report> reports = reportRepository.findAll();
+          List<Report> reports = reportRepository.findAll();
         return reports.stream()
                 .map(ReportDTO::fromEntity)
-                .collect(Collectors.toList());*/
-        return null;
+                .collect(Collectors.toList());
     }
 
+    @Override
     public void addAnswer(ReportDTO reportDTO, String answerTitle, String answerContent){
         reportDTO.setReportTitle(answerTitle);
         reportDTO.setReportContent(answerContent);
 
         reportRepository.save(reportDTO.toEntity());
     }
+
 
 
 

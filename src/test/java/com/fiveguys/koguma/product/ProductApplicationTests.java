@@ -29,15 +29,17 @@ public class ProductApplicationTests {
     @DisplayName("상품 등록 테스트")
     public void addProduct() throws Exception {
 
-        Member seller = memberService.getMember(5L).toEntity();
-        Member buyer = memberService.getMember(6L).toEntity();
-//        Member buyer = memberService.getMember(5L).toEntity();
+
+        Member seller = memberService.getMember(4L).toEntity();
+        //Member buyer = memberService.getMember(5L).toEntity();
+        Member buyer = memberService.getMember(5L).toEntity();
+
         LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
 
 
         Product product = Product.builder()
                 .seller(seller)
-                .buyer(null)
+                .buyer(buyer)
                 .dong(locationDTO.getDong())
                 .latitude(locationDTO.getLatitude())
                 .longitude(locationDTO.getLongitude())

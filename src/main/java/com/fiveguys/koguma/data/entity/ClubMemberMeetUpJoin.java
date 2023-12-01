@@ -35,4 +35,20 @@ public class ClubMemberMeetUpJoin extends BaseTime{
         this.clubMember = clubMember;
         this.activeFlag = activeFlag;
     }
+
+
+    /*
+    * 모임 일정 참여 메서드
+    * */
+    public static ClubMemberMeetUpJoin createClubMemberMeetUpJoin(ClubMeetUp clubMeetUp, ClubMember clubMember){
+        return ClubMemberMeetUpJoin.builder()
+                .clubMeetUp(clubMeetUp)
+                .clubMember(clubMember)
+                .activeFlag(true)
+                .build();
+    }
+
+    public void joinCancel(){
+        this.activeFlag = false;
+    }
 }
