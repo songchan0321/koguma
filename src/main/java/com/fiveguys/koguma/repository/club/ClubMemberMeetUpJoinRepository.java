@@ -15,4 +15,6 @@ public interface ClubMemberMeetUpJoinRepository extends JpaRepository<ClubMember
     ClubMemberMeetUpJoin findByMeetUpJoinMember(@Param("meetUpId") Long meetUpId, @Param("clubMemberId") Long clubMemberId);
 
     List<ClubMemberMeetUpJoin> findAllByClubMeetUpId(Long clubMeetUpId);
+
+
 }

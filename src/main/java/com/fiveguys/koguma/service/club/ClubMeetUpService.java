@@ -25,4 +25,6 @@ public interface ClubMeetUpService {
 
     public void deleteMeetupJoinMember(Long meetUpId, Long joinMemberId, Long leaderId);
 
+    public void changeMeetUpState();
+
 }
