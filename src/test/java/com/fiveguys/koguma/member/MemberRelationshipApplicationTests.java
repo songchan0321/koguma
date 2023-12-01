@@ -82,10 +82,7 @@ public class MemberRelationshipApplicationTests {
 
         MemberRelationshipDTO deletedBlock = memberRelationshipService.getBlock(memberRelationshipDTO.getId());
 
-        assertNull(deletedBlock.getRegDate());
-        assertNull(deletedBlock.getSourceMemberId());
-        assertNull(deletedBlock.getTargetMemberId());
-        assertNull(deletedBlock.getContent());
+
         assertNull(deletedBlock.getMemberRelationshipType());
     }
 

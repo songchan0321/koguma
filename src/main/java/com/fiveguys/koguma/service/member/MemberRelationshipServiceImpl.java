@@ -35,6 +35,7 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         memberRelationshipDTO.setTargetMemberId(null);
         memberRelationshipDTO.setContent(null);
         memberRelationshipDTO.setMemberRelationshipType(null);
+        memberRelationshipDTO.setType(false);
 
         memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
 
