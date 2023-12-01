@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Entity
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor()
 
 
-public class Report extends BaseTime {
+public class Report extends BaseTime{
 
     @Id
     @Column(name = "id")
@@ -22,7 +24,7 @@ public class Report extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id",nullable = false)
-    private Member reporterId;
+    private Member reporter;
 
     @Column(name = "category_id",nullable = false)
     private Long categoryId;
@@ -33,8 +35,8 @@ public class Report extends BaseTime {
     @Column(name = "report_content", nullable = false)
     private String reportContent;
 
-    @Column(name = "report_number", nullable = false)
-    private Integer reportNumber;
+/*    @Column(name = "report_number", nullable = false)
+    private Integer reportNumber;*/
 
     @Column(name = "answer_title")
     private String answerTitle;
@@ -45,19 +47,20 @@ public class Report extends BaseTime {
     @Column(name = "category_name",nullable = false,length=15)
     private String categoryName;
 
+
+
+
     @Builder
-    public Report(Long id, Member reporterId, String categoryName, Long categoryId, String reportTitle, String reportContent, Integer reportNumber, String answerTitle, String answerContent) {
+    public Report(Long id, Member reporter, String categoryName, Long categoryId, String reportTitle, String reportContent, String answerTitle, String answerContent) {
         this.id = id;
-        this.reporterId = reporterId;
+        this.reporter = reporter;
         this.reportTitle = reportTitle;
         this.reportContent = reportContent;
-        this.reportNumber = reportNumber;
         this.answerTitle = answerTitle;
         this.answerContent = answerContent;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
-
 
 
 }

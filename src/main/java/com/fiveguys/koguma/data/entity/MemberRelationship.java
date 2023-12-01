@@ -21,11 +21,11 @@ public class MemberRelationship extends BaseTime {
 
     @ManyToOne
     @JoinColumn(name = "source_member_id")
-    private Member sourceMemberId;
+    private Member sourceMember;
 
     @ManyToOne
     @JoinColumn(name = "target_member_id")
-    private Member targetMemberId;
+    private Member targetMember;
 
     @Column(name = "content")
     private String content;
@@ -36,9 +36,9 @@ public class MemberRelationship extends BaseTime {
 
 
     @Builder
-    public MemberRelationship (Member sourceMemberId, Member targetMemberId, String content, MemberRelationshipType memberRelationshipType) {
-        this.sourceMemberId = sourceMemberId;
-        this.targetMemberId = targetMemberId;
+    public MemberRelationship (Member sourceMember, Member targetMember, String content, MemberRelationshipType memberRelationshipType) {
+        this.sourceMember = sourceMember;
+        this.targetMember = targetMember;
         this.content = content;
         this.memberRelationshipType = memberRelationshipType;
 

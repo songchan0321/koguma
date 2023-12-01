@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReportDTO {
     private Long id;
-    private Member reporterId;
+    private MemberDTO reporterDTO;
     private String reportTitle;
     private String reportContent;
-    private Integer reportNumber;
     private String answerTitle;
     private String answerContent;
     private String categoryName;
     private Long categoryId;
+    private LocalDateTime regDate;
 
 
     public ReportDTO() {
@@ -31,14 +31,14 @@ public class ReportDTO {
     public static ReportDTO fromEntity(Report report) {
         ReportDTO reportDTO = new ReportDTO();
         reportDTO.setId(report.getId());
-        reportDTO.setReporterId(report.getReporterId());
+        reportDTO.setReporterDTO(MemberDTO.fromEntity(report.getReporter()));
         reportDTO.setReportTitle(report.getReportTitle());
         reportDTO.setReportContent(report.getReportContent());
-        reportDTO.setReportNumber(report.getReportNumber());
         reportDTO.setAnswerTitle(report.getAnswerTitle());
         reportDTO.setAnswerContent(report.getAnswerContent());
         reportDTO.setCategoryId(report.getCategoryId());
-        reportDTO.setCategoryName(String.valueOf(report.getCategoryId()));
+        reportDTO.setCategoryName(report.getCategoryName());
+        reportDTO.setRegDate(report.getRegDate());
 
         return reportDTO;
     }
@@ -46,14 +46,14 @@ public class ReportDTO {
     public Report toEntity() {
         Report report = new Report();
         report.setId(id);
-        report.setReporterId(reporterId);
+        report.setReporter(reporterDTO.toEntity());
         report.setReportTitle(reportTitle);
         report.setReportContent(reportContent);
-        report.setReportNumber(reportNumber);
         report.setAnswerTitle(answerTitle);
-        report.setReportContent(answerContent);
+        report.setAnswerContent(answerContent);
         report.setCategoryId(categoryId);
         report.setCategoryName(categoryName);
         return report;
     }
+
 }

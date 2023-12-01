@@ -20,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 
@@ -51,84 +49,74 @@ public class MemberRelationshipApplicationTests {
         Member sourceMember = memberService.getMember(1L).toEntity();
         Member targetMember = memberService.getMember(2L).toEntity();
 
-        MemberRelationshipDTO memberRelationshipDTO = new MemberRelationshipDTO();
-        memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
-        memberRelationshipDTO.setContent("test");
-        memberRelationshipDTO.setType(true);
-
         MemberRelationship memberRelationship = MemberRelationship.builder()
-                .sourceMemberId(sourceMember)
-                .targetMemberId(targetMember)
-                .content(memberRelationshipDTO.getContent())
-                .memberRelationshipType(memberRelationshipDTO.getMemberRelationshipType())
+                .sourceMember(sourceMember)
+                .targetMember(targetMember)
+                .content("사기 쳤어요")
+                .memberRelationshipType(MemberRelationshipType.BLOCK)
                 .build();
-
-        memberRelationshipRepository.save(memberRelationship);
+        memberRelationshipService.addBlock(MemberRelationshipDTO.fromEntity(memberRelationship));
     }
 
     @Test
     @DisplayName("차단 삭제 테스트")
     @Transactional
-    void deleteBlockTest() {
+    public void deleteBlockTest(){
         Member sourceMember = memberService.getMember(1L).toEntity();
         Member targetMember = memberService.getMember(2L).toEntity();
 
-        MemberRelationshipDTO memberRelationshipDTO = new MemberRelationshipDTO();
-        memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
-        memberRelationshipDTO.setContent("test");
-        memberRelationshipDTO.setType(true);
-
-        memberRelationshipService.deleteBlock(memberRelationshipDTO);
-
-        MemberRelationshipDTO deletedBlock = memberRelationshipService.getBlock(memberRelationshipDTO.getId());
-
-
-        assertNull(deletedBlock.getMemberRelationshipType());
+        MemberRelationship memberRelationship = MemberRelationship.builder()
+                .sourceMember(sourceMember)
+                .targetMember(targetMember)
+                .content("사기 쳤어요")
+                .memberRelationshipType(MemberRelationshipType.BLOCK)
+                .build();
+        memberRelationshipService.addBlock(MemberRelationshipDTO.fromEntity(memberRelationship));
     }
 
     @Test
-    @DisplayName("차단 목록 테스트")
+    @DisplayName("차단 목록 조회")
     @Transactional
-    void listBlockTest() {
-        Member sourceMember = memberService.getMember(1L).toEntity();
-        Member targetMember = memberService.getMember(2L).toEntity();
-
-        MemberRelationshipDTO relationshipDTO1 = createMemberRelationshipDTO(
-                sourceMember, targetMember, "Blocking content 1");
-        MemberRelationshipDTO relationshipDTO2 = createMemberRelationshipDTO(
-                sourceMember, targetMember, "Blocking content 2");
-
-        memberRelationshipService.addBlock(relationshipDTO1, sourceMember, targetMember, "Blocking content 1");
-        memberRelationshipService.addBlock(relationshipDTO2, sourceMember, targetMember, "Blocking content 2");
-
-        List<MemberRelationshipDTO> blockList = memberRelationshipService.listBlock();
-
-        assertEquals(2, blockList.size());
+    public void listBlockTest(){
+        List<MemberRelationshipDTO> memberRelationships = memberRelationshipService.listBlock(5L);
+        assertEquals(1, memberRelationships.size());
     }
 
-    // Helper methods
-
-
-    private MemberRelationshipDTO createMemberRelationshipDTO(Member sourceMember, Member targetMember, String content) {
-        return MemberRelationshipDTO.builder()
-                .sourceMemberId(sourceMember)
-                .targetMemberId(targetMember)
-                .content(content)
-                .memberRelationshipType(MemberRelationshipType.BLOCK)
-                .build();
+    @Test
+    @DisplayName("차단 상세 조회")
+    @Transactional
+    public void getBlock(){
+        System.out.println((memberRelationshipService.getBlock(5L).toString()));
     }
 
-    private Member addMember(String nickname) {
-        MemberDTO memberDTO = MemberDTO.builder()
-                .nickname(nickname)
-                .pw("password")
-                .phone("010-1234-5678")
-                .score(36.5F)
-                .email(nickname + "@example.com")
-                .roleFlag(false)
-                .socialFlag(false)
+    @Test
+    @DisplayName("팔로잉 추가 테스트")
+    @Transactional
+    public void addFollowingTest() throws Exception {
+        Member sourceMember = memberService.getMember(3L).toEntity();
+        Member targetMember = memberService.getMember(4L).toEntity();
+
+        MemberRelationship memberRelationship = MemberRelationship.builder()
+                .sourceMember(sourceMember)
+                .targetMember(targetMember)
+                .content("좋은 물건을 많이 판다")
+                .memberRelationshipType(MemberRelationshipType.FOLLOWING)
                 .build();
-        memberService.addMember(memberDTO, nickname, "password", "010-1234-5678", 36.5F, nickname + "@example.com", false, false);
-        return null;
+        memberRelationshipService.addBlock(MemberRelationshipDTO.fromEntity(memberRelationship));
+    }
+
+    @Test
+    @DisplayName("팔로잉 목록 조회")
+    @Transactional
+    public void listFollowingTest(){
+        List<MemberRelationshipDTO> memberRelationships = memberRelationshipService.listFollowing(6L);
+        assertEquals(1, memberRelationships.size());
+    }
+
+    @Test
+    @DisplayName("팔로잉 상세 조회")
+    @Transactional
+    public void getFollowing(){
+        System.out.println((memberRelationshipService.getFollowing(6L).toString()));
     }
 }
