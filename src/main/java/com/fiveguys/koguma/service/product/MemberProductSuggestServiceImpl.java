@@ -26,8 +26,8 @@ public class MemberProductSuggestServiceImpl implements MemberProductSuggestServ
         memberProductSuggestRepository.save(memberProductSuggestDTO.toEntity());
     }
 
-    public List<MemberProductSuggestDTO> listSuggestPrice(Product product) {  //seller 일때 가능
-        List<MemberProductSuggest> memberProductSuggestList = memberProductSuggestRepository.findAllByIdProduct(product);
+    public List<MemberProductSuggestDTO> listSuggestPrice(Long productId) {  //seller 일때 가능
+        List<MemberProductSuggest> memberProductSuggestList = memberProductSuggestRepository.findAllByIdProductId(productId);
 
         return memberProductSuggestList.stream().map((c) -> MemberProductSuggestDTO.fromEntity(c))
                 .collect(Collectors.toList());

@@ -8,6 +8,6 @@ import java.util.List;
 public interface MemberProductSuggestService {
 
     void addSuggetPrice(MemberProductSuggestDTO memberProductSuggestDTO) throws Exception;
-    List<MemberProductSuggestDTO> listSuggestPrice(Product product);
+    List<MemberProductSuggestDTO> listSuggestPrice(Long productId);
     MemberProductSuggestDTO getSuggestPrice();
 }

@@ -5,6 +5,12 @@ import com.fiveguys.koguma.data.entity.ReviewId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, ReviewId> {
+    void findByIdMemberId(Long id);
+
+
+    Optional<Review> findByIdProductId(Long productId);
 }

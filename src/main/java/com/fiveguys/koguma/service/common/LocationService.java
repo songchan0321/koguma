@@ -16,5 +16,6 @@ public interface LocationService {
     LocationDTO addShareLocation(Long latitude,Long longitude);
     LocationDTO getMemberRepLocation(Long memberId);
     void setRepLocation(Long memberId,Long locationId);
-    //LocationFilter();
+    String reverseGeoCoder(double latitude, double longitude);
+//    List<Object> LocationFilter(LocationDTO locationDTO);
 }

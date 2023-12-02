@@ -3,8 +3,10 @@ package com.fiveguys.koguma.product;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.common.LocationRepository;
+import com.fiveguys.koguma.repository.product.ProductRepository;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
+import com.fiveguys.koguma.service.product.MemberProductSuggestService;
 import com.fiveguys.koguma.service.product.ProductService;
 import com.fiveguys.koguma.service.product.ReviewService;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Random;
 
 @SpringBootTest
 public class ProductApplicationTests {
@@ -24,6 +30,10 @@ public class ProductApplicationTests {
     private LocationService locationService;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private MemberProductSuggestService memberProductSuggestService;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("상품 등록 테스트")
@@ -98,8 +108,106 @@ public class ProductApplicationTests {
                 .activeFlag(true)
                 .build();
         reviewService.addReview(reviewDTO);
-
+        System.out.println(reviewService.getReview(1L));
 
     }
 
+
+    @Test
+    @DisplayName("상품 리뷰 조회 테스트")
+    public void 상품리뷰조회() throws Exception{
+        System.out.println(reviewService.getReview(1L));
+    }
+
+    @Test
+    @DisplayName("상품 가격제안추가 테스트")
+    public void 상품가격제안추가() throws Exception{
+
+        Member buyer = memberService.getMember(1L).toEntity();
+        Product product = productService.getProduct(1L).toEntity();
+
+        MemberProductSuggestDTO memberProductSuggestDTO =
+                MemberProductSuggestDTO.builder()
+                        .id(MemberProductSuggestId.builder()
+                                .member(buyer)
+                                .product(product)
+                                .build())
+                        .price(100000)
+                        .build();
+        memberProductSuggestService.addSuggetPrice(memberProductSuggestDTO);
+
+
+    }
+    @Test
+    @DisplayName("상품 가격제안리스트 테스트")
+    public void 상품가격제안리스트조회() throws Exception{
+
+        List<MemberProductSuggestDTO> memberProductSuggestDtoList = memberProductSuggestService.listSuggestPrice(1L);
+        memberProductSuggestDtoList.stream().forEach(list -> System.out.println(list));
+
+    }
+
+
+
+    @Test
+    @DisplayName("상품 추가 더미데이터 ")
+    @Transactional
+    public Product generateRandomProduct() {          //더미데이터 생성용
+
+
+        Member seller = memberService.getMember(4L).toEntity();
+        //Member buyer = memberService.getMember(5L).toEntity();
+        Member buyer = memberService.getMember(5L).toEntity();
+
+
+        Random random = new Random();
+
+        double minLatitude = 37.40;
+        double maxLatitude = 37.49;
+        double randomLatitude = round(minLatitude + (maxLatitude - minLatitude) * random.nextDouble(), 6);
+
+        double minLongitude = 127.00;
+        double maxLongitude = 127.09;
+        double randomLongitude = round(minLongitude + (maxLongitude - minLongitude) * random.nextDouble(), 6);
+
+        String dong = locationService.reverseGeoCoder(randomLatitude,randomLongitude);
+
+        return Product.builder()
+                .seller(seller)
+                .buyer(buyer)
+                .dong(dong)
+                .latitude(randomLatitude)
+                .longitude(randomLongitude)
+                .categoryId(20L)
+                .title("17곡 곡물 그대로")
+                .content("맛있음")
+                .tradeStatus(ProductStateType.SALE)
+                .views(0)
+                .price(3000)
+                .categoryName("식품")
+                .activeFlag(false)
+                .build();
+    }
+
+    public double round(double value, int decimalPlaces) {
+        String pattern = "#." + "0".repeat(decimalPlaces);
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+        return Double.parseDouble(decimalFormat.format(value));
+    }
+
+
+
+
+    @Test
+    public void 도전() throws Exception{
+
+
+        int numberOfProducts = 300; // Change this value based on how many products you want to generate
+        for (int i = 0; i < numberOfProducts; i++) {
+            Product product = generateRandomProduct();
+            productRepository.save(product);
+            System.out.println("Product " + (i + 1) + ": " + product);
+        }
+
+    }
 }

@@ -1,17 +1,24 @@
 package com.fiveguys.koguma.service.common;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Location;
 import com.fiveguys.koguma.repository.common.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 
 @Service
@@ -20,6 +27,12 @@ public class LocationServiceImpl implements LocationService{
 
 
     private final LocationRepository locationRepository;
+
+    @Value("${ncloud.reverseGeo.clientId}")
+    private String clientId;
+
+    @Value("${ncloud.reverseGeo.clientSecret}")
+    private String clientSecret;
 
     public List<LocationDTO> listLocation(Long id) {
         List<Location> locations = locationRepository.findAllByMemberId(id);
@@ -96,6 +109,58 @@ public class LocationServiceImpl implements LocationService{
         Location location = locationRepository.findByMemberIdAndRepAuthLocationFlag(id,true);
         return LocationDTO.fromEntity(location);
     }
+    public String reverseGeoCoder(double latitude, double longitude){   //좌표 입력하여 상세 주소 얻기
+        String coord = longitude+","+latitude;
+        String dong = null;
+        final String requestMethod = "GET";
+        final String hostName = "https://naveropenapi.apigw.ntruss.com";     //요청코드
+        final String requestUrl= "/map-reversegeocode/v2/gc";                //https://api-gov.ncloud-docs.com/docs/ai-naver-mapsreversegeocoding-gc
+        String option = "?coords="+coord+"&orders=admcode&output=json";
+        final String requestFullUrl = hostName + requestUrl+option;          //legalcode,addr,admcode,roadaddr
+
+        HttpClient httpClient = HttpClient.newHttpClient();                 //legalcode = 법정동 admcode = 행정동
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(requestFullUrl))
+                .header("X-NCP-APIGW-API-KEY-ID", clientId)
+                .header("X-NCP-APIGW-API-KEY", clientSecret)
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            String responseBody = response.body();
+            System.out.println(responseBody);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            // 필요한 값 추출
+            JsonNode area3Node = jsonNode.path("results").get(0).path("region").path("area3");
+            dong = area3Node.path("name").asText();
+            System.out.println("Area3 Name: " + dong);
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dong;
+    }
+
+//    public List<Object> LocationFilter(LocationDTO locationDTO){
+//
+//        List<Object> filterList = new ArrayList<>();
+//
+//        double latitude = locationDTO.getLatitude();
+//        double longitude = locationDTO.getLongitude();
+//        int searchRange = locationDTO.getSearchRange();
+//
+//        filterList = locationRepository.findAllByDistance("products",longitude,latitude,searchRange);
+//
+//
+//        return filterList;
+//    }
 
 
 }

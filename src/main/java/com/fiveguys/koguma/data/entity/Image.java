@@ -23,8 +23,8 @@ public class Image extends BaseTime{
     @Column(name = "img_type", nullable = false)
     private ImageType imageType;
 
-    @Column(name = "reg_image_flag")
-    private Boolean regImageFlag;
+    @Column(name = "rep_image_flag")
+    private Boolean repImageFlag;
 
     @Column(name = "active_flag")
     private Boolean activeFlag;
@@ -37,14 +37,27 @@ public class Image extends BaseTime{
     @JoinColumn(name = "club_id")
     private Club club;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
     @Builder
-    public Image(Long id, String URL, ImageType imageType, Boolean regImageFlag, Boolean activeFlag, Product product, Club club) {
+    public Image(Long id, String URL, ImageType imageType, Boolean repImageFlag, Boolean activeFlag, Product product, Club club, Post post) {
         this.id = id;
         this.URL = URL;
         this.imageType = imageType;
-        this.regImageFlag = regImageFlag;
+        this.repImageFlag = repImageFlag;
         this.activeFlag = activeFlag;
         this.product = product;
         this.club = club;
+        this.post = post;
     }
+
+
+
+
+    public void setRepImageFlag(Boolean repImageFlag) {
+        this.repImageFlag = repImageFlag;
+    }
+
 }

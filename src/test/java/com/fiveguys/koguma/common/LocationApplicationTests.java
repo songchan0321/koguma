@@ -101,5 +101,15 @@ public class LocationApplicationTests {
         LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
         System.out.println(locationDTO.toString());
     }
+
+    @Test
+    @DisplayName("reverseGeocoder test")
+    @Transactional
+    public void reverseGeocoder(){
+        String dong = locationService.reverseGeoCoder(37.4923615,127.0292881);
+        System.out.println(dong);
+    }
+
+
 }
 

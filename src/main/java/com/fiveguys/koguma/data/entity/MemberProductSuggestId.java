@@ -17,6 +17,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class MemberProductSuggestId implements Serializable {
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="product_id",nullable = false)
     private Product product;

@@ -5,9 +5,11 @@ import com.fiveguys.koguma.data.entity.ReviewId;
 
 public interface ReviewService {
 
-    ReviewDTO addReview(ReviewDTO reviewDTO);
-    ReviewDTO getReview(ReviewId reviewId) throws Exception;
+    ReviewDTO addReview(ReviewDTO reviewDTO) throws Exception;
+    ReviewDTO getReview(Long productId) throws Exception;
     void deleteReview(ReviewId reviewId) throws Exception;
+
+
 
 
 }

@@ -15,23 +15,30 @@ public class ImageDTO {
     private Long id;
     private String URL;
     private ImageType imageType;
-    private Boolean regImageFlag;
+    private Boolean repImageFlag;
     private Boolean activeFlag;
     private ProductDTO productDTO;
     private ClubDTO clubDTO;
+    private PostDTO postDTO;
+    private Long messageId;
     private LocalDateTime regDate;
 
     @Builder
-    public ImageDTO(Long id, String URL, ImageType imageType, Boolean regImageFlag, Boolean activeFlag, ProductDTO productDTO, ClubDTO clubDTO, LocalDateTime regDate) {
+    public ImageDTO(Long id, String URL, ImageType imageType, Boolean repImageFlag, Boolean activeFlag, ProductDTO productDTO, ClubDTO clubDTO, PostDTO postDTO, Long messageId, LocalDateTime regDate) {
         this.id = id;
         this.URL = URL;
         this.imageType = imageType;
-        this.regImageFlag = regImageFlag;
+        this.repImageFlag = repImageFlag;
         this.activeFlag = activeFlag;
         this.productDTO = productDTO;
         this.clubDTO = clubDTO;
+        this.postDTO = postDTO;
+        this.messageId = messageId;
         this.regDate = regDate;
     }
+
+
+
 
     public static ImageDTO fromEntity(Image image){
         return ImageDTO.builder()
@@ -41,7 +48,8 @@ public class ImageDTO {
                 .productDTO(ProductDTO.fromEntity(image.getProduct()))
                 .activeFlag(image.getActiveFlag())
                 .imageType(image.getImageType())
-                .regImageFlag(image.getRegImageFlag())
+                .postDTO(PostDTO.fromEntity(image.getPost()))
+                .repImageFlag(image.getRepImageFlag())
                 .regDate(image.getRegDate())
                 .build();
     }
@@ -53,7 +61,8 @@ public class ImageDTO {
                 .imageType(imageType)
                 .club(clubDTO.toEntity())
                 .activeFlag(activeFlag)
-                .regImageFlag(regImageFlag)
+                .repImageFlag(repImageFlag)
+                .post(postDTO.toEntity())
                 .product(productDTO.toEntity())
                 .build();
     }

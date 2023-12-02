@@ -13,7 +13,5 @@ import java.util.List;
 public interface MemberProductSuggestRepository extends JpaRepository<MemberProductSuggest,MemberProductSuggestId> {
     MemberProductSuggest findByIdMember(Member member);
 
-
-
-    List<MemberProductSuggest> findAllByIdProduct(Product product);
+    List<MemberProductSuggest> findAllByIdProductId(Long productId);
 }

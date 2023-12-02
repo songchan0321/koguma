@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findByTradeStatusContaining(pageable,state);
     };
     public void newProductAlert() {     //이후 추가
-
+        //AlertSerivce.addAlert(memberDTO, title, content, url);
     }
 
     @Transactional
@@ -88,13 +88,6 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
-    public void addLikeProduct(Long memberId, Long productId) { //시큐리티 적용 대상
-
-    }
-
-    public void deleteLikeProduct(Long memberId, Long productId) { //시큐리티 적용 대상
-
-    }
     public void isOwnProduct(Long memberId, Long sellerId) throws Exception {
         if (!sellerId.equals(memberId))
             throw new Exception("상품에 대한 권한이 없습니다");

@@ -35,6 +35,20 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok:1.18.20' // 테스트 의존성 추가
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.20' // 테스트 의존성 추가
 
+	implementation platform('software.amazon.awssdk:bom:2.20.56')
+	implementation 'software.amazon.awssdk:s3:'
+	implementation 'software.amazon.awssdk:sso'
+	implementation 'software.amazon.awssdk:ssooidc'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.13'	// Amazon S3
+
+	implementation 'commons-io:commons-io:2.6'
+	implementation 'commons-fileupload:commons-fileupload:1.4' // 파일업로드
+
+	implementation 'org.apache.httpcomponents:httpclient:4.5.13' // reverseGeocoder 요청
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0' //json
+
+	implementation 'com.querydsl:querydsl-jpa' // querydsl
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
