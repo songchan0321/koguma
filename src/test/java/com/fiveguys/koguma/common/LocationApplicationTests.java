@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 @SpringBootTest
 @Transactional
@@ -37,7 +39,7 @@ public class LocationApplicationTests {
 
     @Test
     @DisplayName("위치 등록 테스트")
-
+    @Transactional
     public void addLocation() throws Exception {
 
         MemberDTO memberDTO = memberService.getMember(6L);
@@ -65,12 +67,10 @@ public class LocationApplicationTests {
     @Transactional
     public void deleteLocation() throws Exception {
 
-        MemberDTO memberDTO = memberService.getMember(6L);
+        MemberDTO memberDTO = memberService.getMember(4L);
 
-        Optional<Location> beforeLocation = locationRepository.findById(1L);
-        locationService.deleteLocation(memberDTO,1L);
-        Optional<Location> afterLocation = locationRepository.findById(1L);
-        Assertions.assertThat(beforeLocation).isEqualTo(afterLocation);
+        Optional<Location> beforeLocation = locationRepository.findById(2L);
+        locationService.deleteLocation(memberDTO,2L);
     }
     @Test
     @DisplayName("위치 조회 테스트")

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,8 +21,9 @@ public class MemberProductSuggestServiceImpl implements MemberProductSuggestServ
 
 
     public void addSuggetPrice(MemberProductSuggestDTO memberProductSuggestDTO) throws Exception {  //buyer 일때 가능
-        MemberProductSuggest memberProductSuggest = memberProductSuggestRepository.findByIdMember(memberProductSuggestDTO.toEntity().getId().getMember());
-        if (memberProductSuggest!=null)
+        System.out.println(memberProductSuggestDTO.toEntity().getId());
+        Optional<MemberProductSuggest> memberProductSuggest = memberProductSuggestRepository.findById(memberProductSuggestDTO.toEntity().getId());
+        if (memberProductSuggest.isPresent())
             throw new Exception("가격제안이 이미 있습니다.");
         memberProductSuggestRepository.save(memberProductSuggestDTO.toEntity());
     }

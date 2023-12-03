@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @SpringBootTest
 public class ProductApplicationTests {
     @Autowired
@@ -44,6 +46,7 @@ public class ProductApplicationTests {
 
     @Test
     @DisplayName("상품 등록 테스트")
+    @Transactional
     public void addProduct() throws Exception {
 
 
@@ -74,11 +77,13 @@ public class ProductApplicationTests {
 
     @Test
     @DisplayName("상품 끌어올리기 테스트")
+    @Transactional
     public void raiseProduct() throws Exception {
         productService.raiseProduct(1L);
     }
     @Test
     @DisplayName("상품 리스트 조회 테스트")
+    @Transactional
     public void listProduct() throws Exception {
         Page<Product> productPage = productService.listProduct(2L, 0, 10);
 
@@ -88,50 +93,54 @@ public class ProductApplicationTests {
     }
     @Test
     @DisplayName("상품 조회테스트")
+    @Transactional
     public void getProduct() throws Exception{
         System.out.println((productService.getProduct(1L).toString()));
     }
     @Test
     @DisplayName("상품 거래상태 수정 테스트")
+    @Transactional
     public void updateState() throws Exception{
         ProductDTO productDTO = productService.getProduct(1L);
         productService.updateProduct(productDTO);
     }
     @Test
     @DisplayName("상품 리뷰 추가 테스트")
+    @Transactional
     public void 상품리뷰() throws Exception{
 
         Member seller = memberService.getMember(5L).toEntity();
-        Product product = productService.getProduct(1L).toEntity();
+        Product product = productService.getProduct(5L).toEntity();
 
-         ReviewDTO reviewDTO = ReviewDTO.builder()
-                 .id(ReviewId.builder()
-                         .product(product)
-                         .member(seller)
-                         .build())
+
+        ReviewDTO reviewDTO = ReviewDTO.builder()
+                .id(ReviewId.builder()
+                        .product(product)
+                        .member(seller)
+                        .build())
                 .content("김태현 돼지")
                 .commet("ㅇㅈ")
                 .rating('5')
                 .activeFlag(true)
                 .build();
         reviewService.addReview(reviewDTO);
-        System.out.println(reviewService.getReview(1L));
-
     }
 
 
     @Test
     @DisplayName("상품 리뷰 조회 테스트")
+    @Transactional
     public void 상품리뷰조회() throws Exception{
         System.out.println(reviewService.getReview(1L));
     }
 
     @Test
     @DisplayName("상품 가격제안추가 테스트")
+    @Transactional
     public void 상품가격제안추가() throws Exception{
 
         Member buyer = memberService.getMember(1L).toEntity();
-        Product product = productService.getProduct(1L).toEntity();
+        Product product = productService.getProduct(7L).toEntity();
 
         MemberProductSuggestDTO memberProductSuggestDTO =
                 MemberProductSuggestDTO.builder()
@@ -147,6 +156,7 @@ public class ProductApplicationTests {
     }
     @Test
     @DisplayName("상품 가격제안리스트 테스트")
+    @Transactional
     public void 상품가격제안리스트조회() throws Exception{
 
         List<MemberProductSuggestDTO> memberProductSuggestDtoList = memberProductSuggestService.listSuggestPrice(1L);
@@ -200,6 +210,7 @@ public class ProductApplicationTests {
         return Double.parseDouble(decimalFormat.format(value));
     }
     @Test
+    @Transactional
     public void 도전() throws Exception{
 
 
@@ -212,6 +223,7 @@ public class ProductApplicationTests {
 
     }
     @Test
+    @Transactional
     public void 위치기반상품리스트조회테스트() throws Exception{
 
         LocationDTO locationDTO = locationService.getMemberRepLocation(4L);

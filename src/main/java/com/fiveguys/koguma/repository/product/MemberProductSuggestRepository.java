@@ -1,17 +1,16 @@
 package com.fiveguys.koguma.repository.product;
 
-import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberProductSuggest;
 import com.fiveguys.koguma.data.entity.MemberProductSuggestId;
-import com.fiveguys.koguma.data.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MemberProductSuggestRepository extends JpaRepository<MemberProductSuggest,MemberProductSuggestId> {
-    MemberProductSuggest findByIdMember(Member member);
+    Optional<MemberProductSuggest> findById(MemberProductSuggestId memberProductSuggestId);
 
     List<MemberProductSuggest> findAllByIdProductId(Long productId);
 }

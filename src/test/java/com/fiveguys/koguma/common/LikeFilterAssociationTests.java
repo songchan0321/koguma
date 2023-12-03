@@ -29,6 +29,7 @@ public class LikeFilterAssociationTests {
     private CategoryService categoryService;
 
     @Test
+    @Transactional
     public void addLikeProuct(){
 
         MemberDTO memberDTO = memberService.getMember(2L);

@@ -67,23 +67,22 @@ public class ProductServiceImpl implements ProductService{
 
     @Transactional
     public void raiseProduct(Long productId) throws Exception {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품의 정보가 없습니다"));
 
-        Product product = productRepository.findById(productId).orElseThrow(()->new IllegalArgumentException("해당 상품의 정보가 없습니다"));
+        LocalDateTime parsedCreateDate = LocalDateTime.now();
 
-        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-//        Period day = Period.between(product.getRegDate().toLocalDate(), parsedCreateDate.toLocalDate());
+        Period period = Period.between(product.getRegDate().toLocalDate(), parsedCreateDate.toLocalDate());
+        Duration duration = Duration.between(product.getRegDate().toLocalTime(), parsedCreateDate.toLocalTime());
 
-        Duration time = Duration.between(product.getRegDate().toLocalTime(), parsedCreateDate.toLocalTime());
+        long leftHour = 24 - period.getDays() * 24 - duration.toHours();
+        long leftMinute = 60 - (duration.toMinutes() % 60);
+        long leftSecond = 60 - (duration.getSeconds() % 60);
 
-        long leftHour = 24-time.toSeconds()/3600-1;
-        long leftMinute = 60-time.toSeconds()%3600/60;
-        long leftSecond = 60-time.toSeconds()%3600%60;
         System.out.println(leftHour + "시" + leftMinute + "분" + leftSecond);
-        if (leftHour>=24){
+
+        if (leftHour < 0) {
             product.resetRegDate();
-        }
-        else{
+        } else {
             throw new Exception("끌어올리기 가능 시간까지" + leftHour + "시간" + leftMinute + "분" + leftSecond + "초 남았습니다.");
         }
     }
