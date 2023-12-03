@@ -47,10 +47,33 @@ dependencies {
 	implementation 'org.apache.httpcomponents:httpclient:4.5.13' // reverseGeocoder 요청
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0' //json
 
-	implementation 'com.querydsl:querydsl-jpa' // querydsl
+	implementation "com.querydsl:querydsl-jpa"
+	implementation "com.querydsl:querydsl-core"
+	implementation "com.querydsl:querydsl-collections"
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+def generated = 'src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+// https://www.inflearn.com/chats/669477/querydsl-springboot-2-7%EC%9D%98-gradle-%EC%84%A4%EC%A0%95%EC%9D%84-%EA%B3%B5%EC%9C%A0%ED%95%A9%EB%8B%88%EB%8B%A4
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+	main.java.srcDirs += [ generated ]
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+clean {
+	delete file(generated)
 }
 
 tasks.named('bootBuildImage') {
