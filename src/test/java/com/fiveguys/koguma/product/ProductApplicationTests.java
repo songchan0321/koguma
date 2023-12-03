@@ -2,7 +2,6 @@ package com.fiveguys.koguma.product;
 
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
-import com.fiveguys.koguma.repository.common.LocationRepository;
 import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.repository.product.ProductRepository;
 import com.fiveguys.koguma.service.common.LocationService;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;

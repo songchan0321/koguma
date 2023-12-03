@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService{
     public Page<Product> listProduct(Long memberId,int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
-    };
+    }
 
 
     public ProductDTO getProduct(Long productId) {              //시큐리티 본인 확인 대상
@@ -60,7 +60,7 @@ public class ProductServiceImpl implements ProductService{
     public Page<Product> listStateProduct(int page, int size, ProductStateType state) throws Exception{
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findByTradeStatusContaining(pageable,state);
-    };
+    }
     public void newProductAlert() {     //이후 추가
         //AlertSerivce.addAlert(memberDTO, title, content, url);
     }
@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService{
         Period period = Period.between(product.getRegDate().toLocalDate(), parsedCreateDate.toLocalDate());
         Duration duration = Duration.between(product.getRegDate().toLocalTime(), parsedCreateDate.toLocalTime());
 
-        long leftHour = 24 - period.getDays() * 24 - duration.toHours();
+        long leftHour = 24 - period.getDays() * 24L - duration.toHours();
         long leftMinute = 60 - (duration.toMinutes() % 60);
         long leftSecond = 60 - (duration.getSeconds() % 60);
 
