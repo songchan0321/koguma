@@ -20,6 +20,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     Location findByMemberIdAndRepAuthLocationFlag(Long id,boolean flag);
 
-
+//    List<Object> findAllByDistance(EntityPathBase<Object> entity, double longitude, double latitude, int searchRange);
 
 }

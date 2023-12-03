@@ -3,7 +3,6 @@ package com.fiveguys.koguma.product;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.common.LocationRepository;
-import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.repository.product.ProductRepository;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
@@ -15,15 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 public class ProductApplicationTests {
@@ -39,8 +34,6 @@ public class ProductApplicationTests {
     private MemberProductSuggestService memberProductSuggestService;
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private QueryRepository queryRepository;
 
     @Test
     @DisplayName("상품 등록 테스트")
@@ -154,6 +147,8 @@ public class ProductApplicationTests {
 
     }
 
+
+
     @Test
     @DisplayName("상품 추가 더미데이터 ")
     @Transactional
@@ -199,6 +194,10 @@ public class ProductApplicationTests {
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         return Double.parseDouble(decimalFormat.format(value));
     }
+
+
+
+
     @Test
     public void 도전() throws Exception{
 
@@ -210,18 +209,5 @@ public class ProductApplicationTests {
             System.out.println("Product " + (i + 1) + ": " + product);
         }
 
-    }
-    @Test
-    public void 위치기반상품리스트조회테스트() throws Exception{
-
-        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
-
-        Pageable pageable = PageRequest.of(0,10);
-        List<?> productList = queryRepository.findAllByDistance(CategoryType.PRODUCT,locationDTO,pageable,null);
-        List<ProductDTO> productDTOList = productList.stream()
-                .map(x -> ProductDTO.fromEntity((Product) x))
-                .collect(Collectors.toList());
-
-        productDTOList.forEach(System.out::println);
     }
 }
