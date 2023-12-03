@@ -40,7 +40,9 @@ public class ChatApplicationTests {
     public void listChatroomTest() throws Exception {
         ProductDTO productDTO = productService.getProduct(1L);
         MemberDTO memberDTO = memberService.getMember(1L);
-        chatService.addChatroom(memberDTO, productDTO);
+        if(!chatService.existChatroom(memberDTO, productDTO)) {
+            chatService.addChatroom(memberDTO, productDTO);
+        }
         List<ChatroomDTO> chatroomDTOList = chatService.listChatroom(memberDTO);
         assert chatroomDTOList.size() == 1;
 
