@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-@Builder
+
 @Data
 public class ProductDTO {
     private Long id;
@@ -30,6 +30,7 @@ public class ProductDTO {
     private LocalDateTime buyDate;
 
 
+    @Builder
     public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate) {
         this.id = id;
         this.sellerDTO = sellerDTO;
@@ -48,10 +49,6 @@ public class ProductDTO {
         this.regDate = regDate;
         this.buyDate = buyDate;
     }
-
-    @Builder
-
-
     public Product toEntity(){
         Product.ProductBuilder builder = Product.builder()
                 .id(id)
@@ -93,7 +90,7 @@ public class ProductDTO {
                 .buyDate(product.getBuyDate());
 
         if (product.getBuyer() != null) {
-            builder = builder.buyerDTO(MemberDTO.fromEntity(product.getBuyer()));
+            builder.buyerDTO(MemberDTO.fromEntity(product.getBuyer()));
         }
 
         return builder.build();
