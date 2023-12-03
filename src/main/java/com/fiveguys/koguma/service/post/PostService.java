@@ -20,15 +20,15 @@ public interface PostService {
 
     void updatePost(PostDTO postDTO);
 
-    void deletePost(PostDTO postDTO, MemberDTO memberDTO);
+    void deletePost(PostDTO postDTO);
 
     Page<Post> listPostByViews(PostDTO postDTO);
 
-    List<CategoryDTO>  listCategoryForSearch(PostDTO postDTO, CategoryDTO categoryDTO);
+    List<CategoryDTO>  listCategoryForSelect();
 
     Page<Post> listCategoryBySearch (CategoryDTO categoryDTO);
 
-    List<PostDTO> listCategoryForAdd (PostDTO postDTO, CategoryDTO categoryDTO);
+
 
     Page<Post> listSearchKeyword(PostDTO postDTO);
 

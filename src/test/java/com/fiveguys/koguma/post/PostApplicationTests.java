@@ -4,10 +4,7 @@ import com.fiveguys.koguma.data.dto.CategoryDTO;
 import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
-import com.fiveguys.koguma.data.entity.Category;
-import com.fiveguys.koguma.data.entity.ClubPostCategory;
-import com.fiveguys.koguma.data.entity.Member;
-import com.fiveguys.koguma.data.entity.Post;
+import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.common.CategoryRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
@@ -25,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.parameters.P;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,14 +56,13 @@ public class PostApplicationTests {
 
     @DisplayName("게시글 생성")
     @Test
-    public void addPostTest() throws Exception{
+    public void addPostTest() throws Exception {
 
         Member writer = memberService.getMember(4L).toEntity();
 
         LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
 
         Category category = categoryRepository.findById(50L).get();
-
 
 
         Post post = Post.builder()
@@ -86,7 +84,7 @@ public class PostApplicationTests {
 
     @DisplayName("게시글 전체 리스트")
     @Test
-    public void listPostTest() throws Exception{
+    public void listPostTest() throws Exception {
         //when
         Page<Post> postPage = postService.listPost();
 
@@ -97,7 +95,7 @@ public class PostApplicationTests {
 
     @DisplayName("회원 작성 게시글 리스트")
     @Test
-    public void listPostByMemberTest() throws Exception{
+    public void listPostByMemberTest() throws Exception {
 
         //given
         Member writer = memberService.getMember(2L).toEntity();
@@ -110,9 +108,65 @@ public class PostApplicationTests {
         assertEquals(10, postPage.getSize()); //페이지 크기
     }
 
+    @Test
+    @DisplayName("게시글 수정")
+    public void testUpdatePost() throws Exception {
+
+        Member writer = memberService.getMember(4L).toEntity();
+        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+        Category category = categoryRepository.findById(50L).get();
+
+        Post exsitingPost = Post.builder()
+                .member(writer)
+                .category(category)
+                .categoryName(category.getCategoryName())
+                .title("기존 제목")
+                .content("기존 내용")
+                .postType(true)
+                .latitude(locationDTO.getLatitude())
+                .longitude(locationDTO.getLongitude())
+                .dong(locationDTO.getDong())
+                .views(0)
+                .activeFlag(true)
+                .build();
+
+        postRepository.save(exsitingPost);
+
+        PostDTO updatedPostDTO = new PostDTO();
+        updatedPostDTO.setId(exsitingPost.getId());
+        updatedPostDTO.setTitle("새로운 제목");
+        updatedPostDTO.setContent("새로운 내용");
+        updatedPostDTO.setCategoryDTO(categoryService.getCategory(49L));
+        updatedPostDTO.setCategoryName("동네맛집");
+
+        //when
+        postService.updatePost(updatedPostDTO);
+
+        //then
+        Post updatedPost = postRepository.findById(exsitingPost.getId()).orElse(null);
+        assertEquals(updatedPostDTO.getTitle(), updatedPost.getTitle());
+
+    }
+
+
+    @Test
+    @DisplayName("게시글 삭제")
+    public void testDeletePost() throws Exception {
+
+        Long postId = 4L;
+
+        PostDTO existingPost = postService.getPost(postId);
+
+        postService.deletePost(existingPost);
+
+        PostDTO deletedPost = postService.getPost(postId);
+
+        assertFalse(deletedPost.getActiveFlag());
+    }
+
     @DisplayName("게시글 상세조회")
     @Test
-    public void getPostTest() throws Exception{
+    public void getPostTest() throws Exception {
 
 
         //given
@@ -120,7 +174,7 @@ public class PostApplicationTests {
 
         //when
         PostDTO postDTO = postService.getPost(postId.getId());
-        System.out.println("id = " +postDTO.toString());
+        System.out.println("id = " + postDTO.toString());
         //then
         assertNotNull(postId);
         assertEquals(postId.getId(), postDTO.getId());
@@ -130,7 +184,7 @@ public class PostApplicationTests {
     @DisplayName("조회수 증감 여부")
     @Test
     @Rollback(value = false)
-    public void increaseViewsTest() throws Exception{
+    public void increaseViewsTest() throws Exception {
 
         //given
         Post post = createTestPost();
@@ -142,15 +196,15 @@ public class PostApplicationTests {
 
         //then
         Post updatedPost = postRepository.findById(postId).orElse(null);
-        if(updatedPost != null){
+        if (updatedPost != null) {
             int updatedViews = updatedPost.getViews();
             assertEquals(initialViews + 1, updatedViews);
-        }else{
+        } else {
             assertEquals("post not found", "post not found");
         }
     }
 
-    private Post createTestPost(){
+    private Post createTestPost() {
 
         Member writer = memberService.getMember(4L).toEntity();
 
@@ -171,7 +225,7 @@ public class PostApplicationTests {
                 .views(0)
                 .activeFlag(true)
                 .build();
-        
+
         postRepository.save(postView);
 
         return postView;
@@ -179,19 +233,19 @@ public class PostApplicationTests {
 
     @DisplayName("게시글 조회수 정렬")
     @Test
-    public void listPostByViews() throws Exception{
+    public void listPostByViews() throws Exception {
 
         //given
         //테스트에 필요한 11개의 Post 객체 생성 및 저장
-        for (int i = 0 ; i < 11 ; i++){
+        for (int i = 0; i < 11; i++) {
             createTestPost();
         }
 
-        
+
         //when
         Page<Post> postPage = postService.listPostByViews(new PostDTO());
         System.out.println("postPage = " + postPage);
-        
+
         //then
         assertEquals(0, postPage.getNumber());
         assertEquals(10, postPage.getSize());
@@ -199,8 +253,8 @@ public class PostApplicationTests {
 
         //조회수 기준으로 정렬되었는지 확인
         int preViews = Integer.MAX_VALUE;
-        for(Post post : postPage.getContent()){
-            int currViews =  post.getViews();
+        for (Post post : postPage.getContent()) {
+            int currViews = post.getViews();
             assertTrue(currViews <= preViews);
             preViews = currViews;
         }
@@ -239,16 +293,15 @@ public class PostApplicationTests {
         assertNotNull(searchResult);
 
 
-
     }
 
     @Test
     @DisplayName("카테고리 별 리스트 조회")
-    public void testListCategoryBySearch(){
+    public void testListCategoryBySearch() {
 
         //given
         Category category = categoryRepository.findById(50L).get();
-        PageRequest pageRequest = PageRequest.of(0,10);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
         Page<Post> postPage = postService.listCategoryBySearch(CategoryDTO.fromDTO(category));
@@ -259,4 +312,16 @@ public class PostApplicationTests {
         assertEquals(10, postPage.getSize());
 
     }
+
+    @Test
+    @DisplayName("게시글 작성/조회 시 카테고리 리스트")
+    void testListCategoryForSelect() {
+
+        List<CategoryDTO> categoryDTOS = categoryService.listCategory(CategoryType.POST);
+
+        for (CategoryDTO categoryDTO : categoryDTOS) {
+            System.out.println("categoryDTO = " + categoryDTO);
+        }
+    }
+
 }

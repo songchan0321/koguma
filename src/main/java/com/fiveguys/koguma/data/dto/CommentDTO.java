@@ -8,20 +8,24 @@ public class CommentDTO {
     private Long id;
     private PostDTO postDTO;
     private MemberDTO memberDTO;
-    private CommentDTO parentCommentDTO;
+    private CommentDTO parentDTO;
     private String content;
     private Boolean activeFlag;
 
 
     @Builder
     public CommentDTO(Long id, PostDTO postDTO, MemberDTO memberDTO,
-                      CommentDTO parentcommentDTO, String content, Boolean activeFlag){
+                      CommentDTO parentDTO, String content, Boolean activeFlag){
         this.id = id;
         this.postDTO = postDTO;
         this.memberDTO = memberDTO;
-        this.parentCommentDTO = parentcommentDTO;
+        this.parentDTO = parentDTO;
         this.content = content;
         this.activeFlag = activeFlag;
+    }
+
+    public CommentDTO() {
+
     }
 
     public Comment toEntity(){
@@ -33,13 +37,9 @@ public class CommentDTO {
                 .activeFlag(this.activeFlag)
                 .build();
 
-        //부모 댓글 참조 설정
-        if(this.parentCommentDTO != null){
-            comment.setParentComment(this.parentCommentDTO.toEntity());
-        }
-
         return comment;
     }
+
 
     public static CommentDTO fromEntity(Comment comment) {
         CommentDTO commentDTO = CommentDTO.builder()
@@ -50,13 +50,16 @@ public class CommentDTO {
                 .activeFlag(comment.getActiveFlag())
                 .build();
 
-        //부도 댓글 참조 설정
-        if (comment.getParentcomment() != null) {
-            commentDTO.setParentCommentDTO(CommentDTO.fromEntity(comment.getParentcomment()));
+        //부모 댓글 참조 설정
+        if (comment.getParent() != null) {
+            commentDTO.setParentDTO(CommentDTO.fromEntity(comment.getParent()));
         }
         return commentDTO;
     }
 
-
-
+    //부모가 있을 경우 자식 댓글에서 부모를 지정
+    public void updateParent(Comment parent) {
+        this.parentDTO = parentDTO;
+        parent.getChildren().add(this.toEntity());
+    }
 }

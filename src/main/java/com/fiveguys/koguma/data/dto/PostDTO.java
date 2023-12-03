@@ -48,10 +48,8 @@ public class PostDTO {
 
 
     public Post toEntity(){
-        return  Post.builder()
+        Post.PostBuilder postBuilder = Post.builder()
                 .id(this.id)
-                .member(memberDTO.toEntity())
-                .category(categoryDTO.toEntity())
                 .categoryName(this.categoryName)
                 .title(this.title)
                 .content(this.content)
@@ -60,17 +58,25 @@ public class PostDTO {
                 .longitude(this.longitude)
                 .dong(this.dong)
                 .views(this.views)
-                .activeFlag(this.activeFlag)
-                .build();
+                .activeFlag(this.activeFlag);
 
+        // memberDTO가 null이 아닌 경우에만 member를 설정
+        if (this.memberDTO != null) {
+            postBuilder.member(this.memberDTO.toEntity());
+        }
+
+        // categoryDTO가 null이 아닌 경우에만 category를 설정
+        if (this.categoryDTO != null) {
+            postBuilder.category(this.categoryDTO.toEntity());
+        }
+
+        return postBuilder.build();
     }
 
 
     public static PostDTO fromEntity(Post post){
-        return PostDTO.builder()
+        PostDTO.PostDTOBuilder builder = PostDTO.builder()
                 .id(post.getId())
-                .memberDTO(MemberDTO.fromEntity(post.getMember()))
-                .categoryDTO(CategoryDTO.fromDTO(post.getCategory()))
                 .categoryName(post.getCategoryName())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -78,7 +84,16 @@ public class PostDTO {
                 .latitude(post.getLatitude())
                 .longitude(post.getLongitude())
                 .views(post.getViews()) // 조회수 정보 추가
-                .activeFlag(post.getActiveFlag())
-                .build();
+                .activeFlag(post.getActiveFlag());
+
+        if(post.getMember() != null){
+            builder = builder.memberDTO(MemberDTO.fromEntity(post.getMember()));
+        }
+
+        if(post.getCategory() != null){
+            builder =builder.categoryDTO(CategoryDTO.fromDTO(post.getCategory()));
+        }
+
+        return builder.build();
     }
 }
