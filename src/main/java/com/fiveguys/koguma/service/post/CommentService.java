@@ -2,8 +2,11 @@ package com.fiveguys.koguma.service.post;
 
 import com.fiveguys.koguma.data.dto.CommentDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Comment;
-import org.springframework.data.domain.Page;
+
+import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 public interface CommentService {
 
@@ -11,11 +14,13 @@ public interface CommentService {
 
     void updateComment(CommentDTO commentDTO);
 
-    void deleteComment(CommentDTO commentDTO, MemberDTO memberDTO);
+    void deleteComment(CommentDTO commentDTO) throws AccessDeniedException;
 
-    Page<Comment> listComment();
+    List<Comment> listComment(PostDTO postDTO);
 
-    Page<Comment> listCommentByMember(MemberDTO memberDTO);
+    List<Comment> listCommentByMember(MemberDTO memberDTO);
+
+    CommentDTO getComment(Long id);
 
 
 }

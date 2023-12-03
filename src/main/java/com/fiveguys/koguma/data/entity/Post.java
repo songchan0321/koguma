@@ -47,8 +47,8 @@ public class Post extends BaseTime{
     @Column(nullable = false)
     private int views = 0;
 
-    @Column(name = "active_flag",nullable = false)
-    private Boolean activeFlag;
+    @Column(name = "active_flag", nullable = false)
+    private Boolean activeFlag = true;
 
     public void increaseViews(int views){
         this.views++;
@@ -70,5 +70,24 @@ public class Post extends BaseTime{
         this.dong = dong;
         this.views = views;
         this.activeFlag = activeFlag;
+    }
+
+    public void setCategory(Category category) {
+
+        this.category = category;
+    }
+
+    public void setActiveFlag(boolean b) {
+
+        this.activeFlag = b;
+    }
+
+    public void setTitle(String title) {
+
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

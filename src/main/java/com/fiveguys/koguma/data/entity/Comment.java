@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,27 +30,50 @@ public class Comment extends BaseTime{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private Comment parentcomment;
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Comment> children = new ArrayList<>();
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag;
 
 
     @Builder
     public Comment(Long id, Post post, Member member,
-                   Comment parentcomment, String content, Boolean activeFlag){
+                   Comment parent, String content, Boolean activeFlag){
         this.id = id;
         this.post = post;
         this.member = member;
-        this.parentcomment = parentcomment;
+        this.parent = parent;
         this.content = content;
         this.activeFlag = activeFlag;
     }
 
 
-    public void setParentComment(Comment entity) {
+    public static Comment createComment(Post post, Member member, String content){
+        return Comment.builder()
+                .post(post)
+                .member(member)
+                .content(content)
+                .activeFlag(true)
+                .build();
+    }
+
+    public void setContent(String content) {
+
+        this.content = content;
+    }
+
+    public void setActiveFlag(boolean activeFlag) {
+        this.activeFlag = activeFlag;
+    }
+
+    //댓글 리스트 트리구조
+    public void addChild(Comment child) {
+        this.children.add(child);
     }
 }

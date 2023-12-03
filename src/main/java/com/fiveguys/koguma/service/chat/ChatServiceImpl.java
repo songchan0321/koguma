@@ -33,9 +33,28 @@ public class ChatServiceImpl implements ChatService{
 
     @Override
     public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price) {
-        ChatroomDTO chatroomDTO = this.addChatroom(memberDTO, productDTO);
+        ChatroomDTO chatroomDTO;
+        if(this.existChatroom(memberDTO, productDTO)) {
+            chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findByBuyerAndProduct_Seller(memberDTO.toEntity(), productDTO.getSellerDTO().toEntity()).orElseThrow());
+        } else {
+            chatroomDTO = this.addChatroom(memberDTO, productDTO);
+        }
         chatroomDTO.setPrice(price);
         return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+    }
+
+    @Override
+    public boolean existChatroom(MemberDTO memberDTO, ProductDTO productDTO) {
+        return chatroomRepository
+                .findByBuyerAndProduct_Seller(
+                        memberDTO.toEntity(),
+                        productDTO.getSellerDTO().toEntity())
+                .stream()
+                .filter(chatroom -> chatroom.getActiveFlag())
+                .count()
+                > 0
+                ? true
+                : false;
     }
 
     @Override

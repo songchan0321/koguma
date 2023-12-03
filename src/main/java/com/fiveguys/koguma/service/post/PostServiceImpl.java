@@ -2,16 +2,21 @@ package com.fiveguys.koguma.service.post;
 
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.Category;
+import com.fiveguys.koguma.data.entity.CategoryType;
 import com.fiveguys.koguma.data.entity.Post;
+import com.fiveguys.koguma.repository.common.CategoryRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
+import com.fiveguys.koguma.service.common.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,6 +26,8 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private  final CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
     @Override
     public Page<Post> listPost() {
@@ -59,12 +66,31 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updatePost(PostDTO postDTO) {
 
+        Long postId = postDTO.getId();
+
+        //기존 게시글 조회
+        Post existingPost = postRepository.findById(postId)
+                        .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        existingPost.setTitle(postDTO.getTitle());
+        existingPost.setCategory(postDTO.toEntity().getCategory());
+        existingPost.setContent(postDTO.getContent());
+
         postRepository.save(postDTO.toEntity());
         }
 
     @Override
-    public void deletePost(PostDTO postDTO, MemberDTO memberDTO) {
-        postRepository.deleteById(postDTO.getId());
+    public void deletePost(PostDTO postDTO) {
+
+        Long postId = postDTO.getId();
+
+        Post existingPost = postRepository.findById(postId)
+                        .orElseThrow(()-> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        //게시글 비활성화 상태 변경
+        existingPost.setActiveFlag(false);
+
+        postRepository.save(existingPost);
     }
 
     @Override
@@ -81,15 +107,14 @@ public class PostServiceImpl implements PostService {
 
         PageRequest pageRequest = PageRequest.of(0, 10);
 
-        return  postRepository.findTop10ByOrderByViewsDesc(postDTO.toEntity(), pageRequest);
+        return  postRepository.findTop10ByOrderByViewsDesc(pageRequest);
     }
 
     //검색을 위한 카테고리 리스트 정렬
     @Override
-    public List<CategoryDTO>  listCategoryForSearch(PostDTO postDTO, CategoryDTO categoryDTO) {
+    public List<CategoryDTO>  listCategoryForSelect() {
 
-        return null;
-
+        return categoryService.listCategory(CategoryType.POST);
     }
     //카테고리 별 검색 결과
     @Override
@@ -101,11 +126,6 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    //게시글이 저장 될 카테고리 선택 리스트
-    @Override
-    public List<PostDTO> listCategoryForAdd(PostDTO postDTO, CategoryDTO categoryDTO) {
-        return null;
-    }
 
 
     @Override
