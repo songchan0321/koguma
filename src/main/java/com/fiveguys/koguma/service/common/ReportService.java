@@ -9,9 +9,9 @@ public interface ReportService {
     void addReport(ReportDTO reportDTO);
     void deleteReport(Long id);
     ReportDTO getReport(Long id);
-    List<ReportDTO> listReport(Long id);
+    List<ReportDTO> listReport(Long reporterId);
     List<ReportDTO> listAllReport();
-    void addAnswer(ReportDTO reportDTO, String answerTitle, String answerContent);
+    void addAnswer(ReportDTO reportDTO);
 
 
 

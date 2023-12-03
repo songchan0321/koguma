@@ -2,16 +2,20 @@ package com.fiveguys.koguma.service.member;
 
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
 import com.fiveguys.koguma.data.entity.Member;
+import com.fiveguys.koguma.data.entity.MemberRelationshipType;
 
 import java.util.List;
 
 public interface MemberRelationshipService {
 
-    void addBlock(MemberRelationshipDTO memberRelationshipDTO, Member sourceMemberId, Member targetMemberId, String content);
+    void addBlock(MemberRelationshipDTO memberRelationshipDTO);
     void deleteBlock(MemberRelationshipDTO memberRelationshipDTO);
-    List<MemberRelationshipDTO> listBlock();
-    MemberRelationshipDTO getBlock(Long id);
-    void addFollowing(MemberRelationshipDTO memberRelationshipDTO, Member sourceMemberId, Member targetMemberId);
-    void deleteFollowing(MemberRelationshipDTO memberRelationshipDTO);
-    List<MemberRelationshipDTO> listFollowing();
+    List<MemberRelationshipDTO> listBlock(Long sourceMemberId);
+    MemberRelationshipDTO getBlock(Long sourceMember);
+    void addFollowing(MemberRelationshipDTO memberRelationshipDTO);
+    void deleteFollowing(Long id);
+    List<MemberRelationshipDTO> listFollowing(Long sourceMemberId);
+    MemberRelationshipDTO getFollowing(Long sourceMember);
+
+
 }

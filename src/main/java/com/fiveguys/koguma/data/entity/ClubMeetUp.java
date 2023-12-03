@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
@@ -61,5 +63,15 @@ public class ClubMeetUp extends BaseTime{
         this.roadAddr = roadAddr;
     }
 
+    public void changeActiveFlag(){
+
+        this.activeFlag = false;
+    }
+
+    public void onPrePersist() {
+        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.meetDate = parsedCreateDate;
+    }
 
 }

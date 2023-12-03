@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum MemberRelationshipType {
 
     BLOCK("차단"),
-    Following("팔로잉");
+    FOLLOWING("팔로잉");
 
     private final String name;
 }

@@ -52,55 +52,6 @@ class ClubServiceImplTest {
 
 
 
-    @Test
-    public void 멤버닉네임() throws Exception{
-        //given
-        Member member = memberRepository.findById(2L).get();
-
-        System.out.println("member = " + member.getNickname());
-
-        MemberDTO memberDTO = MemberDTO.fromEntity(member);
-
-        System.out.println("memberDTO = " + memberDTO);
-
-
-        //when
-
-        //then
-    }
-
-    //@Test
-    public void 카테고리_추가() throws Exception{
-        //given
-//        Category cate = Category.builder()
-//                .categoryName("운동")
-//                .categoryType(CategoryType.CLUB)
-//                .build();
-//        //when
-//        categoryRepository.save(cate);
-//
-//        List<Category> all = categoryRepository.findAll();
-//        //then
-//        Assertions.assertThat(all.size()).isEqualTo(18);
-    }
-
-    //@Test
-    @Transactional
-    public void 카테고리_리스트() throws Exception{
-        //given
-//        List<CategoryDTO> clubCategories = categoryService.listCategory(CategoryType.CLUB);
-//
-//        //when
-//        for (CategoryDTO clubCategory : clubCategories) {
-//            System.out.println("clubCategory = " + clubCategory);
-//            System.out.println("--------------------------------");
-//            System.out.println(clubCategories);
-//        }
-//        //then
-//        Assertions.assertThat(clubCategories.size()).isEqualTo(9);
-
-    }
-
     //@Test
     public void 모임_생성() throws Exception{
 
@@ -138,6 +89,30 @@ class ClubServiceImplTest {
         //then
         Assertions.assertThat(findClub.getId()).isEqualTo(clubId);
     }
+
+    //@Test
+    public void 모임_생성_더미() throws Exception{
+        Category category = categoryRepository.findById(37L).get();
+
+
+        for(int i = 4;  i < 300; i++){
+            Club club = Club.builder()
+                    .title("모임test" + i)
+                    .content("모임소개" + i)
+                    .dong("모임행정동" + i)
+                    .longitude(37.123456)
+                    .latitude(126.789012)
+                    .maxCapacity(100)
+                    .category(category)
+                    .categoryName(category.getCategoryName())
+                    .joinActiveFlag(true)
+                    .activeFlag(true)
+                    .build();
+
+            clubRepository.save(club);
+        }
+    }
+
 
     //@Test
     public void 모임_가입신청() throws Exception{

@@ -7,6 +7,7 @@ import com.fiveguys.koguma.repository.common.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -39,13 +40,14 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ReportDTO getReport(Long id){
-        return ReportDTO.fromEntity(reportRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 신고가 존재하지 않습니다.")));
+        Report report = reportRepository.findById(id).orElseThrow(()-> new NoResultException("신고 정보 없음"));
+        return ReportDTO.fromEntity(report);
     }
 
     @Override
-    public List<ReportDTO> listReport(Long id) {
-        List<Report> reports = reportRepository.findByReporterId(id);
+    public List<ReportDTO> listReport(Long reporterId) {
+        List<Report> reports = reportRepository.findAllByReporterId(reporterId);
+
         return reports.stream()
                 .map(ReportDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -60,9 +62,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void addAnswer(ReportDTO reportDTO, String answerTitle, String answerContent){
-        reportDTO.setReportTitle(answerTitle);
-        reportDTO.setReportContent(answerContent);
+    public void addAnswer(ReportDTO reportDTO){
 
         reportRepository.save(reportDTO.toEntity());
     }

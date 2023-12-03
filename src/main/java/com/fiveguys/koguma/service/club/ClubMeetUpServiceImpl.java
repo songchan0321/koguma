@@ -11,9 +11,12 @@ import com.fiveguys.koguma.repository.club.ClubMemberMeetUpJoinRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.repository.club.ClubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,13 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
     @Override
     public Long addClubMeetUp(ClubMeetUpDTO clubMeetUpDTO, Long clubId) {
+
+
+        Long meetUpCounts = clubMeetUpRepository.countActiveMeetUpsByClubId(clubId);
+
+        if (meetUpCounts >= 3){
+            throw new IllegalStateException("종료되지 않은 일정이 3개 이상");
+        }
 
         //일정을 생성하는 모임 조회
         ClubDTO clubDTO = clubService.getClub(clubId);
@@ -115,5 +125,22 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
     }
 
+    @Override
+    @Scheduled(cron = "0 20 20 * * * ")
+    public void changeMeetUpState() {
 
+        // 메서드 실행 날짜
+        LocalDateTime endDate = LocalDateTime.now();
+
+        //종료가 필요한 일정 조회
+        Boolean status = true;
+        List<ClubMeetUp> endMeetUps = clubMeetUpRepository.findByChangeState(endDate, status);
+
+        //상태 종료 처리
+        for (ClubMeetUp endMeetUp : endMeetUps) {
+            System.out.println("endMeetUp = " + endMeetUp.getTitle());
+            endMeetUp.changeActiveFlag();
+        }
+
+    }
 }

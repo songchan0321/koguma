@@ -3,7 +3,12 @@ package com.fiveguys.koguma.service.club;
 import com.fiveguys.koguma.data.dto.CategoryDTO;
 import com.fiveguys.koguma.data.dto.ClubDTO;
 import com.fiveguys.koguma.data.dto.ClubMeetUpDTO;
+import com.fiveguys.koguma.data.entity.Category;
+import com.fiveguys.koguma.data.entity.Club;
 import com.fiveguys.koguma.data.entity.ClubMeetUp;
+import com.fiveguys.koguma.repository.club.ClubRepository;
+import com.fiveguys.koguma.repository.common.CategoryRepository;
+import com.fiveguys.koguma.service.common.CategoryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,41 @@ class ClubMeetUpServiceImplTest {
     ClubMeetUpService clubMeetUpService;
     @Autowired
     ClubService clubService;
+    @Autowired
+    ClubRepository clubRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
+
+
+    //@Test
+    public void 일정_생성_더미() throws Exception{
+        //given
+
+
+        for (long i = 21; i < 70; i++ ){
+
+            for(int j = 0; j < 3; j++){
+
+                ClubMeetUpDTO cmuDTO = ClubMeetUpDTO.builder()
+                        .title("만남테스트")
+                        .content("만남 본문")
+                        .maxCapacity(100)
+                        .meetDate(LocalDateTime.parse("2023-12-01T14:30:00"))
+                        .roadAddr("만남 도로명주소")
+                        .activeFlag(true)
+                        .build();
+
+                clubMeetUpService.addClubMeetUp(cmuDTO, (Long) i);
+
+            }
+
+
+        }
+
+        //when
+
+        //then
+    }
 
     //@Test
     public void 모임_일정_생성_및_조회() throws Exception{
@@ -97,8 +137,11 @@ class ClubMeetUpServiceImplTest {
     public void 모임_일정_참여() throws Exception{
         //given
 
+
         //when
 
         //then
     }
+
+
 }
