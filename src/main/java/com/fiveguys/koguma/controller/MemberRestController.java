@@ -47,16 +47,14 @@ public class MemberRestController {
     // 회원 삭제
     @DeleteMapping("/member/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        // 해당 id의 회원을 찾아온다.
         MemberDTO existingMember = memberService.getMember(id);
         // 회원이 존재하는지 확인
         if (existingMember == null) {
-            // 존재하지 않으면 예외 처리 또는 적절한 응답 처리
+
             return ResponseEntity.notFound().build();
         }
         // 회원을 삭제 (activeFlag를 false로 설정)
         memberService.deleteMember(existingMember);
-        // 적절한 응답 반환
         return ResponseEntity.ok().build();
     }
 
