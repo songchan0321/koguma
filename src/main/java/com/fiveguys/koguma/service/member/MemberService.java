@@ -1,13 +1,14 @@
 package com.fiveguys.koguma.service.member;
 
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.entity.Member;
 
 import java.util.List;
 
 public interface MemberService {
 
 
-    void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
+    Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
     void deleteMember(MemberDTO memberDTO);
     void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId, Boolean activeFlag);
     void updateMember(MemberDTO memberDTO);
@@ -18,6 +19,7 @@ public interface MemberService {
     MemberDTO getOtherMember(Long id);
     List<MemberDTO> listMember();
 
+    boolean nicknameValidationCheck(String nickname);
 
 }
 

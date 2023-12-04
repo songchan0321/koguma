@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     @Override
-    public void addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
+    public Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
         //Long rawPw = memberDTO.getPw(); // 사용자가 입력한 비밀번호
         //String encodedPw = passwordEncoder.encode(rawPw); // 비밀번호 해싱
         memberDTO.setNickname(nickname);
@@ -47,6 +46,7 @@ public class MemberServiceImpl implements MemberService {
         memberDTO.setNickname(memberDTO.getNickname());
         memberRepository.save(memberDTO.toEntity());
 
+        return existingMember;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDTO login(String nickname, String pw, Boolean activeFlag) {
-        Member member = memberRepository.findByNicknameAndActiveFlag(nickname, activeFlag)
+        Member member = memberRepository.findByNicknameAndActiveFlag(nickname, true)
                 .orElseThrow(() -> new RuntimeException("해당 닉네임의 회원이 존재하지 않습니다."));
 
 
@@ -113,7 +113,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다."));
 
         // 닉네임 중복 체크
-        Member existingMember = memberRepository.findByNicknameAndActiveFlag(nickname, activeFlag)
+        Member existingMember = memberRepository.findByNicknameAndActiveFlag(nickname, true)
                 .orElse(null);
 
         if (existingMember != null && !existingMember.getId().equals(id)) {
@@ -138,5 +138,12 @@ public class MemberServiceImpl implements MemberService {
         return members.stream()
                 .map(MemberDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public boolean nicknameValidationCheck(String nickname) {
+        Member existingMember = memberRepository.findByNicknameAndActiveFlag(nickname, true)
+                .orElse(null);
+
+        return existingMember == null;
     }
 }
