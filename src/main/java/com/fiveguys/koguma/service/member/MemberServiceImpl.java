@@ -51,7 +51,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void deleteMember(MemberDTO memberDTO) {
-
         memberDTO.setActiveFlag(false);
         memberRepository.save(memberDTO.toEntity());
     }
