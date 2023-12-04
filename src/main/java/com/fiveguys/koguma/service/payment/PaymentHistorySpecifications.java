@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PaymentHistorySpecifications{
-    public static Specification<PaymentHistory> hasType(MemberDTO memberDTO, PaymentHistoryType type) {
+    public static Specification<PaymentHistory> hasType(MemberDTO memberDTO, String type) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             Arrays.stream(PaymentHistoryType.values()).forEach((paymentHistoryType) -> {
-                if(paymentHistoryType.equals(type)) {
-                    predicates.add(criteriaBuilder.equal(root.get("type"), type));
+                if(paymentHistoryType.name().equals(type)) {
+                    predicates.add(criteriaBuilder.equal(root.get("type"), paymentHistoryType));
                 }
             });
             predicates.add(criteriaBuilder.equal(root.get("member"), memberDTO.toEntity()));

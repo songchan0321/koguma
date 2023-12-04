@@ -46,6 +46,11 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
+    public boolean existPayment(MemberDTO memberDTO) {
+        return memberDTO.getPaymentBalance() != null;
+    }
+
+    @Override
     public PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info) {
         PaymentHistoryDTO paymentHistoryDTO = PaymentHistoryDTO.builder()
                 .type(type)
@@ -114,12 +119,12 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, PaymentHistoryType type) {
-        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(memberDTO, type), pageable).toList();
+    public List<PaymentHistoryDTO> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, String type) {
+        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(memberDTO, type), pageable).map(PaymentHistoryDTO::fromEntity).toList();
     }
 
     @Override
-    public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable) {
+    public List<PaymentHistoryDTO> listPaymentHistory(MemberDTO memberDTO, Pageable pageable) {
         return this.listPaymentHistory(memberDTO, pageable, null);
     }
 }

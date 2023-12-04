@@ -90,10 +90,10 @@ public class PaymentHistoryApplicationTests {
         paymentService.chargePoint(senderDTO, 10000);
         paymentService.chargePoint(senderDTO, 10000);
         paymentService.chargePoint(senderDTO, 10000);
-        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.TRANSFER).size() == 1;
-        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.CHARGE).size() == 5;
-        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.REFUND_REQUEST).size() == 0;
-        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.REFUND_SUCCESS).size() == 1;
+        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.TRANSFER.name()).size() == 1;
+        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.CHARGE.name()).size() == 5;
+        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.REFUND_REQUEST.name()).size() == 0;
+        assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9), PaymentHistoryType.REFUND_SUCCESS.name()).size() == 1;
         assert paymentService.listPaymentHistory(senderDTO, PageRequest.of(0, 9)).size() == 7;
     }
 }
