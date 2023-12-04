@@ -30,6 +30,7 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.30'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
