@@ -108,7 +108,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId, Boolean activeFlag) {
+    public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다."));
 
@@ -123,7 +123,7 @@ public class MemberServiceImpl implements MemberService {
         member.setNickname(nickname);
         member.setImageId(imageId);
 
-        memberRepository.save(memberDTO.toEntity());
+        memberRepository.save(member);
     }
 
     @Override
