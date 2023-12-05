@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/payment")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class PaymentHistoryRestController {
     private final PaymentService paymentService;
     private final MemberService memberService;
