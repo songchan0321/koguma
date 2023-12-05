@@ -1,10 +1,10 @@
 package com.fiveguys.koguma.service.member;
 
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
-import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberRelationship;
 import com.fiveguys.koguma.data.entity.MemberRelationshipType;
 import com.fiveguys.koguma.repository.member.MemberRelationshipRepository;
+import com.fiveguys.koguma.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class MemberRelationshipServiceImpl implements MemberRelationshipService {
 
     private final MemberRelationshipRepository memberRelationshipRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public void addBlock(MemberRelationshipDTO memberRelationshipDTO) {
@@ -29,17 +30,17 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
     }
 
     @Override
-    public void deleteBlock(MemberRelationshipDTO memberRelationshipDTO) {
-        memberRelationshipDTO.setSourceMember(null);
-        memberRelationshipDTO.setTargetMember(null);
-        memberRelationshipDTO.setContent(null);
-        memberRelationshipRepository.save(memberRelationshipDTO.toEntity());
-        /*Optional<MemberRelationship> memberRelationshipOptional = memberRelationshipRepository.findById(id);
+    public void deleteBlock(Long sourceMemberId, Long targetMemberId) {
+        List<MemberRelationship> blockRelationships = memberRelationshipRepository
+                .findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(sourceMemberId, targetMemberId, MemberRelationshipType.BLOCK);
 
-        if (memberRelationshipOptional.isPresent()) {
-            MemberRelationship memberRelationship = memberRelationshipOptional.get();
-            memberRelationshipRepository.delete(memberRelationship);
-        }*/
+        blockRelationships.forEach(relationship -> {
+            relationship.setSourceMember(null);
+            relationship.setTargetMember(null);
+            relationship.setContent(null);
+            relationship.setMemberRelationshipType(null);
+            memberRelationshipRepository.save(relationship);
+        });
     }
 
 

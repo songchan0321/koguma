@@ -1,56 +1,88 @@
 package com.fiveguys.koguma.controller;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberRelationship;
+import com.fiveguys.koguma.data.entity.MemberRelationshipType;
 import com.fiveguys.koguma.service.member.MemberRelationshipService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin("*")
 public class MemberRelationshipRestController {
     private final MemberRelationshipService memberRelationshipService;
 
-    @PostMapping("/memberRelationship/block/add")
-    public void addBlock(@RequestBody MemberRelationshipDTO memberRelationshipDTO) {
-        memberRelationshipService.addBlock(memberRelationshipDTO);
+    /*@PostMapping("/memberRelationship/block/add/{sourceMember}")
+    public ResponseEntity<MemberRelationshipDTO> addBlock(
+            @PathVariable Member sourceMember,
+            @RequestParam Member targetMember,
+            @RequestBody MemberRelationshipDTO memberRelationshipDTO) {
+        try {
+
+
+            memberRelationshipDTO.setSourceMember(sourceMember);
+            memberRelationshipDTO.setTargetMember(targetMember);
+            memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
+
+            memberRelationshipService.addBlock(memberRelationshipDTO);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }*/
+
+
+
+    /*@PutMapping("/relationship/block/delete/{sourceMemberId}/{targetMemberId}")
+    public ResponseEntity<MemberRelationshipDTO> deleteBlock(
+            @PathVariable Long sourceMemberId,
+            @PathVariable Long targetMemberId) {
+        memberRelationshipService.deleteBlock(sourceMemberId, targetMemberId);
+        return ResponseEntity.ok().build();
+    }*/
+
+    //차단 정보 조회
+    @GetMapping("/relationship/block/get/{sourceMember}")
+    public ResponseEntity<MemberRelationshipDTO> getBlock(@PathVariable Long sourceMember) {
+        MemberRelationshipDTO existingMember = memberRelationshipService.getBlock(sourceMember);
+        if (existingMember == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
+        }
+        return ResponseEntity.ok(existingMember);
     }
 
-    @PutMapping("/memberRelationship/block/delete/{id}")
-    public void deleteBlock(@RequestBody MemberRelationshipDTO memberRelationshipDTO) {
-        memberRelationshipService.deleteBlock(memberRelationshipDTO);
-    }
-
-    @GetMapping("/memberRelationship/block/get/{sourceMember}")
-    public MemberRelationship getBlock(@PathVariable Long sourceMember) {
-        memberRelationshipService.getBlock(sourceMember);
-        return memberRelationshipService.getBlock(sourceMember).toEntity();
-    }
-
-    @GetMapping("/memberRelationship/block/list/{sourceMemberId}")
+    @GetMapping("/relationship/block/list/{sourceMemberId}")
     public List<MemberRelationshipDTO> ListBlock(@PathVariable Long sourceMemberId) {
         return memberRelationshipService.listBlock(sourceMemberId);
-        //return memberRelationshipService.listBlock(sourceMemberId).toEntity();
     }
 
-    @PostMapping("/memberRelationship/following/add")
+    /*@PostMapping("/relationship/following/add")
     public void add(@RequestBody MemberRelationshipDTO memberRelationshipDTO) {
         memberRelationshipService.addFollowing(memberRelationshipDTO);
-    }
-    @PutMapping("/memberRelationship/following/delete/{id}")
+    }*/
+    /*@PutMapping("/relationship/following/delete/{id}")
     public void delete(@RequestBody MemberRelationshipDTO memberRelationshipDTO){
         memberRelationshipService.deleteFollowing(memberRelationshipDTO.getId());
+    }*/
+    @GetMapping("/relationship/following/get/{sourceMember}")
+    public ResponseEntity<MemberRelationshipDTO> getFollowing(@PathVariable Long sourceMember) {
+        MemberRelationshipDTO existingMember = memberRelationshipService.getFollowing(sourceMember);
+        if (existingMember == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
+        }
+        return ResponseEntity.ok(existingMember);
     }
-    @GetMapping("/memberRelationship/following/get/{sourceMember}")
-    public MemberRelationship get(@PathVariable Long sourceMember){
-        memberRelationshipService.getFollowing(sourceMember);
-        return memberRelationshipService.getFollowing(sourceMember).toEntity();
-    }
-    @GetMapping("/memberRelationship/following/list/{sourceMemberId}")
-    public List<MemberRelationshipDTO> ListFollowing(@PathVariable Long sourceMemberId){
+    @GetMapping("/relationship/following/list/{sourceMemberId}")
+    public List<MemberRelationshipDTO> ListFollowing(@PathVariable Long sourceMemberId) {
         return memberRelationshipService.listFollowing(sourceMemberId);
-        //return memberRelationshipService.listFollowing(sourceMemberId).toEntity();
     }
 }

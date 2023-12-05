@@ -14,4 +14,6 @@ public interface MemberRelationshipRepository extends JpaRepository<MemberRelati
     List<MemberRelationship> findAllBySourceMemberIdAndMemberRelationshipType(Long sourceMemberId, MemberRelationshipType memberRelationshipType);
 
     List<MemberRelationship> findBySourceMemberIdAndMemberRelationshipType(Long sourceMemberId, MemberRelationshipType memberRelationshipType);
+
+    List<MemberRelationship> findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(Long sourceMemberId, Long targetMemberId, MemberRelationshipType memberRelationshipType);
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin("*")
 public class MemberRestController {
     private final MemberService memberService;
 
@@ -38,7 +39,7 @@ public class MemberRestController {
     }
 
     // 회원정보 수정
-    @PutMapping("/member/update/{id}")
+    /*@PutMapping("/member/update/{id}")
     public ResponseEntity<MemberDTO> update(
             @PathVariable Long id,
             @RequestBody MemberDTO memberDTO
@@ -54,7 +55,7 @@ public class MemberRestController {
         }
         memberService.updateMember(member, id, memberDTO.getNickname(), memberDTO.getImageId());
         return ResponseEntity.ok().build();
-    }
+    }*/
 
     // 회원 삭제
     @PutMapping("/member/delete/{id}")
