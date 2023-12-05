@@ -20,35 +20,26 @@ import java.util.List;
 public class MemberRelationshipRestController {
     private final MemberRelationshipService memberRelationshipService;
 
-    /*@PostMapping("/memberRelationship/block/add/{sourceMember}")
-    public ResponseEntity<MemberRelationshipDTO> addBlock(
-            @PathVariable Member sourceMember,
-            @RequestParam Member targetMember,
-            @RequestBody MemberRelationshipDTO memberRelationshipDTO) {
+    @PostMapping("/memberRelationship/block/add/{sourceMember}")
+    public ResponseEntity<MemberRelationshipDTO> addBlock(@RequestBody MemberRelationshipDTO memberRelationshipDTO) {
         try {
-
-
-            memberRelationshipDTO.setSourceMember(sourceMember);
-            memberRelationshipDTO.setTargetMember(targetMember);
-            memberRelationshipDTO.setMemberRelationshipType(MemberRelationshipType.BLOCK);
-
             memberRelationshipService.addBlock(memberRelationshipDTO);
-
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(memberRelationshipDTO);
         }
-    }*/
+    }
 
 
 
-    /*@PutMapping("/relationship/block/delete/{sourceMemberId}/{targetMemberId}")
+
+    @PutMapping("/relationship/block/delete/{sourceMemberId}/{targetMemberId}")
     public ResponseEntity<MemberRelationshipDTO> deleteBlock(
             @PathVariable Long sourceMemberId,
-            @PathVariable Long targetMemberId) {
+            @RequestBody Long targetMemberId) {
         memberRelationshipService.deleteBlock(sourceMemberId, targetMemberId);
         return ResponseEntity.ok().build();
-    }*/
+    }
 
     //차단 정보 조회
     @GetMapping("/relationship/block/get/{sourceMember}")
@@ -65,14 +56,14 @@ public class MemberRelationshipRestController {
         return memberRelationshipService.listBlock(sourceMemberId);
     }
 
-    /*@PostMapping("/relationship/following/add")
+    @PostMapping("/relationship/following/add")
     public void add(@RequestBody MemberRelationshipDTO memberRelationshipDTO) {
         memberRelationshipService.addFollowing(memberRelationshipDTO);
-    }*/
-    /*@PutMapping("/relationship/following/delete/{id}")
+    }
+    @PutMapping("/relationship/following/delete/{id}")
     public void delete(@RequestBody MemberRelationshipDTO memberRelationshipDTO){
         memberRelationshipService.deleteFollowing(memberRelationshipDTO.getId());
-    }*/
+    }
     @GetMapping("/relationship/following/get/{sourceMember}")
     public ResponseEntity<MemberRelationshipDTO> getFollowing(@PathVariable Long sourceMember) {
         MemberRelationshipDTO existingMember = memberRelationshipService.getFollowing(sourceMember);

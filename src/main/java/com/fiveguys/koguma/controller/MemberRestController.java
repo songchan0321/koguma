@@ -10,14 +10,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin("*")
+@RequestMapping("/member")
 public class MemberRestController {
     private final MemberService memberService;
 
     // 회원가입
-    @PostMapping("/member/add")
+    @PostMapping("/add")
     public ResponseEntity<MemberDTO> add(@RequestBody MemberDTO memberDTO) {
         String nickname = memberDTO.getNickname();
         String pw = memberDTO.getPw();
@@ -39,8 +42,14 @@ public class MemberRestController {
     }
 
     // 회원정보 수정
-    /*@PutMapping("/member/update/{id}")
-    public ResponseEntity<MemberDTO> update(
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Void> update(@RequestBody MemberDTO memberDTO){
+        System.out.println(memberDTO.toString());
+
+        memberService.updateMember(memberDTO, memberDTO.getNickname());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    /*public ResponseEntity<Void> update(
             @PathVariable Long id,
             @RequestBody MemberDTO memberDTO
     ) {
@@ -58,7 +67,7 @@ public class MemberRestController {
     }*/
 
     // 회원 삭제
-    @PutMapping("/member/delete/{id}")
+    @PutMapping("/delete/{id}")
     public void deleteMember(@RequestBody MemberDTO memberDTO) {
         /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long authenticatedUserId = // 인증에서 사용자 ID를 추출하는 로직;
@@ -73,7 +82,7 @@ public class MemberRestController {
     }
 
     //회원 정보 가져오기
-    @GetMapping("/member/get/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<MemberDTO> get(@PathVariable Long id) {
         MemberDTO existingMember = memberService.getMember(id);
         if (existingMember == null) {

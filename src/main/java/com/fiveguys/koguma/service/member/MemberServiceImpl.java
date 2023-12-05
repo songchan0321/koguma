@@ -6,6 +6,7 @@ import com.fiveguys.koguma.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -106,24 +107,27 @@ public class MemberServiceImpl implements MemberService {
         return memberDTO;
     }
 
-    @Override
-    public void updateMember(MemberDTO memberDTO, Long id, String nickname, Long imageId) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID의 회원이 존재하지 않습니다."));
 
-        // 닉네임 중복 체크
-        Member existingMember = memberRepository.findByNicknameAndActiveFlag(nickname, true)
+    @Override
+    public void updateMember(MemberDTO memberDTO, String nickname) {
+        Long id = memberDTO.getId();
+
+        Member existingMember = memberRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        Member conflictingMember = memberRepository.findByNicknameAndActiveFlag(memberDTO.getNickname(), true)
                 .orElse(null);
 
-        if (existingMember != null && !existingMember.getId().equals(id)) {
+        if (conflictingMember != null && !conflictingMember.getId().equals(id)) {
             throw new RuntimeException("이미 사용 중인 닉네임입니다.");
         }
 
-        member.setNickname(nickname);
-        member.setImageId(imageId);
+        existingMember.setNickname(memberDTO.getNickname());
+        existingMember.setImageId(memberDTO.getImageId());
 
-        memberRepository.save(member);
+        memberRepository.save(existingMember);
     }
+
 
     @Override
     public void updateMember(MemberDTO memberDTO) {

@@ -17,14 +17,14 @@ import java.time.LocalDateTime;
 public class MemberRelationshipDTO  {
 
     public Long id;
-    public Member targetMember;
+
     public String content;
     public boolean type;
     public LocalDateTime regDate;
     private MemberRelationshipType memberRelationshipType;
     @JsonIgnore
     private Member sourceMember;
-
+    public Member targetMember;
     public MemberRelationshipDTO() {
 
     }
