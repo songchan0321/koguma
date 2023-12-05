@@ -39,6 +39,7 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
         Long meetUpCounts = clubMeetUpRepository.countActiveMeetUpsByClubId(clubId);
 
+        // todo : 3  나중에 변경되는 값, 이라면 properties 별도 관리 필요
         if (meetUpCounts >= 3){
             throw new IllegalStateException("종료되지 않은 일정이 3개 이상");
         }
@@ -70,9 +71,9 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
     }
 
     @Override
-    public void updateClubMeetUp(ClubMeetUpDTO cmuDTO) {
+    public void updateClubMeetUp(Long meetUpId,ClubMeetUpDTO cmuDTO) {
         //일정 조회
-        ClubMeetUp clubMeetUp = clubMeetUpRepository.findById(cmuDTO.getId())
+        ClubMeetUp clubMeetUp = clubMeetUpRepository.findById(meetUpId)
                 .orElseThrow(()-> new IllegalArgumentException("모임 일정이 없습니다."));
 
         //일정 수정
@@ -82,7 +83,7 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
     }
 
     @Override
-    public void deleteClubMeetUp(Long clubMeetUpId) {
+    public void deleteClubMeetUp(Long leaderId,Long clubMeetUpId) {
         clubMeetUpRepository.deleteById(clubMeetUpId);
     }
 

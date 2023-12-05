@@ -1,9 +1,6 @@
 package com.fiveguys.koguma.service.club;
 
-import com.fiveguys.koguma.data.dto.ClubDTO;
-import com.fiveguys.koguma.data.dto.ClubJoinRequestDTO;
-import com.fiveguys.koguma.data.dto.ClubMemberDTO;
-import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.Club;
 import com.fiveguys.koguma.data.entity.ClubMember;
 import com.fiveguys.koguma.data.entity.ClubMemberJoinRequest;
@@ -11,6 +8,8 @@ import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.club.ClubMemberJoinRequestRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.repository.club.ClubRepository;
+import com.fiveguys.koguma.service.common.CategoryService;
+import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,24 +27,39 @@ public class ClubServiceImpl implements ClubService{
     private final ClubMemberRepository clubMemberRepository;
     private final ClubMemberJoinRequestRepository clubMemberJoinRequestRepository;
     private final MemberService memberService;
+    private final LocationService locationService;
+    private final CategoryService categoryService;
 
 
     @Override
-    public Long addClub(ClubDTO clubDTO, ClubMemberDTO clubMemberDTO) {
+    public Long addClub(CreateClubDTO ccd, Long memberId) {
 
-        //모임 생성 등록
-        ClubDTO savedClubDTO = ClubDTO.fromEntity(clubRepository.save(clubDTO.toEntity()));
+        MemberDTO memberDto = memberService.getMember(memberId);
 
-        //clubMemberDTO에 저장된 Club DTO set
-        clubMemberDTO.setClubDTO(savedClubDTO);
+        LocationDTO lorepo = locationService.getMemberRepLocation(memberId);
 
-        //모임장 권한 부여
-        clubMemberDTO.setMemberRole(true);
+        CategoryDTO category = categoryService.getCategory(ccd.getCategoryId());
+
+
+        Club savedClub = Club.createClub(ccd.getTitle(), ccd.getContent(), ccd.getMaxCapacity(),
+                lorepo.getLatitude(), lorepo.getLatitude(), lorepo.getDong(),
+                category.getName(), category.toEntity());
+
+        Club save = clubRepository.save(savedClub);
+
+        ClubMemberDTO clubMemberDTO = ClubMemberDTO.builder()
+                .memberDTO(memberDto)
+                .clubDTO(ClubDTO.fromEntity(savedClub))
+                .content(ccd.getMemberContent())
+                .nickname(ccd.getNickname())
+                .memberRole(true)
+                .build();
+
 
         //clubMember 추가
         this.addClubMember(clubMemberDTO);
 
-        return savedClubDTO.getId();
+        return savedClub.getId();
     }
 
     @Override
@@ -82,6 +96,13 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    public List<ClubDTO> listClubByCategory(Long categoryId) {
+        return clubRepository.findClubsByCategoryId(categoryId).stream()
+                .map((club) -> ClubDTO.fromEntity(club))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ClubDTO getClub(Long clubId) {
         // 모임 조회
         Club club = clubRepository.findById(clubId)
@@ -104,10 +125,20 @@ public class ClubServiceImpl implements ClubService{
 
 
     @Override
-    public Long addJoinRequestClub(ClubJoinRequestDTO clubJoinRequestDTO) {
+    public Long addJoinRequestClub(ClubJoinRequestDTO cjrDTO, Long memberId) {
 
-        ClubMemberJoinRequest clubMemberJoinRequest = clubJoinRequestDTO.toEntity();
-        //save repo
+        MemberDTO requestMember = memberService.getMember(memberId);
+
+        ClubDTO clubDTO = this.getClub(cjrDTO.getClubDTO().getId());
+
+        ClubMemberJoinRequest clubMemberJoinRequest = ClubMemberJoinRequest.builder()
+                .member(requestMember.toEntity())
+                .club(clubDTO.toEntity())
+                .nickname(cjrDTO.getNickname())
+                .content(cjrDTO.getContent())
+                .activeFlag(true)
+                .build();
+
         clubMemberJoinRequestRepository.save(clubMemberJoinRequest);
 
         return clubMemberJoinRequest.getId();
@@ -164,8 +195,8 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public void deleteJoinRequest(Long cmJoinRequestId) {
-        clubMemberJoinRequestRepository.deleteById(cmJoinRequestId);
+    public void deleteByMemberId(Long requestMemberId) {
+        clubMemberJoinRequestRepository.deleteByMemberId(requestMemberId);
     }
 
 
@@ -205,7 +236,10 @@ public class ClubServiceImpl implements ClubService{
 
     @Override
     public void updateClubMember(ClubMemberDTO clubMemberDTO) {
+        ClubMember clubMember = clubMemberRepository.findById(clubMemberDTO.getId())
+                .orElseThrow(() -> new IllegalArgumentException("모임원 없습니다."));
 
+        clubMember.updateClubMember(clubMemberDTO.getNickname(), clubMemberDTO.getContent());
     }
 
     @Override

@@ -14,4 +14,5 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
     @Query("SELECT c FROM Club c WHERE c.latitude = :latitude AND c.longitude = :longitude")
     List<Club> findClubsByLocation(@Param("latitude") Double latitude, @Param("longitude") Double longitude);
 
+    List<Club> findClubsByCategoryId(Long categoryId);
 }

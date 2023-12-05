@@ -11,4 +11,7 @@ import java.util.List;
 public interface ClubMemberJoinRequestRepository extends JpaRepository<ClubMemberJoinRequest, Long> {
 
     List<ClubMemberJoinRequest> findByClubId(Long clubID);
+
+    void deleteByMemberId(Long requestMemberId);
+
 }

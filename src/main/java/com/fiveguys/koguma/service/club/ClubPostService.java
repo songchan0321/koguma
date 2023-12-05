@@ -15,4 +15,5 @@ public class ClubPostService {
     private final MemberService memberService;
 
 
+
 }
