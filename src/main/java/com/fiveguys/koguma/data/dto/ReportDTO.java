@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class ReportDTO {
-    private Long id;
-    private MemberDTO reporterDTO;
-    private String reportTitle;
-    private String reportContent;
-    private String answerTitle;
-    private String answerContent;
-    private String categoryName;
-    private Long categoryId;
-    private LocalDateTime regDate;
+    public Long id;
+    public String reportTitle;
+    public String reportContent;
+    public String answerTitle;
+    public String answerContent;
+    public String categoryName;
+    public Long categoryId;
+    public LocalDateTime regDate;
+    public Member reporter;
 
 
     public ReportDTO() {
@@ -31,7 +31,6 @@ public class ReportDTO {
     public static ReportDTO fromEntity(Report report) {
         ReportDTO reportDTO = new ReportDTO();
         reportDTO.setId(report.getId());
-        reportDTO.setReporterDTO(MemberDTO.fromEntity(report.getReporter()));
         reportDTO.setReportTitle(report.getReportTitle());
         reportDTO.setReportContent(report.getReportContent());
         reportDTO.setAnswerTitle(report.getAnswerTitle());
@@ -39,6 +38,7 @@ public class ReportDTO {
         reportDTO.setCategoryId(report.getCategoryId());
         reportDTO.setCategoryName(report.getCategoryName());
         reportDTO.setRegDate(report.getRegDate());
+        reportDTO.setReporter(report.getReporter());
 
         return reportDTO;
     }
@@ -46,13 +46,13 @@ public class ReportDTO {
     public Report toEntity() {
         Report report = new Report();
         report.setId(id);
-        report.setReporter(reporterDTO.toEntity());
         report.setReportTitle(reportTitle);
         report.setReportContent(reportContent);
         report.setAnswerTitle(answerTitle);
         report.setAnswerContent(answerContent);
         report.setCategoryId(categoryId);
         report.setCategoryName(categoryName);
+        report.setReporter(reporter);
         return report;
     }
 

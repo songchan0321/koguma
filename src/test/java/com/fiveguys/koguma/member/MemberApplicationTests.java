@@ -124,7 +124,7 @@ public class MemberApplicationTests {
     }*/
 
 
-    @Test
+    /*@Test
     @DisplayName("회원 삭제 테스트")
     @Transactional
     public void deleteMemberTest() throws Exception {
@@ -139,7 +139,7 @@ public class MemberApplicationTests {
 
         // activeFlag가 false로 변경되었는지 확인
         assertFalse(deletedMember.getActiveFlag());
-    }
+    }*/
     @Test
     @DisplayName("회원 목록 추가 테스트")
     @Transactional

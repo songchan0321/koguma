@@ -10,6 +10,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,9 +52,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteMember(MemberDTO memberDTO) {
-        memberDTO.setActiveFlag(false);
-        memberRepository.save(memberDTO.toEntity());
+    public void deleteMember(Long id) {
+        Optional<Member> existingMember = memberRepository.findByIdAndActiveFlag(id, true);
+
+        existingMember.ifPresent(member -> {
+            member.setActiveFlag(false);
+            memberRepository.save(member);
+        });
     }
 
     @Override

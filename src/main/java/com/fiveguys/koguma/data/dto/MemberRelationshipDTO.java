@@ -21,9 +21,8 @@ public class MemberRelationshipDTO  {
     public String content;
     public boolean type;
     public LocalDateTime regDate;
-    private MemberRelationshipType memberRelationshipType;
-    @JsonIgnore
-    private Member sourceMember;
+    public MemberRelationshipType memberRelationshipType;
+    public Member sourceMember;
     public Member targetMember;
     public MemberRelationshipDTO() {
 

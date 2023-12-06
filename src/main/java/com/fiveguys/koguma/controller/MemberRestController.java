@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -68,7 +69,8 @@ public class MemberRestController {
 
     // 회원 삭제
     @PutMapping("/delete/{id}")
-    public void deleteMember(@RequestBody MemberDTO memberDTO) {
+    public ResponseEntity<String> deleteMember(@RequestBody Map<String, Long> requestBody) {
+        Long id = requestBody.get("id");
         /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long authenticatedUserId = // 인증에서 사용자 ID를 추출하는 로직;
 
@@ -78,12 +80,22 @@ public class MemberRestController {
         } else {
             // 권한이 없는 삭제 시도를 처리
         }*/
-        memberService.deleteMember(memberDTO);
+        memberService.deleteMember(id);
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
     }
 
     //회원 정보 가져오기
     @GetMapping("/get/{id}")
     public ResponseEntity<MemberDTO> get(@PathVariable Long id) {
+        MemberDTO existingMember = memberService.getMember(id);
+        if (existingMember == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
+        }
+        return ResponseEntity.ok(existingMember);
+    }
+
+    @GetMapping("/profile/get/{id}")
+    public ResponseEntity<MemberDTO> profile(@PathVariable Long id) {
         MemberDTO existingMember = memberService.getMember(id);
         if (existingMember == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);

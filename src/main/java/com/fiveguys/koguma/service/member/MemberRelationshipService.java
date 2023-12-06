@@ -8,7 +8,7 @@ import java.util.List;
 public interface MemberRelationshipService {
 
     void addBlock(MemberRelationshipDTO memberRelationshipDTO);
-    void deleteBlock(Long sourceMemberId, Long targetMemberId);
+    void deleteBlock(Long sourceMember, Long targetMember);
     List<MemberRelationshipDTO> listBlock(Long sourceMemberId);
     MemberRelationshipDTO getBlock(Long sourceMember);
     void addFollowing(MemberRelationshipDTO memberRelationshipDTO);

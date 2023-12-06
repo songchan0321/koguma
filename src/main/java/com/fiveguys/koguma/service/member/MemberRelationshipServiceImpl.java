@@ -30,17 +30,16 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
     }
 
     @Override
-    public void deleteBlock(Long sourceMemberId, Long targetMemberId) {
+    public void deleteBlock(Long sourceMember, Long targetMember) {
         List<MemberRelationship> blockRelationships = memberRelationshipRepository
-                .findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(sourceMemberId, targetMemberId, MemberRelationshipType.BLOCK);
+                .findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(sourceMember, targetMember, MemberRelationshipType.BLOCK);
 
         blockRelationships.forEach(relationship -> {
-            relationship.setSourceMember(null);
-            relationship.setTargetMember(null);
             relationship.setContent(null);
             relationship.setMemberRelationshipType(null);
-            memberRelationshipRepository.save(relationship);
         });
+
+        memberRelationshipRepository.saveAll(blockRelationships);
     }
 
 

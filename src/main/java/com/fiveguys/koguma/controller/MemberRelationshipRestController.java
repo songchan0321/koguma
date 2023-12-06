@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.ws.Response;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +21,7 @@ import java.util.List;
 public class MemberRelationshipRestController {
     private final MemberRelationshipService memberRelationshipService;
 
-    @PostMapping("/memberRelationship/block/add/{sourceMember}")
+    @PostMapping("/relationship/block/add/{sourceMember}")
     public ResponseEntity<MemberRelationshipDTO> addBlock(@RequestBody MemberRelationshipDTO memberRelationshipDTO) {
         try {
             memberRelationshipService.addBlock(memberRelationshipDTO);
@@ -29,17 +30,37 @@ public class MemberRelationshipRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(memberRelationshipDTO);
         }
     }
+    /*{
+        "sourceMember" : {
+        "id" : 1
+    },
+        "targetMember" : {
+        "id" : 2,
+                "nickname" : "사기꾼"
+    },
+        "content" : "짜증나게 함",
+            "memberRelationshipType" : "BLOCK"
+    }*/
+//http://localhost:8080/relationship/block/add/3
 
 
 
 
     @PutMapping("/relationship/block/delete/{sourceMemberId}/{targetMemberId}")
-    public ResponseEntity<MemberRelationshipDTO> deleteBlock(
-            @PathVariable Long sourceMemberId,
-            @RequestBody Long targetMemberId) {
-        memberRelationshipService.deleteBlock(sourceMemberId, targetMemberId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteBlock(@RequestBody Map<String, Long> requestBody) {
+        Long sourceMember = requestBody.get("sourceMember");
+        Long targetMember = requestBody.get("targetMember");
+
+        // 예외 처리 등 필요한 로직 추가
+        memberRelationshipService.deleteBlock(sourceMember, targetMember);
+
+        return ResponseEntity.ok("차단 삭제 완료");
     }
+
+    //{
+    //  "sourceMember": 1,
+    //  "targetMember": 3
+    //}
 
     //차단 정보 조회
     @GetMapping("/relationship/block/get/{sourceMember}")

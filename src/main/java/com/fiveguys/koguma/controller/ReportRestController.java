@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.controller;
 
 import com.fiveguys.koguma.data.dto.ReportDTO;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.service.common.ReportService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,18 +14,35 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin("*")
+@RequestMapping("/report")
 public class ReportRestController {
     private final ReportService reportService;
 
-    /*@PostMapping("/report/add")
-    public void addReport(@RequestBody ReportDTO reportDTO){
-        reportService.addReport(reportDTO);
+    @PostMapping("/add/{reporter}")
+    public ResponseEntity<ReportDTO> addReport(@RequestBody ReportDTO reportDTO){
+        try{
+            reportService.addReport(reportDTO);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(reportDTO);
+        }
     }
-    @DeleteMapping("/report/delete")
-    public void deleteReport(@RequestBody Long id){
+
+    //{
+    //    "reporter" : {
+    //        "id" : "1"
+    //    },
+    //    "reportTitle" : "사기를 당했어요.",
+    //    "reportContent" : "중고 거래를 하다 사기를 당했어요. 가해자를 처벌해 주세요.",
+    //    "categoryId" : "51",
+    //    "categoryName" : "회원"
+    //}
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteReport(@PathVariable Long id) {
         reportService.deleteReport(id);
-    }*/
-    @GetMapping("/report/get/{id}")
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/get/{id}")
     public ResponseEntity<ReportDTO> getReport(@PathVariable Long id){
         ReportDTO existingReport = reportService.getReport(id);
         if (existingReport == null){
@@ -32,12 +50,12 @@ public class ReportRestController {
         }
         return ResponseEntity.ok(existingReport);
     }
-    @GetMapping("/report/list/{reporterId}")
+    @GetMapping("/list/{reporterId}")
     public List<ReportDTO> ListReport(@PathVariable Long reporterId){
         return reportService.listReport(reporterId);
     }
 
-    @GetMapping("/report/listAll")
+    @GetMapping("/listAll")
     public List<ReportDTO> ListAllReport() {
         return reportService.listAllReport();
     }
