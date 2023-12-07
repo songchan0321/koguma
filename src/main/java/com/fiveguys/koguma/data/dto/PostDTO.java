@@ -1,13 +1,10 @@
 package com.fiveguys.koguma.data.dto;
 
-import com.fiveguys.koguma.data.entity.Category;
-import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Post;
 import lombok.*;
 
-import java.nio.file.LinkOption;
-
 @Data
+@NoArgsConstructor
 public class PostDTO {
     private Long id;
     private MemberDTO memberDTO;
@@ -42,8 +39,7 @@ public class PostDTO {
 
     }
 
-    public PostDTO() {
-
+    public PostDTO(Post post) {
     }
 
 

@@ -18,6 +18,8 @@ public interface CommentService {
 
     List<Comment> listComment(PostDTO postDTO);
 
+    List<Comment> listReply(PostDTO postDTO);
+
     List<Comment> listCommentByMember(MemberDTO memberDTO);
 
     CommentDTO getComment(Long id);
