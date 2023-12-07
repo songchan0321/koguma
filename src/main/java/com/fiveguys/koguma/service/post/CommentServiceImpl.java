@@ -14,10 +14,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,24 +24,25 @@ public class CommentServiceImpl implements CommentService {
 
 
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
-    private  final MemberRepository memberRepository;
 
 
 
     @Override
     public void addComment(CommentDTO commentDTO) {
 
-        Long parentId = commentDTO.getParentDTO().getId();
 
         //부모가 있는 답글
-        if(parentId != null) {
+        if(commentDTO.getParentDTO() != null && commentDTO.getParentDTO().getId() != null) {
             //부모 유효성 체크
-            Comment parent = findVerifiedComment(parentId);
-            //부모 댓글 설정
-            commentDTO.updateParent(parent);
+            Comment parent = findVerifiedComment(commentDTO.getParentDTO().getId());
+
+            Comment saved = commentRepository.save(commentDTO.toEntity());
+            saved.updateParent(parent);
+
+        }else {
+            commentRepository.save(commentDTO.toEntity());
         }
-        commentRepository.save(commentDTO.toEntity());
+
     }
 
     private Comment findVerifiedComment(Long parentId) {
@@ -94,38 +93,31 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(existingComment);
     }
 
-    private List<Comment> buildCommentTree(List<Comment> comments){
-
-        Map<Long, Comment> commentMap = new HashMap<>();
-
-        //댓글, id를 키로 삼는 맵으로 변환
-        for (Comment comment : comments){
-            commentMap.put(comment.getId(), comment);
-        }
-
-        //최종적으로 변환할 결과 리스트
-        List<Comment> result = new ArrayList<>();
-
-        //댓글을 부모-자식 관계에 맞게 구성
-        for (Comment comment : comments){
-            if (comment.getParent() != null){
-                Comment parent = commentMap.get(comment.getParent().getId());
-                if(parent != null){
-                    parent.addChild(comment);
-                }
-            }else{
-                result.add(comment);
-            }
-        }
-        return result;
-    }
 
     @Override
     public List<Comment> listComment(PostDTO postDTO) {
 
         List<Comment> allComments = commentRepository.findAllByPostId(postDTO.getId());
-        return buildCommentTree(allComments);
 
+        List<Comment> comments = allComments.stream()
+                .filter(comment -> comment.getParent() == null)
+                .collect(Collectors.toList());
+
+        return comments;
+
+    }
+
+    @Override
+    public List<Comment> listReply(PostDTO postDTO) {
+
+        List<Comment> allComments = commentRepository.findAllByPostId(postDTO.getId());
+
+        List<Comment> reply = allComments.stream()
+                .filter(comment -> comment.getParent() != null)
+                .collect(Collectors.toList());
+
+
+        return reply;
     }
 
     @Override

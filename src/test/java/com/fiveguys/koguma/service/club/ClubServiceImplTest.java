@@ -53,6 +53,8 @@ class ClubServiceImplTest {
 
 
 
+
+
     //@Test
 //    public void 모임_생성() throws Exception{
 //
@@ -91,29 +93,29 @@ class ClubServiceImplTest {
 //        Assertions.assertThat(findClub.getId()).isEqualTo(clubId);
 //    }
 //
-//    //@Test
-//    public void 모임_생성_더미() throws Exception{
-//        Category category = categoryRepository.findById(37L).get();
-//
-//
-//        for(int i = 4;  i < 300; i++){
-//            Club club = Club.builder()
-//                    .title("모임test" + i)
-//                    .content("모임소개" + i)
-//                    .dong("모임행정동" + i)
-//                    .longitude(37.123456)
-//                    .latitude(126.789012)
-//                    .maxCapacity(100)
-//                    .category(category)
-//                    .categoryName(category.getCategoryName())
-//                    .joinActiveFlag(true)
-//                    .activeFlag(true)
-//                    .build();
-//
-//            clubRepository.save(club);
-//        }
-//    }
-//
+  // @Test
+    public void 모임_생성_더미() throws Exception{
+        Category category = categoryRepository.findById(29L).get();
+
+
+        for(int i = 4;  i < 300; i++){
+            Club club = Club.builder()
+                    .title("모임test" + i)
+                    .content("모임소개" + i)
+                    .dong("모임행정동" + i)
+                    .longitude(37.123456)
+                    .latitude(126.789012)
+                    .maxCapacity(100)
+                    .category(category)
+                    .categoryName(category.getCategoryName())
+                    .joinActiveFlag(true)
+                    .activeFlag(true)
+                    .build();
+
+            clubRepository.save(club);
+        }
+    }
+
 //
 //    //@Test
 //    public void 모임_가입신청() throws Exception{
@@ -349,16 +351,32 @@ class ClubServiceImplTest {
 //
 //
 //
-//    //@Test
-//    public void 카테고리_테스트() throws Exception{
-//
-//        List<CategoryDTO> categoryDTOS = categoryService.listCategory(CategoryType.POST);
-//
-//        for (CategoryDTO categoryDTO : categoryDTOS) {
-//            System.out.println("categoryDTO = " + categoryDTO);
-//        }
-//
-//    }
+    //@Test
+    public void 카테고리_테스트() throws Exception{
 
+        List<CategoryDTO> categoryDTOS = categoryService.listCategory(CategoryType.POST);
 
+        for (CategoryDTO categoryDTO : categoryDTOS) {
+            System.out.println("categoryDTO = " + categoryDTO);
+        }
+
+    }
+
+    //@Test
+    public void 카테고리_생성() throws Exception{
+        //given
+
+        CategoryDTO categoryDTO = CategoryDTO.builder()
+                .categoryType(CategoryType.CLUB)
+                .name("운동")
+                .build();
+
+        Category entity = categoryDTO.toEntity();
+
+        categoryRepository.save(entity);
+
+        //when
+
+        //then
+    }
 }

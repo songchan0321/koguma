@@ -59,7 +59,7 @@ public class CommentDTO {
 
     //부모가 있을 경우 자식 댓글에서 부모를 지정
     public void updateParent(Comment parent) {
-        this.parentDTO = parentDTO;
+        this.parentDTO = CommentDTO.fromEntity(parent);
         parent.getChildren().add(this.toEntity());
     }
 }

@@ -8,18 +8,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class PaymentHistoryDTO {
-    private Long id;
+    private UUID id;
     private PaymentHistoryType type;
     private Integer price;
     private String info;
     private MemberDTO memberDTO;
     private LocalDateTime regDate;
     @Builder
-    public PaymentHistoryDTO(PaymentHistoryType type, Integer price, String info, MemberDTO memberDTO) {
+    public PaymentHistoryDTO(UUID id, PaymentHistoryType type, Integer price, String info, MemberDTO memberDTO) {
+        this.id = id == null ? UUID.randomUUID() : id;
         this.type = type;
         this.price = price;
         this.info = info;

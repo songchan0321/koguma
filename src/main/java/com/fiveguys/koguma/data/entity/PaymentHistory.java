@@ -3,6 +3,7 @@ package com.fiveguys.koguma.data.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "payment_history")
@@ -12,8 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class PaymentHistory extends BaseTime {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id", columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @Column(name = "payment_type", nullable = false)
     @Enumerated(EnumType.STRING)
