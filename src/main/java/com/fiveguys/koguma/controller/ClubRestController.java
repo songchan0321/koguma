@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/club")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class ClubRestController {
 
     private final ClubService clubService;
@@ -25,7 +25,7 @@ public class ClubRestController {
     private final LocationService locationService;
     private final MemberService memberService;
 
-    @GetMapping(path = "/new")
+    @GetMapping(path = "/add")
     public ResponseEntity<?> addClub(){
 
         List<CategoryDTO> categoryDTOS = categoryService.listCategory(CategoryType.CLUB);
@@ -33,19 +33,28 @@ public class ClubRestController {
         return ResponseEntity.ok(categoryDTOS);
     }
 
-    @PostMapping(path = "/new/{memberId}")
+    @PostMapping(path = "/add")
     public ResponseEntity<Long> addClub(@RequestBody CreateClubDTO createClubDTO,
-                                     @PathVariable Long memberId){
-
-        System.out.println("createClubDTO = " + createClubDTO);
-
+                                     @RequestBody Long memberId){
         return ResponseEntity.ok(clubService.addClub(createClubDTO, memberId));
     }
 
-    //// TODO: 2023-12-04, 위도 및 경도 기반 리스트 location 담당자에게 문의 필요
-    @PostMapping(path = "/list")
-    public ResponseEntity<?> listClub(){
-        return null;
+    //// TODO: 위도 및 경도 기반 리스트 location 담당자에게 문의 필요, UI 시 작업 진행
+    @GetMapping(path = "/list/{memberId}")
+    public ResponseEntity<List<ClubDTO>> listClub(@PathVariable Long memberId){
+
+        LocationDTO repLo = locationService.getMemberRepLocation(memberId);
+
+        if (repLo.getLatitude() != null){
+            List<ClubDTO> clubDTOS = clubService.listClub(repLo.getLatitude(), repLo.getLongitude());
+            return ResponseEntity.ok(clubDTOS);
+        }
+        return ResponseEntity.ok(clubService.listClub());
+    }
+
+    @GetMapping(path = "/list")
+    public ResponseEntity<List<ClubDTO>> listClub(){
+        return ResponseEntity.ok(clubService.listClub());
     }
 
     @GetMapping(path = "/list/category/{categoryId}")
@@ -108,8 +117,8 @@ public class ClubRestController {
     }
 
     //todo: memberDTO 다 없애야할듯
-    @GetMapping("/member")
-    public ResponseEntity<ClubMemberDTO> getClubMember(@RequestParam Long clubMemberId){
+    @GetMapping("/member/{clubMemberId}")
+    public ResponseEntity<ClubMemberDTO> getClubMember(@PathVariable Long clubMemberId){
         return ResponseEntity.ok(clubService.getClubMember(clubMemberId));
     }
 
@@ -180,6 +189,15 @@ public class ClubRestController {
         clubMeetUpService.cancel(clubMeetUpId, clubMemberId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/category/{type}")
+    public ResponseEntity<?> listCategory(@PathVariable String type){
+
+        CategoryType categoryType = CategoryType.valueOf(type);
+
+        List<CategoryDTO> categoryDTOS = categoryService.listCategory(categoryType);
+        return ResponseEntity.ok(categoryDTOS);
     }
 
 

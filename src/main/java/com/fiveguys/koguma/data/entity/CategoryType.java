@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public enum CategoryType {
 
-    PRODUCT("상품"),
-    POST("동네생활"),
-    CLUB("모임");
+    PRODUCT("PRODUCT"),
+    POST("POST"),
+    CLUB("CLUB");
 
     private final String name;
 
