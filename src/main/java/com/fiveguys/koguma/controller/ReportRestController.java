@@ -18,6 +18,7 @@ import java.util.List;
 public class ReportRestController {
     private final ReportService reportService;
 
+
     @PostMapping("/add/{reporter}")
     public ResponseEntity<ReportDTO> addReport(@RequestBody ReportDTO reportDTO){
         try{
