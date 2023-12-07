@@ -12,14 +12,12 @@ import com.fiveguys.koguma.service.common.CategoryService;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.post.PostService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,11 +50,12 @@ public class PostApplicationTests {
 
     @Autowired
     CategoryRepository categoryRepository;
+    private String keyword;
 
 
     @DisplayName("게시글 생성")
     @Test
-    public void addPostTest() throws Exception {
+    public void testAddPost() throws Exception {
 
         Member writer = memberService.getMember(4L).toEntity();
 
@@ -84,9 +83,14 @@ public class PostApplicationTests {
 
     @DisplayName("게시글 전체 리스트")
     @Test
-    public void listPostTest() throws Exception {
+    public void testListPost() throws Exception {
+
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+
         //when
-        Page<Post> postPage = postService.listPost();
+        Page<Post> postPage = postService.listPost(pageRequest);
 
         //Then [페이징에 대한 검증]
         assertEquals(0, postPage.getNumber()); //현재 페이지 번호
@@ -95,13 +99,15 @@ public class PostApplicationTests {
 
     @DisplayName("회원 작성 게시글 리스트")
     @Test
-    public void listPostByMemberTest() throws Exception {
+    public void testListPostByMember() throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         //given
         Member writer = memberService.getMember(2L).toEntity();
 
         //when
-        Page<Post> postPage = postService.listPostByMember(MemberDTO.fromEntity(writer));
+        Page<Post> postPage = postService.listPostByMember(MemberDTO.fromEntity(writer), pageRequest);
 
         //then
         assertEquals(0, postPage.getNumber()); //현재 페이지 번호
@@ -166,7 +172,7 @@ public class PostApplicationTests {
 
     @DisplayName("게시글 상세조회")
     @Test
-    public void getPostTest() throws Exception {
+    public void testGetPost() throws Exception {
 
 
         //given
@@ -184,7 +190,7 @@ public class PostApplicationTests {
     @DisplayName("조회수 증감 여부")
     @Test
     @Rollback(value = false)
-    public void increaseViewsTest() throws Exception {
+    public void testIncreaseViews() throws Exception {
 
         //given
         Post post = createTestPost();
@@ -233,17 +239,17 @@ public class PostApplicationTests {
 
     @DisplayName("게시글 조회수 정렬")
     @Test
-    public void listPostByViews() throws Exception {
+    public void testListPostByViews() throws Exception {
 
+        PageRequest pageRequest = PageRequest.of(0, 10);
         //given
         //테스트에 필요한 11개의 Post 객체 생성 및 저장
         for (int i = 0; i < 11; i++) {
             createTestPost();
         }
 
-
         //when
-        Page<Post> postPage = postService.listPostByViews(new PostDTO());
+        Page<Post> postPage = postService.listPostByViews(pageRequest);
         System.out.println("postPage = " + postPage);
 
         //then
@@ -271,6 +277,11 @@ public class PostApplicationTests {
 
         Category category = categoryRepository.findById(50L).get();
 
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        String keyword = "con";
+
+
         //given
         Post postSearch = Post.builder()
                 .member(writer)
@@ -287,7 +298,7 @@ public class PostApplicationTests {
                 .build();
 
         //when
-        Page<Post> searchResult = postService.listSearchKeyword(PostDTO.fromEntity(postSearch));
+        Page<Post> searchResult = postService.listSearchKeyword(keyword, pageRequest);
 
         //then
         assertNotNull(searchResult);
@@ -304,7 +315,7 @@ public class PostApplicationTests {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        Page<Post> postPage = postService.listCategoryBySearch(CategoryDTO.fromDTO(category));
+        Page<Post> postPage = postService.listCategoryBySearch(CategoryDTO.fromDTO(category), pageRequest);
 
         //then
         assertNotNull(postPage);
