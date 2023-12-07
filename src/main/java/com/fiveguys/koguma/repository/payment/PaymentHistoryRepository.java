@@ -8,8 +8,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long>{
+public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, UUID>{
 //    Page<PaymentHistory> findAllByMember(Member member, Specification<PaymentHistory> spec, Pageable pageable);
     Page<PaymentHistory> findAll(Specification<PaymentHistory> spec, Pageable pageable);
 }

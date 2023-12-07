@@ -1,8 +1,10 @@
 package com.fiveguys.koguma.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fiveguys.koguma.data.dto.ChatroomDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PaymentHistoryDTO;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.PaymentHistoryType;
 import com.fiveguys.koguma.service.chat.ChatService;
 import com.fiveguys.koguma.service.member.MemberService;
@@ -11,9 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/payment")
@@ -85,18 +89,18 @@ public class PaymentHistoryRestController {
         return ResponseEntity.ok().body(paymentHistoryDTOList);
     }
 
-    @RequestMapping(value = "/charge", method = RequestMethod.POST)
-    public ResponseEntity chargePoint(
-            @RequestParam Long memberId,
-            @RequestBody Map<String, String> json
-    ) throws Exception {
-        MemberDTO memberDTO = memberService.getMember(memberId);
-        int point = Integer.parseInt(json.get("point"));
-        if(point < 0)
-            throw new Exception("충전은 0원 초과만 가능합니다.");
-        paymentService.chargePoint(memberDTO, point);
-        return ResponseEntity.ok().build();
-    }
+//    @RequestMapping(value = "/charge", method = RequestMethod.POST)
+//    public ResponseEntity chargePoint(
+//            @RequestParam Long memberId,
+//            @RequestBody Map<String, String> json
+//    ) throws Exception {
+//        MemberDTO memberDTO = memberService.getMember(memberId);
+//        int point = Integer.parseInt(json.get("point"));
+//        if(point < 0)
+//            throw new Exception("충전은 0원 초과만 가능합니다.");
+//        paymentService.chargePoint(memberDTO, point);
+//        return ResponseEntity.ok().build();
+//    }
 
     @RequestMapping(value = "/transfer", method = RequestMethod.POST)
     public ResponseEntity transferPoint(
@@ -144,8 +148,8 @@ public class PaymentHistoryRestController {
             @RequestBody Map<String, String> json
     ) throws Exception {
         MemberDTO memberDTO = memberService.getMember(memberId);
-        long paymentHistoryId = Long.parseLong(json.get("paymentHistoryId"));
-        PaymentHistoryDTO paymentHistoryDTO = paymentService.getPaymentHistory(paymentHistoryId);
+        String paymentHistoryId = json.get("paymentHistoryId");
+        PaymentHistoryDTO paymentHistoryDTO = paymentService.getPaymentHistory(UUID.fromString(paymentHistoryId));
         if(!paymentHistoryDTO.getType().equals(PaymentHistoryType.REFUND_REQUEST)) {
             throw new Exception("허용되지 않은 접근입니다.");
         }
@@ -159,12 +163,44 @@ public class PaymentHistoryRestController {
             @RequestBody Map<String, String> json
     ) throws Exception {
         MemberDTO memberDTO = memberService.getMember(memberId);
-        long paymentHistoryId = Long.parseLong(json.get("paymentHistoryId"));
-        PaymentHistoryDTO paymentHistoryDTO = paymentService.getPaymentHistory(paymentHistoryId);
+        String paymentHistoryId = json.get("paymentHistoryId");
+        PaymentHistoryDTO paymentHistoryDTO = paymentService.getPaymentHistory(UUID.fromString(paymentHistoryId));
         if(!paymentHistoryDTO.getType().equals(PaymentHistoryType.REFUND_REQUEST)) {
             throw new Exception("허용되지 않은 접근입니다.");
         }
         paymentService.deletePaymentHistory(paymentHistoryDTO);
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/check/name", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> checkName(
+            @RequestBody Map<String, String> json
+    ) throws JsonProcessingException {
+        String name = json.get("name");
+        String account = json.get("account");
+        String bankCode = json.get("code");
+        try {
+            Map<String, Object> response = Map.of("result", paymentService.checkPortOneAccountName(name, account, bankCode));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("result", false));
+        }
+    }
+
+    @RequestMapping(value = "/check/charge", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> checkCharge(
+            @RequestParam Long memberId,
+            @RequestBody Map<String, String> json
+    ) {
+        String impUid = json.get("imp_uid");
+        String merchantUid = json.get("merchant_uid");
+        MemberDTO memberDTO = memberService.getMember(memberId);
+        try {
+            Map<String, Object> response = Map.of("result", paymentService.checkPortOneChargeSuccess(memberDTO, impUid, merchantUid));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("result", false));
+        }
     }
 }
