@@ -13,6 +13,8 @@ public interface ClubService {
 
     public List<ClubDTO> listClub(Double latitude, Double longitude);
 
+    public List<ClubDTO> listClub();
+
     public List<ClubDTO> listMyClub(Long memberId);
 
     public List<ClubDTO> listClubByCategory(Long categoryId);

@@ -77,6 +77,15 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    public List<ClubDTO> listClub() {
+
+        List<Club> all = clubRepository.findAll();
+        return all.stream()
+                .map((c)-> ClubDTO.fromEntity(c))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ClubDTO> listMyClub(Long memberId) {
 
         // 내 모임 리스트 조회
