@@ -32,6 +32,7 @@ public class Comment extends BaseTime{
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
+   // @Builder.Default
     @OneToMany(mappedBy = "parent")
     private List<Comment> children = new ArrayList<>();
 
@@ -40,7 +41,6 @@ public class Comment extends BaseTime{
 
     @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag;
-
 
     @Builder
     public Comment(Long id, Post post, Member member,
@@ -63,8 +63,11 @@ public class Comment extends BaseTime{
                 .build();
     }
 
-    public void setContent(String content) {
+    public void updateParent(Comment parent){
+        this.parent = parent;
+    }
 
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -72,8 +75,4 @@ public class Comment extends BaseTime{
         this.activeFlag = activeFlag;
     }
 
-    //댓글 리스트 트리구조
-    public void addChild(Comment child) {
-        this.children.add(child);
-    }
 }

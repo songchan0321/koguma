@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberRelationship;
 import com.fiveguys.koguma.data.entity.MemberRelationshipType;
@@ -16,13 +17,13 @@ import java.time.LocalDateTime;
 public class MemberRelationshipDTO  {
 
     public Long id;
-    public Member sourceMember;
-    public Member targetMember;
+
     public String content;
     public boolean type;
     public LocalDateTime regDate;
-    private MemberRelationshipType memberRelationshipType;
-
+    public MemberRelationshipType memberRelationshipType;
+    public Member sourceMember;
+    public Member targetMember;
     public MemberRelationshipDTO() {
 
     }

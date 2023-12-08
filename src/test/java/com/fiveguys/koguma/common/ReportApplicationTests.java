@@ -4,6 +4,7 @@ import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ReportDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Report;
+import com.fiveguys.koguma.repository.common.ReportRepository;
 import com.fiveguys.koguma.service.common.ReportService;
 import com.fiveguys.koguma.service.member.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +28,9 @@ public class ReportApplicationTests {
     private ReportService reportService;
 
     @Autowired
+    private ReportRepository reportRepository;
+
+    @Autowired
     private MemberService memberService;
 
     @Test
@@ -33,7 +38,7 @@ public class ReportApplicationTests {
     @Transactional
     public void addReportTest() throws Exception {
 
-        Member reporter = memberService.getMember(2L).toEntity();
+        Member reporter = memberService.getMember(5L).toEntity();
 
         Report report = Report.builder()
                 .reporter(reporter)
@@ -47,12 +52,12 @@ public class ReportApplicationTests {
         reportService.addReport(ReportDTO.fromEntity(report));
     }
 
-    /*@Test
-    @DisplayName("신고 삭제 테스트")
+    @Test
+    @DisplayName("신고 추가 및 삭제 테스트")
     @Transactional
-    public void deleteReportTest() {
+    public void addAndDeleteReportTest() throws Exception {
         // Given
-        Member reporter = memberService.getMember(2L).toEntity();
+        Member reporter = memberService.getMember(3L).toEntity();
 
         Report report = Report.builder()
                 .reporter(reporter)
@@ -65,21 +70,15 @@ public class ReportApplicationTests {
                 .build();
         reportService.addReport(ReportDTO.fromEntity(report));
 
-        // When
-        reportService.deleteReport(report.getId());
-
-        // Then
-        assertThrows(NoSuchElementException.class, () -> reportService.getReport(report.getId()));
-
-        // Additional verification to check if reporterId is null
-        Report deletedReport = reportService.getReport(report.getId()).toEntity();
-        assertNull(deletedReport.getReporter(), "Reporter ID should be null after deletion");
-    }*/
+        reportService.deleteReport(3L);
+        Optional<Report> deletedReportOptional = reportRepository.findById(3L);
+        assertFalse(deletedReportOptional.isPresent(), "Report should be deleted");
+    }
     @Test
     @DisplayName("신고 상세 조회 테스트")
     @Transactional
     public void getReportTest(){
-        System.out.println((reportService.getReport(12L).toString()));
+        reportService.getReport(13L);
     }
 
     @Test

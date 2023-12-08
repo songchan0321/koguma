@@ -72,6 +72,7 @@ public class MemberRelationshipApplicationTests {
                 .memberRelationshipType(MemberRelationshipType.BLOCK)
                 .build();
         memberRelationshipService.addBlock(MemberRelationshipDTO.fromEntity(memberRelationship));
+
     }
 
     @Test

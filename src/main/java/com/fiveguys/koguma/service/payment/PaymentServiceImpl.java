@@ -1,5 +1,9 @@
 package com.fiveguys.koguma.service.payment;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.ChatroomDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
@@ -11,13 +15,13 @@ import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,8 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService{
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final MemberService memberService;
+    private final ObjectMapper objectMapper;
+    private final String API_URL = "https://api.iamport.kr/";
 
     @Override
     public void addPayment(MemberDTO memberDTO, String account, String bank, String password) {
@@ -46,8 +52,14 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info) {
+    public boolean existPayment(MemberDTO memberDTO) {
+        return memberDTO.getPaymentBalance() != null;
+    }
+
+    @Override
+    public PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, UUID id, PaymentHistoryType type, Integer point, String info) {
         PaymentHistoryDTO paymentHistoryDTO = PaymentHistoryDTO.builder()
+                .id(id)
                 .type(type)
                 .price(point)
                 .info(info)
@@ -57,6 +69,10 @@ public class PaymentServiceImpl implements PaymentService{
         return PaymentHistoryDTO.fromEntity(paymentHistoryRepository.save(paymentHistory));
     }
 
+    @Override
+    public PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info) {
+        return this.addPaymentHistory(memberDTO, null, type, point, info);
+    }
     @Override
     public void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point) {
         senderDTO.setPaymentBalance(senderDTO.getPaymentBalance() - point);
@@ -68,10 +84,10 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public PaymentHistoryDTO chargePoint(MemberDTO memberDTO, Integer point) {
+    public PaymentHistoryDTO chargePoint(MemberDTO memberDTO, UUID id, Integer point) {
         memberDTO.setPaymentBalance(memberDTO.getPaymentBalance() + point);
         memberService.updateMember(memberDTO);
-        return this.addPaymentHistory(memberDTO, PaymentHistoryType.CHARGE, point, "카카오 페이");
+        return this.addPaymentHistory(memberDTO, id, PaymentHistoryType.CHARGE, point, "카카오 페이");
     }
 
     @Override
@@ -101,7 +117,7 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public PaymentHistoryDTO getPaymentHistory(Long id) {
+    public PaymentHistoryDTO getPaymentHistory(UUID id) {
         PaymentHistoryDTO paymentHistoryDTO = PaymentHistoryDTO.fromEntity(paymentHistoryRepository.findById(id).orElseThrow());
         return paymentHistoryDTO;
     }
@@ -114,12 +130,90 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, PaymentHistoryType type) {
-        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(memberDTO, type), pageable).toList();
+    public List<PaymentHistoryDTO> listPaymentHistory(MemberDTO memberDTO, Pageable pageable, String type) {
+        return paymentHistoryRepository.findAll(PaymentHistorySpecifications.hasType(memberDTO, type), pageable).map(PaymentHistoryDTO::fromEntity).toList();
     }
 
     @Override
-    public List<PaymentHistory> listPaymentHistory(MemberDTO memberDTO, Pageable pageable) {
+    public List<PaymentHistoryDTO> listPaymentHistory(MemberDTO memberDTO, Pageable pageable) {
         return this.listPaymentHistory(memberDTO, pageable, null);
+    }
+
+    @Override
+    public String getPortOneToken() throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> json =  Map.of("imp_key", "5015733552163318", "imp_secret", "akVKvDqSOAdVrPTMXz7agCJCyYXu0rI8g29OyirRIUOZ47bxQfXsv631sVyS6Nane0cDWCqmuydQIu8M");
+        String requestBody = objectMapper.writeValueAsString(json);
+        // HttpEntity를 사용하여 바디에 데이터를 담음
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        // POST 요청 보내기
+        ResponseEntity<String> response = restTemplate.postForEntity(API_URL +"users/getToken", requestEntity, String.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Error: " + response.getStatusCode());
+        }
+        String responseBody = response.getBody();
+        JsonNode rootNode = objectMapper.readTree(responseBody);
+
+        JsonNode accessTokenNode = rootNode.path("response").path("access_token");
+        String accessToken = accessTokenNode.asText();
+        return accessToken;
+    }
+
+    @Override
+    public String getPortOneAccountName(String accessToken, String account, String code) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(API_URL +"vbanks/holder?bank_code=" + code + "&bank_num=" + account, HttpMethod.GET, requestEntity ,String.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Error: " + response.getStatusCode());
+        }
+        String responseBody = response.getBody();
+        JsonNode rootNode = objectMapper.readTree(responseBody);
+
+        JsonNode accessTokenNode = rootNode.path("response").path("bank_holder");
+        String name = accessTokenNode.asText();
+        return name;
+    }
+
+    @Override
+    public boolean checkPortOneAccountName(String name, String account, String code) throws JsonProcessingException {
+        String accessToken = this.getPortOneToken();
+        return name.equals(this.getPortOneAccountName(accessToken, account, code));
+    }
+
+    @Override
+    public boolean checkPortOneChargeSuccess(MemberDTO memberDTO, String impUid, String merchantUid) throws Exception {
+        String accessToken = this.getPortOneToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(API_URL +"payments/" + impUid, HttpMethod.GET, requestEntity ,String.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new Exception("결제 오류");
+        }
+        String responseBody = response.getBody();
+        JsonNode rootNode = objectMapper.readTree(responseBody);
+        JsonNode amountNode = rootNode.path("response").path("amount");
+        JsonNode merchantUidNode = rootNode.path("response").path("merchant_uid");
+        JsonNode buyerNameNode = rootNode.path("response").path("buyer_name");
+        if(
+                paymentHistoryRepository.existsById(UUID.fromString(merchantUid))
+                || !merchantUidNode.asText().equals(merchantUid)
+                || !buyerNameNode.asText().equals(memberDTO.getNickname())
+        ) {
+            throw new Exception("비정상적인 접근");
+        }
+        this.chargePoint(memberDTO, UUID.fromString(merchantUid), Integer.parseInt(amountNode.asText()));
+        return true;
     }
 }

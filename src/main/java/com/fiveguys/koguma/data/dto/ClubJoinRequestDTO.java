@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class ClubJoinRequestDTO {
 
     private Long id;
-    private MemberDTO memberDTO;
     private ClubDTO clubDTO;
     private String nickname;
     private String content;
@@ -20,10 +19,9 @@ public class ClubJoinRequestDTO {
     private LocalDateTime regDate;
 
     @Builder
-    public ClubJoinRequestDTO(Long id, MemberDTO memberDTO, ClubDTO clubDTO, String nickname,
+    public ClubJoinRequestDTO(Long id,ClubDTO clubDTO, String nickname,
                               String content, Boolean activeFlag, LocalDateTime regDate){
         this.id = id;
-        this.memberDTO = memberDTO;
         this.clubDTO = clubDTO;
         this.nickname = nickname;
         this.content = content;
@@ -33,7 +31,6 @@ public class ClubJoinRequestDTO {
 
     public ClubJoinRequestDTO(ClubMemberJoinRequest clubMemberJoinRequest){
         this.id = clubMemberJoinRequest.getId();
-        this.memberDTO = MemberDTO.fromEntity(clubMemberJoinRequest.getMember());
         this.clubDTO = ClubDTO.fromEntity(clubMemberJoinRequest.getClub());
         this.nickname = clubMemberJoinRequest.getNickname();
         this.content = clubMemberJoinRequest.getContent();
@@ -44,7 +41,6 @@ public class ClubJoinRequestDTO {
     public ClubMemberJoinRequest toEntity(){
         return ClubMemberJoinRequest.builder()
                 .id(this.id)
-                .member(memberDTO.toEntity())
                 .club(clubDTO.toEntity())
                 .nickname(this.nickname)
                 .content(this.content)
@@ -55,7 +51,6 @@ public class ClubJoinRequestDTO {
     public static ClubJoinRequestDTO fromEntity(ClubMemberJoinRequest entity){
         return ClubJoinRequestDTO.builder()
                 .id(entity.getId())
-                .memberDTO(MemberDTO.fromEntity(entity.getMember()))
                 .clubDTO(ClubDTO.fromEntity(entity.getClub()))
                 .nickname(entity.getNickname())
                 .content(entity.getContent())

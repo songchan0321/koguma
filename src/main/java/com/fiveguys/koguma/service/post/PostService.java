@@ -5,14 +5,16 @@ import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Post;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface PostService {
 
-    Page<Post> listPost();
+    Page<Post> listPost(PageRequest pageRequest);
 
-    Page<Post> listPostByMember(MemberDTO memberDTO);
+    Page<Post> listPostByMember(MemberDTO memberDTO, PageRequest pageRequest);
 
     void addPost(PostDTO postDTO);
 
@@ -22,15 +24,15 @@ public interface PostService {
 
     void deletePost(PostDTO postDTO);
 
-    Page<Post> listPostByViews(PostDTO postDTO);
+    Page<Post> listPostByViews(Pageable pageRequest);
 
     List<CategoryDTO>  listCategoryForSelect();
 
-    Page<Post> listCategoryBySearch (CategoryDTO categoryDTO);
+    Page<Post> listCategoryBySearch (CategoryDTO categoryDTO, PageRequest pageRequest);
 
 
 
-    Page<Post> listSearchKeyword(PostDTO postDTO);
+    Page<Post> listSearchKeyword(String keyword, PageRequest pageRequest);
 
 
     //조회수 증가 메서드

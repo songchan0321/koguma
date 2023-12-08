@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @Table(name = "clubs")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Club extends BaseTime{
 
     @Id
@@ -73,6 +75,26 @@ public class Club extends BaseTime{
             this.title = clubDTO.getTitle();
             this.content = clubDTO.getContent();
             this.maxCapacity = clubDTO.getMaxCapacity();
+            this.category = clubDTO.getCategoryDTO().toEntity();
+    }
+
+    public static Club createClub(String title, String content, Integer maxCapacity,
+                                  Double latitude, Double longitude, String dong,
+                                  String categoryName, Category category){
+
+            return Club.builder()
+                    .title(title)
+                    .content(content)
+                    .maxCapacity(maxCapacity)
+                    .latitude(latitude)
+                    .longitude(longitude)
+                    .dong(dong)
+                    .joinActiveFlag(true)
+                    .activeFlag(true)
+                    .categoryName(categoryName)
+                    .category(category)
+                    .build();
+
     }
 
 

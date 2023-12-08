@@ -13,9 +13,9 @@ public interface ClubMeetUpService {
 
     public List<ClubMeetUpDTO> listClubMeetUp(Long clubId);
 
-    public void updateClubMeetUp(ClubMeetUpDTO clubMeetUpDTO);
+    public void updateClubMeetUp(Long meetUpId,ClubMeetUpDTO clubMeetUpDTO);
 
-    public void deleteClubMeetUp(Long clubMeetUpId);
+    public void deleteClubMeetUp(Long leaderId,Long clubMeetUpId);
 
     public Long joinClubMeetUp(Long clubMeetUpId, Long clubMemberId);
 
