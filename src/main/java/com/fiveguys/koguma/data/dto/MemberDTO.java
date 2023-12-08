@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.data.dto;
 
 import com.fiveguys.koguma.data.entity.Member;
+import com.fiveguys.koguma.data.entity.MemberRoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class MemberDTO {
     private String paymentPw;
     private Boolean activeFlag;
     private LocalDateTime regDate;
+    private MemberRoleType memberRoleType;
 
     public MemberDTO() {
 
@@ -50,6 +52,7 @@ public class MemberDTO {
         memberDTO.setPaymentPw(member.getPaymentPw());
         memberDTO.setActiveFlag(member.getActiveFlag());
         memberDTO.setScore(member.getScore());
+        memberDTO.setMemberRoleType(member.getMemberRoleType());
         return memberDTO;
     }
 
@@ -69,6 +72,7 @@ public class MemberDTO {
         member.setPaymentBalance(paymentBalance);
         member.setPaymentPw(paymentPw);
         member.setActiveFlag(activeFlag);
+        member.setMemberRoleType(memberRoleType);
         return member;
     }
 }

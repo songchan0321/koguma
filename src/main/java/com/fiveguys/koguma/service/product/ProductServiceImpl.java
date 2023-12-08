@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.service.product;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
@@ -40,27 +41,36 @@ public class ProductServiceImpl implements ProductService{
         return ProductDTO.fromEntity(product);
     }
 
-    public void updateProduct(ProductDTO productDTO) {
-//        if (productDTO.getSellerDTO().getId().equals(memberId))   //시큐리티 본인 확인 대상
-        productRepository.save(productDTO.toEntity());
+    public ProductDTO updateProduct(ProductDTO productDTO) {
+
+        return ProductDTO.fromEntity(productRepository.save(productDTO.toEntity()));
 
     }
+    public void deleteProduct(Long productId){
+        productRepository.deleteById(productId);
+    }
+
+
     public void updateState(ProductDTO productDTO, ProductStateType state) {  //시큐리티 본인 확인 대상
         productDTO.setTradeStatus(state);
         productRepository.save(productDTO.toEntity());
 
     }
+
     @Transactional
     public void updateView(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()->new NoResultException("해당 상품의 정보가 존재하지 않습니다."));
         product.appendView(product.getViews());
     }
 
-
-    public Page<Product> listStateProduct(int page, int size, ProductStateType state) throws Exception{
-        Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findByTradeStatusContaining(pageable,state);
+    @Override
+    public Page<Product> listStateProduct(Long memberId, Pageable pageable, ProductStateType state) throws Exception {
+        return productRepository.findBySellerIdAndTradeStatusContaining(memberId, pageable, state);
     }
+    public Page<Product> listBuyProduct(Long memberId, Pageable pageable) throws Exception {
+        return productRepository.findByBuyerIdAndTradeStatusContaining(memberId, pageable, ProductStateType.SALED);
+    }
+
     public void newProductAlert() {     //이후 추가
         //AlertSerivce.addAlert(memberDTO, title, content, url);
     }

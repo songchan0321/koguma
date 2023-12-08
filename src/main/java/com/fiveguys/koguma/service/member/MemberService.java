@@ -12,12 +12,13 @@ public interface MemberService {
     void deleteMember(Long id);
     void updateMember(MemberDTO memberDTO, String nickname);
     void updateMember(MemberDTO memberDTO);
-    MemberDTO login(String nickname, String pw, Boolean activeFlag);
+    MemberDTO login(String id, String pw);
     boolean validationCheckPw(String rawPw, String encodedPw);
     void logout();
     MemberDTO getMember(Long id);
     MemberDTO getOtherMember(Long id);
     List<MemberDTO> listMember();
+    MemberDTO getMemberByEmail(String email);
 
     boolean nicknameValidationCheck(String nickname);
 

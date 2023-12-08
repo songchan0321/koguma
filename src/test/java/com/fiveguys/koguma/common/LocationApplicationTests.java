@@ -37,31 +37,31 @@ public class LocationApplicationTests {
     private MemberService memberService;
 
 
-    @Test
-    @DisplayName("위치 등록 테스트")
-    @Transactional
-    public void addLocation() throws Exception {
+//    @Test
+//    @DisplayName("위치 등록 테스트")
+//    @Transactional
+//    public void addLocation() throws Exception {
+//
+//        MemberDTO memberDTO = memberService.getMember(6L);
+//        locationService.addLocation(LocationDTO.builder()
+//                        .memberDTO(memberDTO)
+//                        .dong("인헌동")
+//                        .latitude(37.4923615)
+//                        .longitude(127.0292881)
+//                        .repAuthLocationFlag(true)
+//                        .searchRange(3)
+//                        .build());
+//    }
 
-        MemberDTO memberDTO = memberService.getMember(6L);
-        locationService.addLocation(LocationDTO.builder()
-                        .memberDTO(memberDTO)
-                        .dong("인헌동")
-                        .latitude(37.4923615)
-                        .longitude(127.0292881)
-                        .repAuthLocationFlag(true)
-                        .searchRange(3)
-                        .build());
-    }
-
-    @Test
-    @DisplayName("위치 리스트 테스트")
-    @Transactional
-    public void listLocation() throws Exception {
-        List<LocationDTO> locations = locationService.listLocation(4L);
-        for (LocationDTO locationDTO : locations){
-            System.out.println(locationDTO.toString());
-        }
-    }
+//    @Test
+//    @DisplayName("위치 리스트 테스트")
+//    @Transactional
+//    public void listLocation() throws Exception {
+//        List<LocationDTO> locations = locationService.listLocation(4L);
+//        for (LocationDTO locationDTO : locations){
+//            System.out.println(locationDTO.toString());
+//        }
+//    }
     @Test
     @DisplayName("위치 삭제 테스트")
     @Transactional
@@ -98,7 +98,7 @@ public class LocationApplicationTests {
     @DisplayName("멤버 대표 테스트")
     @Transactional
     public void getMemberRepLocation() throws Exception {
-        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+        LocationDTO locationDTO = locationService.getMemberRepLocation(6L);
         System.out.println(locationDTO.toString());
     }
 

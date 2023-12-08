@@ -7,6 +7,10 @@ import com.fiveguys.koguma.data.entity.MemberProductSuggestId;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.repository.product.MemberProductSuggestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +32,16 @@ public class MemberProductSuggestServiceImpl implements MemberProductSuggestServ
         memberProductSuggestRepository.save(memberProductSuggestDTO.toEntity());
     }
 
-    public List<MemberProductSuggestDTO> listSuggestPrice(Long productId) {  //seller 일때 가능
+    public Page<MemberProductSuggest> listSuggestPrice(Long productId, int page) {  //seller 일때 가능
+
         List<MemberProductSuggest> memberProductSuggestList = memberProductSuggestRepository.findAllByIdProductId(productId);
 
-        return memberProductSuggestList.stream().map((c) -> MemberProductSuggestDTO.fromEntity(c))
-                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page,9);
+
+        memberProductSuggestList = memberProductSuggestList.stream().collect(Collectors.toList());
+        Page<MemberProductSuggest> list = new PageImpl<>(memberProductSuggestList, pageable, memberProductSuggestList.size());
+
+        return list;
     }
 
 

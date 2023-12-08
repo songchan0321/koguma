@@ -5,20 +5,23 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fiveguys.koguma.data.dto.LocationDTO;
-import com.fiveguys.koguma.data.dto.MemberDTO;
-import com.fiveguys.koguma.data.entity.Location;
+import com.fiveguys.koguma.data.dto.*;
+import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.common.LocationRepository;
+import com.fiveguys.koguma.repository.common.QueryRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +29,7 @@ import java.net.http.HttpResponse;
 public class LocationServiceImpl implements LocationService{
 
 
+    private QueryRepository queryRepository;
     private final LocationRepository locationRepository;
 
     @Value("${ncloud.reverseGeo.clientId}")
@@ -34,16 +38,12 @@ public class LocationServiceImpl implements LocationService{
     @Value("${ncloud.reverseGeo.clientSecret}")
     private String clientSecret;
 
-    public List<LocationDTO> listLocation(Long id) {
-        List<Location> locations = locationRepository.findAllByMemberId(id);
-        List<LocationDTO> locationDTOList = new ArrayList<>();
+    public Page<Location> listLocation(MemberDTO memberDTO,int page) {
 
-        for (Location location : locations){
-            LocationDTO locationDTO = LocationDTO.fromEntity(location);
-            locationDTOList.add(locationDTO);
-        }
+        Pageable pageable = PageRequest.of(page,9);
+        Page<Location> locations = locationRepository.findAllByMemberId(memberDTO.getId(),pageable);
 
-        return locationDTOList;
+        return locations;
     }
 
 
@@ -60,18 +60,20 @@ public class LocationServiceImpl implements LocationService{
     }
 
 
-    public void addLocation(LocationDTO locationDTO) throws Exception {
+    public LocationDTO addLocation(MemberDTO memberDTO,LocationDTO locationDTO) throws Exception {
 
+        Location location = null;
         List<Location> locations =  locationRepository.findAllByMemberId(locationDTO.getMemberDTO().getId());
         if (locations.size() >= 3){
             throw new Exception("인증된 위치가 초과 됐습니다.");
         } else if (locations.isEmpty()) {
             locationDTO.setRepAuthLocationFlag(true);
-            locationRepository.save(locationDTO.toEntity());
+            location = locationRepository.save(locationDTO.toEntity());
         } else {
             locationDTO.setRepAuthLocationFlag(false);
-            locationRepository.save(locationDTO.toEntity());
+            location = locationRepository.save(locationDTO.toEntity());
         }
+        return LocationDTO.fromEntity(location);
     }
 
     @Transactional
@@ -88,16 +90,17 @@ public class LocationServiceImpl implements LocationService{
             }
         }
     }
-    public LocationDTO getLocation(Long id){
+    public LocationDTO getLocation(long id){
 
         Location location = locationRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("위치를 가져올 수 없습니다."));
         return LocationDTO.fromEntity(location);
     }
 
     @Transactional
-    public void updateSearchRange(LocationDTO locationDTO,int range) {
+    public LocationDTO updateSearchRange(LocationDTO locationDTO,int range) {
         Location location = locationRepository.findById(locationDTO.getId()).orElseThrow(()->new IllegalArgumentException("업데이트 할 수 없습니다."));
         location.setSearchRange(range);
+        return LocationDTO.fromEntity(location);
     }
 
     public LocationDTO addShareLocation(Long latitude,Long longitude) {
@@ -148,20 +151,34 @@ public class LocationServiceImpl implements LocationService{
         return dong;
     }
 
-//    public List<Object> LocationFilter(LocationDTO locationDTO){
-//
-//        List<Object> filterList = new ArrayList<>();
-//
-//        double latitude = locationDTO.getLatitude();
-//        double longitude = locationDTO.getLongitude();
-//        int searchRange = locationDTO.getSearchRange();
-//
-//        filterList = locationRepository.findAllByDistance("products",longitude,latitude,searchRange);
-//
-//
-//        return filterList;
-//    }
+    public Page<Object> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable,String keyword) throws Exception {
 
+        List<Object> objectByLocationDTOList = new ArrayList<>();
+        Page<?> objectByLocation = queryRepository.findAllByDistance(categoryType,locationDTO,pageable,keyword);
 
+        switch (categoryType){
+            case PRODUCT:{
+                objectByLocationDTOList = objectByLocation.stream()
+                        .map(x -> ProductDTO.fromEntity((Product) x))
+                        .collect(Collectors.toList());
+                break;
+            }
+            case POST:{
+                objectByLocationDTOList = objectByLocation.stream()
+                        .map(x -> PostDTO.fromEntity((Post) x))
+                        .collect(Collectors.toList());
+                break;
+            }
+            case CLUB:{
+                objectByLocationDTOList = objectByLocation.stream()
+                        .map(x -> ClubDTO.fromEntity((Club) x))
+                        .collect(Collectors.toList());
+                break;
+            }
+        }
+
+        Page<Object> page = new PageImpl<>(objectByLocationDTOList, pageable, objectByLocationDTOList.size());
+        return page;
+    }
 }
 

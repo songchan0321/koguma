@@ -3,6 +3,7 @@ package com.fiveguys.koguma.service.member;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.member.MemberRepository;
+import com.fiveguys.koguma.service.common.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 //import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
+    private final AuthService authService;
 
 
     @Override
@@ -62,18 +64,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDTO login(String nickname, String pw, Boolean activeFlag) {
-        Member member = memberRepository.findByNicknameAndActiveFlag(nickname, true)
-                .orElseThrow(() -> new RuntimeException("해당 닉네임의 회원이 존재하지 않습니다."));
+    public MemberDTO login(String id, String pw) {  //id : nickname, email
+
+        MemberDTO memberDTO = null;
+
+        Member member = memberRepository.findByNicknameOrEmail(id,id)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
 
 
         if (validationCheckPw(pw, member.getPw())) {
-            httpSession.setAttribute("loggedInMember", MemberDTO.fromEntity(member));
-            return MemberDTO.fromEntity(member);
-        } else {
+            memberDTO = MemberDTO.fromEntity(member);
 
+        } else {
             throw new RuntimeException("패스워드가 일치하지 않습니다.");
         }
+        return memberDTO;
     }
 
     @Override
@@ -112,7 +118,6 @@ public class MemberServiceImpl implements MemberService {
         return memberDTO;
     }
 
-
     @Override
     public void updateMember(MemberDTO memberDTO, String nickname) {
         Long id = memberDTO.getId();
@@ -132,7 +137,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(existingMember);
     }
-
 
     @Override
     public void updateMember(MemberDTO memberDTO) {
@@ -154,4 +158,8 @@ public class MemberServiceImpl implements MemberService {
 
         return existingMember == null;
     }
+    public MemberDTO getMemberByEmail(String email) {
+        return MemberDTO.fromEntity(memberRepository.findByEmail(email));
+    }
 }
+

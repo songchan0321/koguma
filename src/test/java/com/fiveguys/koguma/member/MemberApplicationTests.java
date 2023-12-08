@@ -218,7 +218,7 @@ public class MemberApplicationTests {
             }
 
             @Override
-            public MemberDTO login(String nickname, String pw, Boolean activeFlag) {
+            public MemberDTO login(String nickname, String pw) {
                 return null;
             }
 
