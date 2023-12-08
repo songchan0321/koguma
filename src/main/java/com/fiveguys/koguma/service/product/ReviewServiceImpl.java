@@ -1,10 +1,14 @@
 package com.fiveguys.koguma.service.product;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ReviewDTO;
 import com.fiveguys.koguma.data.entity.Review;
 import com.fiveguys.koguma.data.entity.ReviewId;
 import com.fiveguys.koguma.repository.product.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,9 +32,16 @@ public class ReviewServiceImpl implements ReviewService{
                 .orElse(null);
     }
 
+
+
     public void deleteReview(ReviewId reviewId) throws Exception {
         Review review = reviewRepository.findById(reviewId).orElseThrow(()->new Exception("상품을 찾을 수 없습니다"));
         reviewRepository.delete(review);
+    }
+
+    public Page<Review> listReview(MemberDTO memberDTO,int page) {
+        Pageable pageable = PageRequest.of(page,9);
+        return reviewRepository.findAllByIdProductSellerId(memberDTO.getId(),pageable);
     }
 
 }

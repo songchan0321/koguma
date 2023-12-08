@@ -13,8 +13,10 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long>{
 
-    Page<Product> findByTradeStatusContaining(Pageable pageable, ProductStateType state);
+    Page<Product> findByBuyerIdAndTradeStatusContaining(Long memberId, Pageable pageable, ProductStateType state);
 
+
+    Page<Product> findBySellerIdAndTradeStatusContaining(Long memberId, Pageable pageable, ProductStateType state);
     @Query("SELECT p FROM Product p JOIN LikeFilterAssociation l ON p.id = l.product.id")
     List<Product> findProductsInAssociation();
 }

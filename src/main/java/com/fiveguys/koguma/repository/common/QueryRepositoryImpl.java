@@ -27,7 +27,7 @@ public class QueryRepositoryImpl implements QueryRepository{
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<?> findAllByDistance(CategoryType target, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception {
+    public Page<?> findAllByDistance(CategoryType target, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception {
         EntityPath<?> entity = null;
 
         switch (target) {
@@ -61,7 +61,7 @@ public class QueryRepositoryImpl implements QueryRepository{
             jpaQuery.where(titlePath.containsIgnoreCase(keyword));
         }
 
-        List<?> filterList = jpaQuery
+        Page<?> filterList = (Page<?>) jpaQuery
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

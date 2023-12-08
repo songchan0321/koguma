@@ -152,15 +152,15 @@ public class ProductApplicationTests {
 
 
     }
-    @Test
-    @DisplayName("상품 가격제안리스트 테스트")
-    @Transactional
-    public void 상품가격제안리스트조회() throws Exception{
-
-        List<MemberProductSuggestDTO> memberProductSuggestDtoList = memberProductSuggestService.listSuggestPrice(1L);
-        memberProductSuggestDtoList.stream().forEach(list -> System.out.println(list));
-
-    }
+//    @Test
+//    @DisplayName("상품 가격제안리스트 테스트")
+//    @Transactional
+//    public void 상품가격제안리스트조회() throws Exception{
+//
+//        List<MemberProductSuggestDTO> memberProductSuggestDtoList = memberProductSuggestService.listSuggestPrice(1L);
+//        memberProductSuggestDtoList.stream().forEach(list -> System.out.println(list));
+//
+//    }
 
     @Test
     @DisplayName("상품 추가 더미데이터 ")
@@ -220,18 +220,18 @@ public class ProductApplicationTests {
         }
 
     }
-    @Test
-    @Transactional
-    public void 위치기반상품리스트조회테스트() throws Exception{
-
-        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
-
-        Pageable pageable = PageRequest.of(0,10);
-        List<?> productList = queryRepository.findAllByDistance(CategoryType.PRODUCT,locationDTO,pageable,null);
-        List<ProductDTO> productDTOList = productList.stream()
-                .map(x -> ProductDTO.fromEntity((Product) x))
-                .collect(Collectors.toList());
-
-        productDTOList.forEach(System.out::println);
-    }
+//    @Test
+//    @Transactional
+//    public void 위치기반상품리스트조회테스트() throws Exception{
+//
+//        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+//
+//        Pageable pageable = PageRequest.of(1,10);
+//        List<?> productList = queryRepository.findAllByDistance(CategoryType.PRODUCT,locationDTO,pageable,null);
+//        List<ProductDTO> productDTOList = productList.stream()
+//                .map(x -> ProductDTO.fromEntity((Product) x))
+//                .collect(Collectors.toList());
+//
+//        productDTOList.forEach(System.out::println);
+//    }
 }

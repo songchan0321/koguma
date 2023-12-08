@@ -58,24 +58,37 @@ public class Member extends BaseTime{
     @Column(name = "active_flag")
     private Boolean activeFlag;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name= "member_role_type")
+    private MemberRoleType memberRoleType;
+
 
     @Builder
-    public Member (String nickname, String email, Long imageId, Boolean roleFlag, String pw, String phone, Float score, Boolean socialFlag, String paymentAccount, String paymentPw, String paymentBank, Integer paymentBalance, Boolean activeFlag) {
-        this.email = email;
-        this.imageId = imageId;
-        this.roleFlag = roleFlag;
-        this.activeFlag = activeFlag;
-        this.pw = pw;
+    public Member(Long id, String nickname, Long imageId, String pw, String phone, Float score, Boolean roleFlag, Boolean socialFlag, String email, String paymentAccount, String paymentBank, Integer paymentBalance, String paymentPw, Boolean activeFlag, MemberRoleType memberRoleType) {
+        this.id = id;
         this.nickname = nickname;
-        this.paymentAccount = paymentAccount;
-        this.paymentBalance = paymentBalance;
-        this.paymentBank = paymentBank;
-        this.paymentPw = paymentPw;
+        this.imageId = imageId;
+        this.pw = pw;
         this.phone = phone;
         this.score = score;
+        this.roleFlag = roleFlag;
         this.socialFlag = socialFlag;
-
+        this.email = email;
+        this.paymentAccount = paymentAccount;
+        this.paymentBank = paymentBank;
+        this.paymentBalance = paymentBalance;
+        this.paymentPw = paymentPw;
+        this.activeFlag = activeFlag;
+        this.memberRoleType = memberRoleType;
     }
 
-
+    public void updateEmail(String email){
+        this.email=email;
+    }
+    public void updateSocialFlag(boolean socialFlag){
+        this.socialFlag = socialFlag;
+    }
+    public void updateMemberRole(MemberRoleType memberRoleType){
+        this.memberRoleType = memberRoleType;
+    }
 }
