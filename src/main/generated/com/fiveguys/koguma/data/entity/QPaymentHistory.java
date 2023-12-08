@@ -24,7 +24,7 @@ public class QPaymentHistory extends EntityPathBase<PaymentHistory> {
 
     public final QBaseTime _super = new QBaseTime(this);
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final ComparablePath<java.util.UUID> id = createComparable("id", java.util.UUID.class);
 
     public final StringPath info = createString("info");
 
