@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/auth")
 public class AuthRestController {
 
-    private MemberService memberService;
-    private AuthService authService;
+    private final MemberService memberService;
+    private final AuthService authService;
 
     @Value("${security.secret}")
     private String secret;

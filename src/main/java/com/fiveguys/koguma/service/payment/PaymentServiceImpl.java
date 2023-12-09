@@ -13,6 +13,7 @@ import com.fiveguys.koguma.data.entity.PaymentHistoryType;
 import com.fiveguys.koguma.repository.payment.PaymentHistoryRepository;
 import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
@@ -30,6 +31,10 @@ public class PaymentServiceImpl implements PaymentService{
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final MemberService memberService;
     private final ObjectMapper objectMapper;
+    @Value("${portone.imp-key}")
+    private String IMP_KEY;
+    @Value("${portone.imp-secret}")
+    private String IMP_SECRET;
     private final String API_URL = "https://api.iamport.kr/";
 
     @Override
@@ -143,7 +148,7 @@ public class PaymentServiceImpl implements PaymentService{
     public String getPortOneToken() throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, String> json =  Map.of("imp_key", "5015733552163318", "imp_secret", "akVKvDqSOAdVrPTMXz7agCJCyYXu0rI8g29OyirRIUOZ47bxQfXsv631sVyS6Nane0cDWCqmuydQIu8M");
+        Map<String, String> json =  Map.of("imp_key", IMP_KEY, "imp_secret", IMP_SECRET);
         String requestBody = objectMapper.writeValueAsString(json);
         // HttpEntity를 사용하여 바디에 데이터를 담음
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
