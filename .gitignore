@@ -29,9 +29,7 @@ out/
 !**/src/test/**/out/
 
 .DS_Store
-application-mysql.properties
-application-ncloud.properties
-application-secret.properties
+application-local.properties
 
 ### NetBeans ###
 /nbproject/private/
