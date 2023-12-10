@@ -55,7 +55,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             log.info("validToken : "+validToken);
             log.info("memberId : "+memberId);
         } catch (Exception e) {
-           log.info(e.getMessage());
+            log.info("token이 존재하지 않음");
         }
         //헤더에 accessToken을 받아서
         //claim의 id값은 있는데, 인증이 안된경우
@@ -66,29 +66,34 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 
 
-        if(!validToken && SecurityContextHolder.getContext().getAuthentication() == null){ 
-            MemberDTO memberDTO = memberService.getMember(memberId);  //1. 액세스토큰 만료X, 인증 없을시
-            authService.setSecurityContextHolder(request,memberDTO);
-            log.info("1.엑세스토큰 만료 x");
+        if (memberId != null) {
+            if (!validToken && SecurityContextHolder.getContext().getAuthentication() == null) {
+                MemberDTO memberDTO = memberService.getMember(memberId);  //1. 액세스토큰 만료X, 인증 없을시
+                authService.setSecurityContextHolder(request, memberDTO);
+                log.info("1.엑세스토큰 만료 x");
 
-        }
-        else if (validToken){  //2. 액세스토큰 만료O
-            String refreshToken = authService.getRefreshTokenFromCookie(request);
-            log.info("토큰",token);
-            log.info("리프레쉬토큰",refreshToken);
-            log.info("2.엑세스토큰 만료 O");
-            boolean valid = false;
-            try {
-                valid = authService.validateTokenExpiration(refreshToken);
-            } catch (Exception e) {
-                log.info(e.getMessage());
-            }
-            if (!valid) {     //2-1 리프레시토큰으로 엑세스 토큰 생성후 인증
-                log.info("2-1 리프레시토큰으로 엑세스 토큰 생성후 인증");
-                memberId = authService.getMemberId(refreshToken);
-                MemberDTO memberDTO = memberService.getMember(memberId);
-                authService.generateAccessTokenFromRefreshToken(memberId);
-                authService.setSecurityContextHolder(request,memberDTO);
+            } else if (validToken) {  //2. 액세스토큰 만료O
+                String refreshToken = authService.getRefreshTokenFromCookie(request);
+                log.info("토큰", token);
+                log.info("리프레쉬토큰", refreshToken);
+                log.info("2.엑세스토큰 만료 O");
+                boolean valid = false;
+                try {
+                    valid = authService.validateTokenExpiration(refreshToken);
+                } catch (Exception e) {
+                    log.info(e.getMessage());
+                }
+                if (!valid) {     //2-1 리프레시토큰으로 엑세스 토큰 생성후 인증
+                    log.info("2-1 리프레시토큰으로 엑세스 토큰 생성후 인증");
+                    try {
+                        memberId = authService.getMemberId(refreshToken);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    MemberDTO memberDTO = memberService.getMember(memberId);
+                    authService.generateAccessTokenFromRefreshToken(memberId);
+                    authService.setSecurityContextHolder(request, memberDTO);
+                }
             }
         }
 

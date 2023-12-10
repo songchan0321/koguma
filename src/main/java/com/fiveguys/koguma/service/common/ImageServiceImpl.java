@@ -98,10 +98,34 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Transactional
-    public void setRepImage(Long imageId) {     // 이미지 수정때 대표이미지 변경가능 등록때는 프론트에서 flag 설정함
+    public void setRepImage(Long imageId) throws Exception {     // 이미지 수정때 대표이미지 변경가능
 
-        Image image = imageRepository.findById(imageId).get();
-        image.setRepImageFlag(true);
+
+        Image newRepImage = imageRepository.findById(imageId).get();
+        Image oldRepImage = null;
+
+        switch (newRepImage.getImageType()){
+            case PRODUCT:{
+                oldRepImage = imageRepository.findByProductIdAndRepImageFlagTrue(newRepImage.getProduct().getId());
+                break;
+            }
+            case POST:{
+                oldRepImage = imageRepository.findByProductIdAndRepImageFlagTrue(newRepImage.getPost().getId());
+                break;
+            }
+            case CLUB:{
+                oldRepImage = imageRepository.findByProductIdAndRepImageFlagTrue(newRepImage.getClub().getId());
+                break;
+            }
+//            case MESSAGE:{
+//                oldRepImage = imageRepository.findByProductIdAndRepImageFlagTrue(newRepImage.getProduct().getId());
+//                break;
+//            }
+            default:
+                throw new Exception("요청 이미지 타입이 잘못 됐 습니다.");
+        }
+        oldRepImage.setRepImageFlag(false);
+        newRepImage.setRepImageFlag(true);
     }
 
     public void updateProfilePicture(Member member,Long imageId) {

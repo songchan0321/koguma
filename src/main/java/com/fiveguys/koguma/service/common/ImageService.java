@@ -15,7 +15,7 @@ public interface ImageService {
     ImageDTO getImage(Long imageId);
     ImageDTO getRepImage(ImageType imageType, Long productId) throws Exception;
 
-    void setRepImage(Long imageId);
+    void setRepImage(Long imageId) throws Exception;
 
     void updateProfilePicture(Member member, Long imageId);
     public String tempFileUpload(MultipartFile multipartFile) throws IOException;

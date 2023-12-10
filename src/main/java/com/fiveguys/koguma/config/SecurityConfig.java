@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 
 @Configuration
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
+    private final CorsFilter corsFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,6 +27,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .addFilter(corsFilter)
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers(
@@ -35,9 +38,10 @@ public class SecurityConfig {
                         "/comment/**",
                         "/relationship/**",
                         "/paymenthistory/**",
-                        "/review/**"
-                ).hasAnyRole("ROLE_AUTH_MEMBER","ROLE_ADMIN")
-                .antMatchers(
+                        "/review/**",
+//                        "/review/**"
+//                ).hasAnyRole("ROLE_AUTH_MEMBER","ROLE_ADMIN")
+//                .antMatchers(
                         "/member/**",
                         "/location/**"
                 ).authenticated();

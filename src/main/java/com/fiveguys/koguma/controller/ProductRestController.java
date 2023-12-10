@@ -17,12 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/product")
 public class ProductRestController {
 
@@ -33,6 +33,12 @@ public class ProductRestController {
     private final MemberProductSuggestService memberProductSuggestService;
     private final AlertService alertService;
 
+    @GetMapping("/member")
+    public ResponseEntity<MemberDTO> Product() throws Exception {
+
+        MemberDTO memberDTO = authService.getAuthMember();
+        return ResponseEntity.status(HttpStatus.OK).body(memberDTO);
+    }
     @GetMapping("/list")
     public ResponseEntity<Page<Object>> listProduct(@RequestParam int page, @RequestParam String keyword) throws Exception {
 
@@ -47,7 +53,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/get/{no}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long no) {
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long no) throws Exception {
 
         ProductDTO productDTO = productService.getProduct(no);
 
@@ -68,7 +74,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/update/{no}")
-    public ResponseEntity<ProductDTO> getUpdateProductInfo(@PathVariable Long no) {
+    public ResponseEntity<ProductDTO> getUpdateProductInfo(@PathVariable Long no) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);
 
         MemberDTO memberDTO = authService.getAuthMember();
@@ -79,7 +85,7 @@ public class ProductRestController {
     }
 
     @DeleteMapping("/delete/{no}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long no) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long no) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);
         MemberDTO memberDTO = authService.getAuthMember();
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
@@ -97,7 +103,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/list/like")
-    public ResponseEntity<Page<Product>> likeProductList(@RequestParam int page) {
+    public ResponseEntity<Page<Product>> likeProductList(@RequestParam int page) throws Exception {
 
         MemberDTO memberDTO = authService.getAuthMember();
         return ResponseEntity.status(HttpStatus.OK)
@@ -105,7 +111,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/like/{no}")
-    public ResponseEntity<String> addLikeProduct(@PathVariable Long no) {
+    public ResponseEntity<String> addLikeProduct(@PathVariable Long no) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);
         MemberDTO memberDTO = authService.getAuthMember();
         LikeFilterAssociationDTO likeFilterAssociationDTO = LikeFilterAssociationDTO.builder().
@@ -123,7 +129,7 @@ public class ProductRestController {
     }
 
     @PutMapping("/tradestate")
-    public ResponseEntity<String> updateStateProduct(@RequestBody Map<String,String> json){
+    public ResponseEntity<String> updateStateProduct(@RequestBody Map<String,String> json) throws Exception {
         ProductDTO productDTO = productService.getProduct(Long.parseLong(json.get("productNo")));
         MemberDTO memberDTO = authService.getAuthMember();
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
@@ -165,7 +171,7 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body("가격제안 성공");
     }
     @GetMapping("/suggest/list")
-    public ResponseEntity<Page<MemberProductSuggest>> listSuggestProduct(@RequestParam int page){
+    public ResponseEntity<Page<MemberProductSuggest>> listSuggestProduct(@RequestParam int page) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         Page<MemberProductSuggest> list = memberProductSuggestService.listSuggestPrice(memberDTO.getId(),page);
 
@@ -188,7 +194,7 @@ public class ProductRestController {
         }
     }
     @GetMapping("/buyer/list/{productNo}")
-    public ResponseEntity<Map<String,Object>> selectBuyer(@PathVariable Long productNo,@RequestParam int page){
+    public ResponseEntity<Map<String,Object>> selectBuyer(@PathVariable Long productNo,@RequestParam int page) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         ProductDTO productDTO = productService.getProduct(productNo);
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {

@@ -12,16 +12,15 @@ public interface AuthService {
 
     KakaoAuthDTO getAccessToken(String code);
     KakaoProfileDTO findProfile(String token);
-//    SaveUserAndGetToken(String token);
     String generateAccessToken(Long cliamId);
     String generateAccessTokenFromRefreshToken(Long refreshTokenClaim);
     String generateRefreshToken(Long cliamId);
     void setSecurityContextHolder(HttpServletRequest request, MemberDTO memberDTO);
     boolean validateTokenExpiration(String token) throws Exception;
-    Long getMemberId(String token);
+    Long getMemberId(String token) throws Exception;
     Cookie createCookie(String name, String value);
     String getRefreshTokenFromCookie(HttpServletRequest request);
 
     boolean validateSocialMember(MemberDTO memberDTO);
-    MemberDTO getAuthMember();
+    MemberDTO getAuthMember() throws Exception;
 }
