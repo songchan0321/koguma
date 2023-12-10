@@ -23,7 +23,7 @@ public class LocationRestController {
     private final AuthService authService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id){
+    public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         LocationDTO locationDTO = locationService.getLocation(id);
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
@@ -32,7 +32,7 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
     @GetMapping("list")
-    public ResponseEntity<Page<Location>> listLocation(@RequestParam int page){
+    public ResponseEntity<Page<Location>> listLocation(@RequestParam int page) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         Page<Location> listLocation = locationService.listLocation(memberDTO,page);
 
@@ -62,7 +62,7 @@ public class LocationRestController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody Map<String, Integer> json){
+    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody Map<String, Integer> json) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         LocationDTO locationDTO = locationService.getLocation(json.get("locationId"));
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
@@ -73,7 +73,7 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
     @PostMapping("/rep/{id}")
-    public ResponseEntity<String> setRepLocation(@PathVariable Long id){
+    public ResponseEntity<String> setRepLocation(@PathVariable Long id) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         LocationDTO locationDTO = locationService.getLocation(id);
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){

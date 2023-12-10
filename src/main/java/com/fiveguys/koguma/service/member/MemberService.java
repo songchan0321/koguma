@@ -12,7 +12,7 @@ public interface MemberService {
     void deleteMember(Long id);
     void updateMember(MemberDTO memberDTO, String nickname);
     void updateMember(MemberDTO memberDTO);
-    MemberDTO login(String id, String pw);
+    MemberDTO login(String id, String pw) throws Exception;
     boolean validationCheckPw(String rawPw, String encodedPw);
     void logout();
     MemberDTO getMember(Long id);

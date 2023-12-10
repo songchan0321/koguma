@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @RequestMapping("/review")
 public class ReviewRestController {
 
@@ -29,7 +30,7 @@ public class ReviewRestController {
         return ResponseEntity.status(HttpStatus.OK).body(reviewDTO);
     }
     @GetMapping("/list")
-    public ResponseEntity<Page<Review>> listReview(@RequestParam int page){
+    public ResponseEntity<Page<Review>> listReview(@RequestParam int page) throws Exception {
         MemberDTO memberDTO = authService.getAuthMember();
         Page<Review> reviewList = reviewService.listReview(memberDTO,page);
         return ResponseEntity.status(HttpStatus.OK).body(reviewList);

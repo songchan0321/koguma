@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @RequestMapping("/auth")
 public class AuthRestController {
 
@@ -33,22 +35,22 @@ public class AuthRestController {
     // 회원가입
     @PostMapping("/login")
     public ResponseEntity<String> add(HttpServletRequest request, HttpServletResponse response,
-                                         @RequestParam(name = "id") String id,
-                                         @RequestParam(name="pw") String pw) {
+                                          @RequestBody Map<String,String> loginform) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
 
-        HttpHeaders headers = new HttpHeaders();
+            MemberDTO memberDTO = memberService.login(loginform.get("id"), loginform.get("pw"));
 
-        MemberDTO memberDTO = memberService.login(id,pw);
+            String accessToken =authService.generateAccessToken(memberDTO.getId());
+            String refreshToken = authService.generateRefreshToken(memberDTO.getId());
+            headers.set("Authorization", "Bearer " + accessToken);
+            authService.setSecurityContextHolder(request,memberDTO);
 
-        String accessToken =authService.generateAccessToken(memberDTO.getId());
-        String refreshToken = authService.generateRefreshToken(memberDTO.getId());
-
-        headers.set("Authorization", "Bearer " + accessToken);
-        authService.setSecurityContextHolder(request,memberDTO);
-
-        response.addCookie(authService.createCookie("refreshToken", refreshToken));
-//        return new ResponseEntity<>(accessToken,HttpStatus.OK);
-        return ResponseEntity.ok().headers(headers).body("");
+            response.addCookie(authService.createCookie("refreshToken", refreshToken));
+            return ResponseEntity.ok().headers(headers).body(accessToken);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("로그인 실패: " + e.getMessage());
+        }
     }
 
     @GetMapping("/error")
@@ -57,7 +59,7 @@ public class AuthRestController {
     }
     @GetMapping("/kakao/callback/check")
     public ResponseEntity getLogin(@RequestParam("code") String code,
-                                    HttpServletRequest request, HttpServletResponse response ) { //(1)
+                                    HttpServletRequest request, HttpServletResponse response ) throws Exception { //(1)
 
 
         ResponseEntity responseEntity = null;
@@ -72,9 +74,9 @@ public class AuthRestController {
         System.out.println(kakaoAuthDTO);
         KakaoProfileDTO kakaoProfileDTO = authService.findProfile(kakaoAuthDTO.getAccess_token());
         MemberDTO memberDTO = memberService.getMemberByEmail(kakaoProfileDTO.getKakao_account().getEmail());
-
+        MemberDTO loginInfo = authService.getAuthMember();
         boolean valid = authService.validateSocialMember(memberDTO);
-        if (valid){
+        if (valid){   // 소셜로그인으로 로그인
 
             Member member = memberDTO.toEntity();
             member.setEmail(kakaoProfileDTO.getKakao_account().getEmail());
@@ -88,13 +90,14 @@ public class AuthRestController {
             response.addCookie(authService.createCookie("refreshToken", refreshToken));
             responseEntity = ResponseEntity.ok().headers(headers).body(accessToken);
         }
-        else{
+        //스프링 컨텍스트에 저장된 인증정보가 있다면 설정 페이지에서 카카오 연동을 할 수 있음.
+        else if (loginInfo!=null){
+            loginInfo.setSocialFlag(true);
+            memberService.updateMember(loginInfo);
+        }
+        else{  // 연동된 소셜로그인이 없어 회원가입부터
             responseEntity = (ResponseEntity) ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(kakaoProfileDTO.getKakao_account().getEmail());
         }
-
-        //1. 이메일이 존재하는 회원 -> 로그인
-        //2. 이메일이 없는 회원 -> 회원가입 후 연동
-
 
         return responseEntity;
     }

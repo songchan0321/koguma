@@ -64,22 +64,23 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDTO login(String id, String pw) {  //id : nickname, email
+    public MemberDTO login(String id, String pw) throws Exception {  //id : nickname, email
 
-        MemberDTO memberDTO = null;
+        try {
+            MemberDTO memberDTO = null;
 
-        Member member = memberRepository.findByNicknameOrEmail(id,id)
-                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+            Member member = memberRepository.findByNicknameOrEmail(id, id)
+                    .orElseThrow(() -> new Exception("회원이 존재하지 않습니다."));
 
-
-
-        if (validationCheckPw(pw, member.getPw())) {
-            memberDTO = MemberDTO.fromEntity(member);
-
-        } else {
-            throw new RuntimeException("패스워드가 일치하지 않습니다.");
+            if (validationCheckPw(pw, member.getPw())) {
+                memberDTO = MemberDTO.fromEntity(member);
+                return memberDTO;
+            } else {
+                throw new Exception("패스워드가 일치하지 않습니다.");
+            }
+        } catch (Exception e) {
+            throw new Exception("로그인 실패: " + e.getMessage());
         }
-        return memberDTO;
     }
 
     @Override

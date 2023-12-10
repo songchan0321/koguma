@@ -28,22 +28,19 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-
-
     @Value("${security.kakao.clientId}")
     private String clientId;
-
     @Value("${security.kakao.redirectUri}")
     private String redirectUri;
-
     @Value("${security.expirationTime}")
     private String expirationTime;
-
     @Value("${security.refreshExpirationTime}")
     private String refreshExpirationTime;
     @Value("${security.secret}")
@@ -131,24 +128,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-//    public String SaveUserAndGetToken(String token) {
-//        KakaoProfileDTO profile = findProfile(token);
-//
-//        Member member = memberRepository.findByKakaoEmail(profile.getKakao_account().getEmail());
-//        if(member == null) {
-//            member = Member.builder()
-//                    .kakaoId(profile.getId())
-//                    .kakaoProfileImg(profile.getKakao_account().getProfile().getProfile_image_url())
-//                    .kakaoNickname(profile.getKakao_account().getProfile().getNickname())
-//                    .kakaoEmail(profile.getKakao_account().getEmail())
-//                    .userRole("ROLE_USER").build();
-//
-//            userRepository.save(user);
-//        }
-//
-//        return createToken(user);
-//    }
-
     public String generateAccessToken(Long cliamId) {
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
@@ -222,13 +201,17 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    public Long getMemberId(String token){
-        // 토큰 파싱
-        Jws<Claims> claims = Jwts.parser()
-                .setSigningKey(secret.getBytes())
-                .parseClaimsJws(token);
-        Long memberId = claims.getBody().get("id", Long.class);
-        return memberId;
+    public Long getMemberId(String token) throws Exception {
+        try {
+            // 토큰 파싱
+            Jws<Claims> claims = Jwts.parser()
+                    .setSigningKey(secret.getBytes())
+                    .parseClaimsJws(token);
+            Long memberId = claims.getBody().get("id", Long.class);
+            return memberId;
+        } catch (Exception e) {
+            throw new Exception(String.valueOf(HttpStatus.UNAUTHORIZED)); // 만약 올바르지 않은 토큰이라면 에러
+        }
     }
 
     public Cookie createCookie(String name, String value) {
@@ -252,18 +235,17 @@ public class AuthServiceImpl implements AuthService {
         }
         return null; // 쿠키가 존재하지 않는 경우
     }
-    public MemberDTO getAuthMember(){
+    @Override
+    public MemberDTO getAuthMember() throws Exception {
 
-        MemberDTO memberDTO = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof MemberDTO) {
-            memberDTO = (MemberDTO) authentication.getPrincipal();
-            System.out.println(memberDTO.toString());
-            System.out.println("권한 : "+authentication.getAuthorities());
-        } else {
-            System.out.println("인증정보에 사용자가 없스비다");
-        }
-        return memberDTO;
-    }
 
+        if (authentication != null && authentication.getPrincipal() instanceof MemberDTO) {
+            MemberDTO memberDTO = (MemberDTO) authentication.getPrincipal();
+            return memberDTO;
+        } else {
+            throw new Exception("인증 정보가 없습니다.");
+
+        }
+    }
 }
