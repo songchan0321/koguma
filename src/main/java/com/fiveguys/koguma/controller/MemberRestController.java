@@ -5,6 +5,7 @@ import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.service.member.MemberService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,13 +86,15 @@ public class MemberRestController {
     }
 
     //회원 정보 가져오기
-    @GetMapping("/get/{id}")
-    public ResponseEntity<MemberDTO> get(@PathVariable Long id) {
-        MemberDTO existingMember = memberService.getMember(id);
-        if (existingMember == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
+    @GetMapping("/get")
+    public ResponseEntity<MemberDTO> get(
+            @CurrentMember MemberDTO memberDTO
+    ) {
+//        MemberDTO existingMember = memberService.getMember(id);
+        if (memberDTO == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(memberDTO);
         }
-        return ResponseEntity.ok(existingMember);
+        return ResponseEntity.ok(memberDTO);
     }
 
     @GetMapping("/profile/get/{id}")
