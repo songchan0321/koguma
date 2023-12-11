@@ -78,7 +78,7 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         List<MemberRelationship> followingRelationships = memberRelationshipRepository.findBySourceMemberIdAndMemberRelationshipType(sourceMemberId, MemberRelationshipType.FOLLOWING);
 
         if (followingRelationships.isEmpty()) {
-            throw new NoResultException("차단 정보 없음");
+            throw new NoResultException("팔로잉 정보 없음");
         }
 
 
@@ -93,16 +93,16 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
     }
 
     @Override
-    public void deleteFollowing(Long id) {
-        Optional<MemberRelationship> memberRelationshipOptional = memberRelationshipRepository.findById(id);
+    public void deleteFollowing(Long sourceMember, Long targetMember) {
+        List<MemberRelationship> followingRelationships = memberRelationshipRepository
+                .findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(sourceMember, targetMember, MemberRelationshipType.FOLLOWING);
 
-        if (memberRelationshipOptional.isPresent()) {
-            MemberRelationship memberRelationship = memberRelationshipOptional.get();
+        followingRelationships.forEach(relationship -> {
+            relationship.setContent(null);
+            relationship.setMemberRelationshipType(null);
+        });
 
-            memberRelationshipRepository.delete(memberRelationship);
-
-
-        }
+        memberRelationshipRepository.saveAll(followingRelationships);
     }
 
 

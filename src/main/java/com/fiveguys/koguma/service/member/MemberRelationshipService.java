@@ -12,7 +12,7 @@ public interface MemberRelationshipService {
     List<MemberRelationshipDTO> listBlock(Long sourceMemberId);
     MemberRelationshipDTO getBlock(Long sourceMember);
     void addFollowing(MemberRelationshipDTO memberRelationshipDTO);
-    void deleteFollowing(Long id);
+    void deleteFollowing(Long sourceMember, Long targetMember);
     List<MemberRelationshipDTO> listFollowing(Long sourceMemberId);
     MemberRelationshipDTO getFollowing(Long sourceMember);
 

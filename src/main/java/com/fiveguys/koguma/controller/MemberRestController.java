@@ -9,6 +9,7 @@ import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -45,11 +46,15 @@ public class MemberRestController {
 
     // 회원정보 수정
     @PutMapping("/update/{id}")
-    public ResponseEntity<Void> update(@RequestBody MemberDTO memberDTO){
-        System.out.println(memberDTO.toString());
+    public ResponseEntity<Void> update(@CurrentMember MemberDTO authenticatedMember, @RequestBody MemberDTO memberDTO) {
+        if (authenticatedMember == null || !authenticatedMember.getId().equals(memberDTO.getId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
+        // 여기서 회원 정보 수정 로직을 수행
         memberService.updateMember(memberDTO, memberDTO.getNickname());
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return ResponseEntity.ok().build();
     }
     /*public ResponseEntity<Void> update(
             @PathVariable Long id,
@@ -70,23 +75,18 @@ public class MemberRestController {
 
     // 회원 삭제
     @PutMapping("/delete/{id}")
-    public ResponseEntity<String> deleteMember(@RequestBody Map<String, Long> requestBody) {
-        Long id = requestBody.get("id");
-        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long authenticatedUserId = // 인증에서 사용자 ID를 추출하는 로직;
-
-        // 인증된 사용자가 계정 소유자인지 확인
-        if (authenticatedUserId.equals(memberDTO.getId())) {
-            memberService.deleteMember(memberDTO);
+    public ResponseEntity<String> deleteMember(@PathVariable Long id, @AuthenticationPrincipal MemberDTO authenticatedMember) {
+        if (authenticatedMember != null && id.equals(authenticatedMember.getId())) {
+            memberService.deleteMember(id);
+            return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
         } else {
             // 권한이 없는 삭제 시도를 처리
-        }*/
-        memberService.deleteMember(id);
-        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원 삭제 권한이 없습니다.");
+        }
     }
 
     //회원 정보 가져오기
-    @GetMapping("/get")
+    @GetMapping("/profile/get")
     public ResponseEntity<MemberDTO> get(
             @CurrentMember MemberDTO memberDTO
     ) {
@@ -97,7 +97,7 @@ public class MemberRestController {
         return ResponseEntity.ok(memberDTO);
     }
 
-    @GetMapping("/profile/get/{id}")
+    @GetMapping("/member/profile/get/{id}")
     public ResponseEntity<MemberDTO> profile(@PathVariable Long id) {
         MemberDTO existingMember = memberService.getMember(id);
         if (existingMember == null) {
