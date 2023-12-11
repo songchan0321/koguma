@@ -32,8 +32,9 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price) {
+    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price) throws Exception {
         ChatroomDTO chatroomDTO;
+        if(memberDTO.getId().equals(productDTO.getSellerDTO().getId())) throw new Exception("자신의 상품에 채팅할 수 없습니다.");
         if(this.existChatroom(memberDTO, productDTO)) {
             chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findByBuyerAndProduct_Seller(memberDTO.toEntity(), productDTO.getSellerDTO().toEntity()).orElseThrow());
         } else {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ChatService {
     public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO);
-    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price);
+    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price) throws Exception;
     public boolean existChatroom(MemberDTO memberDTO, ProductDTO productDTO);
     public ChatroomDTO getChatroom(Long id) throws Exception;
     public List<ChatroomDTO> listChatroom(MemberDTO memberDTO);
