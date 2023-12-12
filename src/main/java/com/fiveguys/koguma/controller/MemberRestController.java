@@ -45,39 +45,27 @@ public class MemberRestController {
     }
 
     // 회원정보 수정
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Void> update(@CurrentMember MemberDTO authenticatedMember, @RequestBody MemberDTO memberDTO) {
-        if (authenticatedMember == null || !authenticatedMember.getId().equals(memberDTO.getId())) {
+    @PutMapping("/update")
+    public ResponseEntity<Void> update(
+            @CurrentMember MemberDTO authenticatedMember,
+            @RequestBody MemberDTO updatedMemberDTO
+    ) {
+        if (authenticatedMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         // 여기서 회원 정보 수정 로직을 수행
-        memberService.updateMember(memberDTO, memberDTO.getNickname());
+        memberService.updateMember(authenticatedMember, updatedMemberDTO.getNickname());
 
         return ResponseEntity.ok().build();
     }
-    /*public ResponseEntity<Void> update(
-            @PathVariable Long id,
-            @RequestBody MemberDTO memberDTO
-    ) {
-        MemberDTO member = memberService.getMember(id);
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        MemberDTO existingMember = memberService.getMember(id);
-        if (existingMember != null && !existingMember.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(existingMember);
-        }
-        memberService.updateMember(member, id, memberDTO.getNickname(), memberDTO.getImageId());
-        return ResponseEntity.ok().build();
-    }*/
 
     // 회원 삭제
-    @PutMapping("/delete/{id}")
-    public ResponseEntity<String> deleteMember(@PathVariable Long id, @AuthenticationPrincipal MemberDTO authenticatedMember) {
-        if (authenticatedMember != null && id.equals(authenticatedMember.getId())) {
-            memberService.deleteMember(id);
+    @PutMapping("/delete")
+    public ResponseEntity<String> deleteMember(@CurrentMember MemberDTO currentMember) {
+        if (currentMember != null) {
+            Long memberId = currentMember.getId();
+            memberService.deleteMember(memberId);
             return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
         } else {
             // 권한이 없는 삭제 시도를 처리

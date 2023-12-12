@@ -10,10 +10,10 @@ public interface MemberRelationshipService {
     void addBlock(MemberRelationshipDTO memberRelationshipDTO);
     void deleteBlock(Long sourceMember, Long targetMember);
     List<MemberRelationshipDTO> listBlock(Long sourceMemberId);
-    MemberRelationshipDTO getBlock(Long sourceMember);
+    MemberRelationshipDTO getBlock(Long sourceMemberId, Long targetMemberId);
     void addFollowing(MemberRelationshipDTO memberRelationshipDTO);
     void deleteFollowing(Long sourceMember, Long targetMember);
     List<MemberRelationshipDTO> listFollowing(Long sourceMemberId);
-    MemberRelationshipDTO getFollowing(Long sourceMember);
+    MemberRelationshipDTO getFollowing(Long sourceMemberId, Long targetMemberId);
 
 }

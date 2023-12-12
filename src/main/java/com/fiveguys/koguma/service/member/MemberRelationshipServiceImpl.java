@@ -62,25 +62,29 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
 
 
     @Override
-    public MemberRelationshipDTO getBlock(Long sourceMemberId) {
-        List<MemberRelationship> blockRelationships = memberRelationshipRepository.findBySourceMemberIdAndMemberRelationshipType(sourceMemberId, MemberRelationshipType.BLOCK);
+    public MemberRelationshipDTO getBlock(Long sourceMemberId, Long targetMemberId) {
+        // sourceMemberId와 targetMemberId를 사용하여 차단 정보를 조회
+        List<MemberRelationship> blockRelationships = memberRelationshipRepository
+                .findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(
+                        sourceMemberId, targetMemberId, MemberRelationshipType.BLOCK);
 
         if (blockRelationships.isEmpty()) {
             throw new NoResultException("차단 정보 없음");
         }
 
-
         return MemberRelationshipDTO.fromEntity(blockRelationships.get(0));
     }
 
     @Override
-    public MemberRelationshipDTO getFollowing(Long sourceMemberId) {
-        List<MemberRelationship> followingRelationships = memberRelationshipRepository.findBySourceMemberIdAndMemberRelationshipType(sourceMemberId, MemberRelationshipType.FOLLOWING);
+    public MemberRelationshipDTO getFollowing(Long sourceMemberId, Long targetMemberId) {
+        // sourceMemberId와 targetMemberId를 사용하여 차단 정보를 조회
+        List<MemberRelationship> followingRelationships = memberRelationshipRepository
+                .findBySourceMemberIdAndTargetMemberIdAndMemberRelationshipType(
+                        sourceMemberId, targetMemberId, MemberRelationshipType.FOLLOWING);
 
         if (followingRelationships.isEmpty()) {
             throw new NoResultException("팔로잉 정보 없음");
         }
-
 
         return MemberRelationshipDTO.fromEntity(followingRelationships.get(0));
     }

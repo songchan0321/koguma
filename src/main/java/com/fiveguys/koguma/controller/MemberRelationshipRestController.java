@@ -79,11 +79,14 @@ public class MemberRelationshipRestController {
     //}
 
     //차단 정보 조회
-    @GetMapping("/member/relationship/block/get")
-    public ResponseEntity<MemberRelationshipDTO> getBlock(@CurrentMember MemberDTO authenticatedMember) {
+    @GetMapping("/member/relationship/block/get/{targetMemberId}")
+    public ResponseEntity<MemberRelationshipDTO> getBlock(
+            @CurrentMember MemberDTO authenticatedMember,
+            @PathVariable Long targetMemberId
+    ) {
         Long sourceMemberId = authenticatedMember.getId();
 
-        MemberRelationshipDTO existingMember = memberRelationshipService.getBlock(sourceMemberId);
+        MemberRelationshipDTO existingMember = memberRelationshipService.getBlock(sourceMemberId, targetMemberId);
         if (existingMember == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
         }
@@ -144,11 +147,14 @@ public class MemberRelationshipRestController {
     //{
     //      "targetMemberId": 5
     //}
-    @GetMapping("/member/relationship/following/get")
-    public ResponseEntity<MemberRelationshipDTO> getFollowing(@CurrentMember MemberDTO authenticatedMember) {
+    @GetMapping("/member/relationship/following/get/{targetMemberId}")
+    public ResponseEntity<MemberRelationshipDTO> getFollowing(
+            @CurrentMember MemberDTO authenticatedMember,
+            @PathVariable Long targetMemberId
+    ) {
         Long sourceMemberId = authenticatedMember.getId();
 
-        MemberRelationshipDTO existingMember = memberRelationshipService.getFollowing(sourceMemberId);
+        MemberRelationshipDTO existingMember = memberRelationshipService.getFollowing(sourceMemberId, targetMemberId);
         if (existingMember == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
         }
