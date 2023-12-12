@@ -101,6 +101,27 @@ public class AuthRestController {
 
         return responseEntity;
     }
+
+    @PostMapping("/member/add")
+    public ResponseEntity<MemberDTO> add(@RequestBody MemberDTO memberDTO) {
+        String nickname = memberDTO.getNickname();
+        String pw = memberDTO.getPw();
+        String phone = memberDTO.getPhone();
+        float score = memberDTO.getScore();
+        String email = memberDTO.getEmail();
+        Boolean roleFlag = memberDTO.getRoleFlag();
+        Boolean socialFlag = memberDTO.getSocialFlag();
+
+        // 닉네임 중복 체크
+        if (!memberService.nicknameValidationCheck(nickname)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 중복이 아니면 회원 추가
+        memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag);
+
+        return ResponseEntity.ok().build();
+    }
 //    @PostMapping("/signup")
 //    public ResponseEntity<MemberDTO> signUp(@RequestBody MemberDTO memberDTO,
 //                                            HttpServletRequest request, HttpServletResponse response){
