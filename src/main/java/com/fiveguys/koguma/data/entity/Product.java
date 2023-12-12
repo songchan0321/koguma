@@ -42,6 +42,7 @@ public class Product {
     private int price;
 
     @Column(name = "trade_status",nullable = false)
+    @Enumerated(EnumType.STRING)
     private ProductStateType tradeStatus;
     @Column(nullable = false,length=20)
     private String dong;

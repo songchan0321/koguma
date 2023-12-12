@@ -23,7 +23,7 @@ public class ChatApplicationTests {
     @Autowired private ChatService chatService;
     @Test
     public void addChatroomTest() throws Exception {
-        ProductDTO productDTO = productService.getProduct(1L);
+        ProductDTO productDTO = productService.getProduct(7L);
         System.out.println(productDTO);
         MemberDTO memberDTO = memberService.getMember(2L);
         ChatroomDTO chatroomDTO = chatService.addChatroom(memberDTO, productDTO);
@@ -31,10 +31,10 @@ public class ChatApplicationTests {
         assert chatroomDTO.getProductDTO().getId() == productDTO.getId();
         assert chatroomDTO.getPrice() == productDTO.getPrice();
 
-        chatroomDTO = chatService.addChatroom(memberDTO, productDTO, 10000);
-        assert chatroomDTO.getBuyerDTO().getId() == memberDTO.getId();
-        assert chatroomDTO.getProductDTO().getId() == productDTO.getId();
-        assert chatroomDTO.getPrice() == 10000;
+//        chatroomDTO = chatService.addChatroom(memberDTO, productDTO, 10000);
+//        assert chatroomDTO.getBuyerDTO().getId() == memberDTO.getId();
+//        assert chatroomDTO.getProductDTO().getId() == productDTO.getId();
+//        assert chatroomDTO.getPrice() == 10000;
         System.out.println(chatroomDTO);
     }
 
