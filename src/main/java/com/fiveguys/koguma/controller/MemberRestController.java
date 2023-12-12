@@ -23,7 +23,7 @@ public class MemberRestController {
     private final MemberService memberService;
 
     // 회원가입
-    @PostMapping("/add")
+    /*@PostMapping("/add")
     public ResponseEntity<MemberDTO> add(@RequestBody MemberDTO memberDTO) {
         String nickname = memberDTO.getNickname();
         String pw = memberDTO.getPw();
@@ -42,7 +42,7 @@ public class MemberRestController {
         memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag);
 
         return ResponseEntity.ok().build();
-    }
+    }*/
 
     // 회원정보 수정
     @PutMapping("/update")
