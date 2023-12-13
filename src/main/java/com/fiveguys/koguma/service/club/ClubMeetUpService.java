@@ -27,4 +27,6 @@ public interface ClubMeetUpService {
 
     public void changeMeetUpState();
 
+    public boolean checkJoinMeetUp(Long meetUpId,Long clubMemberId);
+
 }

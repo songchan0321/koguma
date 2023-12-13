@@ -37,12 +37,14 @@ public interface ClubService {
 
     public Long addClubMember(ClubMemberDTO clubMemberDTO);
 
-    public ClubMemberDTO getClubMember(Long clubMemberId);
+    public ClubMemberDTO getClubMember(Long clubId, Long memberId);
 
     public List<ClubMemberDTO> listClubMember(Long clubId);
 
     public void updateClubMember(ClubMemberDTO clubMemberDTO);
 
     public void changeClubLeader(Long currentLeaderId, Long newLeaderId);
+
+    public ClubMemberDTO checkJoinClub(Long clubId, Long memberId);
 
 }

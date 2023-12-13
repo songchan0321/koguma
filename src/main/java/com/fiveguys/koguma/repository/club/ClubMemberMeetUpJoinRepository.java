@@ -16,5 +16,7 @@ public interface ClubMemberMeetUpJoinRepository extends JpaRepository<ClubMember
 
     List<ClubMemberMeetUpJoin> findAllByClubMeetUpId(Long clubMeetUpId);
 
+    boolean existsByIdAndClubMemberId(Long id, Long clubMemberId);
+
 
 }
