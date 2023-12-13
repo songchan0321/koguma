@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface CommentService {
 
-    void addComment(CommentDTO commentDTO);
+    void addComment(CommentDTO commentDTO, MemberDTO memberDTO);
 
-    void updateComment(CommentDTO commentDTO);
+    void updateComment(CommentDTO commentDTO, MemberDTO memberDTO);
 
     void deleteComment(CommentDTO commentDTO) throws AccessDeniedException;
 

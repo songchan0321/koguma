@@ -2,12 +2,16 @@ package com.fiveguys.koguma.controller;
 
 
 import com.fiveguys.koguma.data.dto.CategoryDTO;
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.CategoryType;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Post;
 import com.fiveguys.koguma.service.common.CategoryService;
+import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.post.PostService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,8 +34,9 @@ public class PostRestController {
 
     private final PostService postService;
 
-
     private final CategoryService categoryService;
+
+    private final LocationService locationService;
 
 
     //게시글 리스트 조회
@@ -50,19 +55,21 @@ public class PostRestController {
 
     }
 
-    @GetMapping("/list/member/{memberId}")
+    @GetMapping("/list/member")
     public ResponseEntity<Page<PostDTO>> listPostByMember(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @PathVariable Long memberId
+            @CurrentMember MemberDTO currentMember
     ){
 
         try{
-            MemberDTO memberDTO = new MemberDTO();
-            memberDTO.setId(memberId);
+
+            if (currentMember == null || currentMember.getId() == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
 
             PageRequest pageRequest = PageRequest.of(page,size);
-            Page<PostDTO> posts = postService.listPostByMember(memberDTO, pageRequest).map(PostDTO::fromEntity);
+            Page<PostDTO> posts = postService.listPostByMember(currentMember, pageRequest).map(PostDTO::fromEntity);
 
             return new ResponseEntity<>(posts, HttpStatus.OK);
         }catch (Exception e){
@@ -72,7 +79,6 @@ public class PostRestController {
 
     }
 
-    // todo :: 접근 회원에 따라 수정, 삭제로 연결하기위해 security varidation이 추가 된 후 코드 수정 할 것
     @GetMapping("/get/{postId}")
     public ResponseEntity<PostDTO> getPost(@PathVariable("postId") Long postId){
 
@@ -86,12 +92,31 @@ public class PostRestController {
         }
     }
 
-
     @PostMapping("/add")
-    public ResponseEntity<Void> addPost(@RequestBody PostDTO postDTO){
+    public ResponseEntity<Void> addPost(
+            @RequestBody PostDTO postDTO,
+            @CurrentMember MemberDTO currentMember
+    ){
 
         try{
-            postService.addPost(postDTO);
+            if(currentMember == null || currentMember.getId() == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+
+
+            LocationDTO locationDTO =locationService.getMemberRepLocation(currentMember.getId());
+
+            postDTO.setDong(locationDTO.getDong());
+            postDTO.setLatitude(locationDTO.getLatitude());
+            postDTO.setLongitude(locationDTO.getLongitude());
+
+//            CategoryDTO categoryDTO = new CategoryDTO();
+//            categoryDTO.setId(postDTO.getCategoryDTO().getId());
+//            postDTO.setCategoryDTO(categoryDTO);
+
+            postService.addPost(postDTO, currentMember);
+
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -100,9 +125,16 @@ public class PostRestController {
 
 
     @PutMapping("/update")
-    public ResponseEntity<Void> updatePost(@RequestBody PostDTO postDTO){
+    public ResponseEntity<Void> updatePost(
+            @RequestBody PostDTO postDTO,
+            @CurrentMember MemberDTO currentMember
+            ){
         try{
-            postService.updatePost(postDTO);
+
+            if(!postDTO.getMemberDTO().getId().equals(currentMember.getId())){
+                throw new Exception("권한이 없습니다.");
+            }
+            postService.updatePost(postDTO, currentMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (EntityNotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -112,9 +144,17 @@ public class PostRestController {
     }
 
     @PutMapping("/delete")
-    public ResponseEntity<Void> deletePost(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<Void> deletePost(
+            @RequestBody PostDTO postDTO,
+            @CurrentMember MemberDTO currentMember
+    ) {
         try {
-            postService.deletePost(postDTO);
+
+            if(!postDTO.getMemberDTO().getId().equals(currentMember.getId())){
+                throw new Exception("권한이 없습니다.");
+            }
+
+            postService.deletePost(postDTO, currentMember);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

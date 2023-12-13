@@ -45,10 +45,9 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void addPost(PostDTO postDTO) {
+    public void addPost(PostDTO postDTO, MemberDTO memberDTO) {
 
-        postDTO.setPostType(true);
-        postDTO.setActiveFlag(true);
+        postDTO.setMemberDTO(memberDTO);
 
 
         postRepository.save(postDTO.toEntity());
@@ -65,23 +64,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(PostDTO postDTO) {
+    public void updatePost(PostDTO postDTO, MemberDTO memberDTO) {
 
         Long postId = postDTO.getId();
 
         //기존 게시글 조회
-        Post existingPost = postRepository.findById(postId)
-                        .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+            Post existingPost = postRepository.findById(postId)
+                            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+            existingPost.setTitle(postDTO.getTitle());
+            existingPost.setCategory(postDTO.toEntity().getCategory());
+            existingPost.setContent(postDTO.getContent());
 
-        existingPost.setTitle(postDTO.getTitle());
-        existingPost.setCategory(postDTO.toEntity().getCategory());
-        existingPost.setContent(postDTO.getContent());
-
-        postRepository.save(existingPost);
-        }
+            postRepository.save(existingPost);
+    }
 
     @Override
-    public void deletePost(PostDTO postDTO) {
+    public void deletePost(PostDTO postDTO, MemberDTO memberDTO) {
 
         Long postId = postDTO.getId();
 

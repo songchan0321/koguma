@@ -7,6 +7,7 @@ import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Comment;
 import com.fiveguys.koguma.service.post.CommentService;
 import com.fiveguys.koguma.service.post.PostService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -27,10 +28,18 @@ public class CommentRestController {
     private final CommentService commentService;
 
     @PostMapping("/add")
-    public ResponseEntity<Void> addComment(@RequestBody CommentDTO commentDTO){
+    public ResponseEntity<Void> addComment(
+            @RequestBody CommentDTO commentDTO,
+            @CurrentMember MemberDTO currentMember
+    ){
         System.out.println("commentDto : "+commentDTO);
         try {
-            commentService.addComment(commentDTO);
+            if(currentMember == null || currentMember.getId() == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            commentService.addComment(commentDTO, new MemberDTO());
+
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -39,10 +48,18 @@ public class CommentRestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Void> updateComment(@RequestBody CommentDTO commentDTO){
+    public ResponseEntity<Void> updateComment(
+            @RequestBody CommentDTO commentDTO,
+            @CurrentMember MemberDTO currentMember
+    ){
 
         try{
-            commentService.updateComment(commentDTO);
+
+            if(!commentDTO.getMemberDTO().getId().equals(currentMember.getId())){
+                throw new Exception("권한이 없습니다.");
+            }
+
+            commentService.updateComment(commentDTO, currentMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -52,9 +69,16 @@ public class CommentRestController {
     }
 
     @PutMapping("/delete")
-    public ResponseEntity<Void> deleteComment(@RequestBody CommentDTO commentDTO){
+    public ResponseEntity<Void> deleteComment(
+            @RequestBody CommentDTO commentDTO,
+            @CurrentMember MemberDTO currentMember
+
+    ){
 
         try{
+            if(!commentDTO.getMemberDTO().getId().equals(currentMember.getId())){
+                throw new Exception("권한이 없습니다.");
+            }
             commentService.deleteComment(commentDTO);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (EntityNotFoundException e) {
@@ -130,19 +154,23 @@ public class CommentRestController {
     }
 
 
-    @GetMapping("/list/member/{memberId}")
+    @GetMapping("/list/member")
     public ResponseEntity<List<CommentDTO>> listCommentByMember(
-            @PathVariable (name = "memberId") Long memberId
+            @CurrentMember MemberDTO currentMember
     ){
         try {
-            MemberDTO memberDTO =new MemberDTO();
-            memberDTO.setId(memberId);
 
-            List<Comment> comments = commentService.listCommentByMember(memberDTO);
+            if (currentMember == null || currentMember.getId() == null){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            List<Comment> comments = commentService.listCommentByMember(currentMember);
 
             List<CommentDTO> collect = comments.stream()
                     .map((c) -> CommentDTO.fromEntity(c))
                     .collect(Collectors.toList());
+
+            System.out.println("collect = " + collect);
 
             return new ResponseEntity<>(collect, HttpStatus.OK);
         }catch (EntityNotFoundException e){

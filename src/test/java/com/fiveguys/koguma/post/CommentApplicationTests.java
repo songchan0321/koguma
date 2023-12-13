@@ -120,7 +120,7 @@ public class CommentApplicationTests {
         updatedCommentDTO.setContent("새로운 댓글 내용");
 
         // When
-        commentService.updateComment(updatedCommentDTO);
+        commentService.updateComment(updatedCommentDTO, new MemberDTO());
 
         // Then
         Comment updatedComment = commentRepository.findById(existingComment.getId()).orElse(null);
