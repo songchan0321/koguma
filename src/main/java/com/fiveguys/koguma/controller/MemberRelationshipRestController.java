@@ -12,9 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.NoResultException;
 import javax.xml.ws.Response;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 @RestController
@@ -68,10 +71,17 @@ public class MemberRelationshipRestController {
         Long targetMemberId = requestBody.get("targetMemberId");
         // authenticatedMember를 사용하여 현재 인증된 사용자의 정보를 활용할 수 있습니다.
 
-        // 예외 처리 등 필요한 로직 추가
-        memberRelationshipService.deleteBlock(sourceMemberId, targetMemberId);
-
-        return ResponseEntity.ok("차단 삭제 완료");
+        try {
+            // 예외 처리 등 필요한 로직 추가
+            memberRelationshipService.deleteBlock(sourceMemberId, targetMemberId);
+            return ResponseEntity.ok("차단 삭제 완료");
+        } catch (NoResultException e) {
+            // 차단 정보가 없을 경우
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("차단 정보가 없습니다.");
+        } catch (Exception e) {
+            // 그 외 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("차단 삭제 중 오류가 발생했습니다.");
+        }
     }
 
     //{
@@ -80,17 +90,22 @@ public class MemberRelationshipRestController {
 
     //차단 정보 조회
     @GetMapping("/member/relationship/block/get/{targetMemberId}")
-    public ResponseEntity<MemberRelationshipDTO> getBlock(
+    public CompletableFuture<ResponseEntity<MemberRelationshipDTO>> getBlock(
             @CurrentMember MemberDTO authenticatedMember,
             @PathVariable Long targetMemberId
     ) {
         Long sourceMemberId = authenticatedMember.getId();
 
-        MemberRelationshipDTO existingMember = memberRelationshipService.getBlock(sourceMemberId, targetMemberId);
-        if (existingMember == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
-        }
-        return ResponseEntity.ok(existingMember);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                MemberRelationshipDTO existingMember = memberRelationshipService.getBlock(sourceMemberId, targetMemberId);
+                return ResponseEntity.ok(existingMember);
+            } catch (NoResultException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+        });
     }
 
     @GetMapping("/member/relationship/block/list")
@@ -136,13 +151,22 @@ public class MemberRelationshipRestController {
             @RequestBody Map<String, Long> requestBody,
             @CurrentMember MemberDTO authenticatedMember
     ) {
+        // requestBody에서 targetMemberId를 추출합니다.
         Long sourceMemberId = authenticatedMember.getId();
         Long targetMemberId = requestBody.get("targetMemberId");
+        // authenticatedMember를 사용하여 현재 인증된 사용자의 정보를 활용할 수 있습니다.
 
-        // 예외 처리 등 필요한 로직 추가
-        memberRelationshipService.deleteFollowing(sourceMemberId, targetMemberId);
-
-        return ResponseEntity.ok("팔로잉 삭제 완료");
+        try {
+            // 예외 처리 등 필요한 로직 추가
+            memberRelationshipService.deleteFollowing(sourceMemberId, targetMemberId);
+            return ResponseEntity.ok("팔로잉 삭제 완료");
+        } catch (NoResultException e) {
+            // 차단 정보가 없을 경우
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("팔로잉 정보가 없습니다.");
+        } catch (Exception e) {
+            // 그 외 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("팔로잉 삭제 중 오류가 발생했습니다.");
+        }
     }
     //{
     //      "targetMemberId": 5
