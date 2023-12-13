@@ -48,6 +48,7 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
         ClubDTO clubDTO = clubService.getClub(clubId);
 
         clubMeetUpDTO.setClubDTO(clubDTO);
+        clubMeetUpDTO.setActiveFlag(true);
         ClubMeetUp cmu = clubMeetUpDTO.toEntity();
 
         return  clubMeetUpRepository.save(cmu).getId();
@@ -143,5 +144,11 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
             endMeetUp.changeActiveFlag();
         }
 
+    }
+
+    @Override
+    public boolean checkJoinMeetUp(Long meetUpId, Long clubMemberId ) {
+
+        return clubMemberMeetUpJoinRepository.existsByIdAndClubMemberId(meetUpId,clubMemberId);
     }
 }
