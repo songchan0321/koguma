@@ -85,13 +85,22 @@ public class MemberRestController {
         return ResponseEntity.ok(memberDTO);
     }
 
-    @GetMapping("/member/profile/get/{id}")
+    /*@GetMapping("/member/profile/get/{id}")
     public ResponseEntity<MemberDTO> profile(@PathVariable Long id) {
         MemberDTO existingMember = memberService.getMember(id);
         if (existingMember == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(existingMember);
         }
         return ResponseEntity.ok(existingMember);
+    }*/
+    @GetMapping("/other/get/{id}")
+    public ResponseEntity<MemberDTO> getOtherMember(@PathVariable Long id) {
+        try {
+            MemberDTO otherMember = memberService.getOtherMember(id);
+            return ResponseEntity.ok(otherMember);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

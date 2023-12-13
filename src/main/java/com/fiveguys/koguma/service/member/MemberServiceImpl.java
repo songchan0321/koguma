@@ -162,5 +162,8 @@ public class MemberServiceImpl implements MemberService {
     public MemberDTO getMemberByEmail(String email) {
         return MemberDTO.fromEntity(memberRepository.findByEmail(email));
     }
+
+
+
 }
 

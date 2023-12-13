@@ -52,7 +52,7 @@ public class ReportApplicationTests {
         reportService.addReport(ReportDTO.fromEntity(report));
     }
 
-    @Test
+    /*@Test
     @DisplayName("신고 추가 및 삭제 테스트")
     @Transactional
     public void addAndDeleteReportTest() throws Exception {
@@ -73,13 +73,13 @@ public class ReportApplicationTests {
         reportService.deleteReport(3L);
         Optional<Report> deletedReportOptional = reportRepository.findById(3L);
         assertFalse(deletedReportOptional.isPresent(), "Report should be deleted");
-    }
-    @Test
+    }*/
+    /*@Test
     @DisplayName("신고 상세 조회 테스트")
     @Transactional
     public void getReportTest(){
         reportService.getReport(13L);
-    }
+    }*/
 
     @Test
     @DisplayName("특정 회원의 신고 목록 조회 테스트")

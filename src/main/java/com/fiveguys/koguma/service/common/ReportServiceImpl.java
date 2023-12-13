@@ -1,9 +1,11 @@
 package com.fiveguys.koguma.service.common;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ReportDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Report;
 import com.fiveguys.koguma.repository.common.ReportRepository;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,20 +30,31 @@ public class ReportServiceImpl implements ReportService {
         reportRepository.save(reportDTO.toEntity());
     }
     @Override
-    public void deleteReport(Long id) {
+    public void deleteReport(@CurrentMember MemberDTO authenticatedMember) {
+        Long reporterId = authenticatedMember.getId();
 
-        Optional<Report> reportOptional = reportRepository.findById(id);
+        Optional<Report> reportOptional = reportRepository.findByReporterId(reporterId);
 
         if (reportOptional.isPresent()) {
             Report report = reportOptional.get();
             reportRepository.delete(report);
+        } else {
+            throw new NoResultException("해당 신고를 찾을 수 없습니다.");
         }
     }
 
     @Override
-    public ReportDTO getReport(Long id){
-        Report report = reportRepository.findById(id).orElseThrow(()-> new NoResultException("신고 정보 없음"));
-        return ReportDTO.fromEntity(report);
+    public ReportDTO getReport(@CurrentMember MemberDTO authenticatedMember) {
+        Long reporterId = authenticatedMember.getId();
+
+        Optional<Report> reportOptional = reportRepository.findByReporterId(reporterId);
+
+        if (reportOptional.isPresent()) {
+            Report report = reportOptional.get();
+            return ReportDTO.fromEntity(report);
+        } else {
+            throw new NoResultException("해당 신고를 찾을 수 없습니다.");
+        }
     }
 
     @Override
@@ -66,8 +79,5 @@ public class ReportServiceImpl implements ReportService {
 
         reportRepository.save(reportDTO.toEntity());
     }
-
-
-
 
 }
