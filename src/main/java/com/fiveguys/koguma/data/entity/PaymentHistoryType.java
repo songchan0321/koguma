@@ -11,4 +11,13 @@ public enum PaymentHistoryType {
     REFUND_REQUEST("환급 요청"),
     REFUND_SUCCESS("환급 성공");
     private final String type;
+
+    public static boolean contains(String testType) {
+        for (PaymentHistoryType type : PaymentHistoryType.values()) {
+            if (type.name().contains(testType)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
