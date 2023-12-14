@@ -17,14 +17,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/report")
+@RequestMapping("/member/report")
 public class ReportRestController {
     private final ReportService reportService;
 
 
-    @PostMapping("/add/{reporter}")
-    public ResponseEntity<ReportDTO> addReport(@RequestBody ReportDTO reportDTO){
+    @PostMapping("/add")
+    public ResponseEntity<ReportDTO> addReport(
+            @CurrentMember MemberDTO authenticatedMember,
+            @RequestBody ReportDTO reportDTO
+    ){
+        reportDTO.setReporter(authenticatedMember.toEntity());
         try{
+            if( authenticatedMember == null || !authenticatedMember.getId().equals(reportDTO.getReporter().getId())){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             reportService.addReport(reportDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -38,7 +45,7 @@ public class ReportRestController {
     //    },
     //    "reportTitle" : "사기를 당했어요.",
     //    "reportContent" : "중고 거래를 하다 사기를 당했어요. 가해자를 처벌해 주세요.",
-    //    "categoryId" : "51",
+    //    "categoryId" : "17",
     //    "categoryName" : "회원"
     //}
     @DeleteMapping("/delete")
