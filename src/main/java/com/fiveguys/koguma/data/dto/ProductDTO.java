@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.data.dto;
 
+import com.fiveguys.koguma.data.entity.Image;
 import com.fiveguys.koguma.data.entity.Location;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
@@ -7,10 +8,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Data
+@NoArgsConstructor
 public class ProductDTO {
     private Long id;
     private MemberDTO sellerDTO;
@@ -28,10 +30,12 @@ public class ProductDTO {
     private Boolean activeFlag;
     private LocalDateTime regDate;
     private LocalDateTime buyDate;
+    private List<String> images;
+    private List<ImageDTO> imageDTO;
 
 
     @Builder
-    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate) {
+    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate, List<String> images, List<ImageDTO> imageDTO) {
         this.id = id;
         this.sellerDTO = sellerDTO;
         this.buyerDTO = buyerDTO;
@@ -48,7 +52,13 @@ public class ProductDTO {
         this.activeFlag = activeFlag;
         this.regDate = regDate;
         this.buyDate = buyDate;
+        this.images = images;
+        this.imageDTO = imageDTO;
     }
+
+    @Builder
+
+
     public Product toEntity(){
         Product.ProductBuilder builder = Product.builder()
                 .id(id)
@@ -63,11 +73,14 @@ public class ProductDTO {
                 .longitude(longitude)
                 .views(views)
                 .categoryName(categoryName)
-                .activeFlag(activeFlag)
                 .buyDate(buyDate);
         if (buyerDTO != null) {
             builder.buyer(buyerDTO.toEntity());
         }
+        if (activeFlag != null){
+            builder.activeFlag(activeFlag);
+        }
+
 
         return builder.build();
     }
@@ -85,15 +98,45 @@ public class ProductDTO {
                 .longitude(product.getLongitude())
                 .views(product.getViews())
                 .categoryName(product.getCategoryName())
-                .activeFlag(product.getActiveFlag())
                 .regDate(product.getRegDate())
                 .buyDate(product.getBuyDate());
 
         if (product.getBuyer() != null) {
             builder.buyerDTO(MemberDTO.fromEntity(product.getBuyer()));
         }
+        if (product.getActiveFlag() != null){
+            builder.activeFlag(product.getActiveFlag());
+        }
 
         return builder.build();
     }
+    public static ProductDTO fromEntityContainImage(Product product) {
+        ProductDTO.ProductDTOBuilder builder = ProductDTO.builder()
+                .id(product.getId())
+                .sellerDTO(MemberDTO.fromEntity(product.getSeller()))
+                .categoryId(product.getCategoryId())
+                .title(product.getTitle())
+                .content(product.getContent())
+                .price(product.getPrice())
+                .tradeStatus(product.getTradeStatus())
+                .dong(product.getDong())
+                .latitude(product.getLatitude())
+                .longitude(product.getLongitude())
+                .views(product.getViews())
+                .categoryName(product.getCategoryName())
+                .regDate(product.getRegDate())
+                .buyDate(product.getBuyDate());
 
+        if (product.getBuyer() != null) {
+            builder.buyerDTO(MemberDTO.fromEntity(product.getBuyer()));
+        }
+        if (product.getActiveFlag() != null){
+            builder.activeFlag(product.getActiveFlag());
+        }
+        if (product.getImage()!= null){
+            builder.imageDTO(product.getImage().stream().map((ImageDTO::fromEntity)).collect(Collectors.toList()));
+        }
+
+        return builder.build();
+    }
 }

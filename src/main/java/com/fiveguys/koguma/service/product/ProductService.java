@@ -1,13 +1,16 @@
 package com.fiveguys.koguma.service.product;
 
+import com.fiveguys.koguma.data.dto.ImageDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ProductService {
-    void addProduct(ProductDTO productDTO);
+    ProductDTO addProduct(ProductDTO productDTO);
     Page<Product> listProduct(Long memberId,int page, int size);
     ProductDTO getProduct(Long productId);
     ProductDTO updateProduct(ProductDTO productDTO);
@@ -24,6 +27,5 @@ public interface ProductService {
     void raiseProduct(Long productId) throws Exception;
 
     void isOwnProduct(Long memberId, Long sellerId) throws Exception;
-
 
 }

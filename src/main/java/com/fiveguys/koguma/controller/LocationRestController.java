@@ -5,6 +5,7 @@ import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Location;
 import com.fiveguys.koguma.service.common.AuthService;
 import com.fiveguys.koguma.service.common.LocationService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class LocationRestController {
     private final AuthService authService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         LocationDTO locationDTO = locationService.getLocation(id);
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -32,15 +33,15 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
     @GetMapping("list")
-    public ResponseEntity<Page<Location>> listLocation(@RequestParam int page) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<Page<Location>> listLocation(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         Page<Location> listLocation = locationService.listLocation(memberDTO,page);
 
         return ResponseEntity.status(HttpStatus.OK).body(listLocation);
     }
     @PostMapping("/new")
-    public ResponseEntity<LocationDTO> addLocation(@RequestBody LocationDTO locationDTO) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<LocationDTO> addLocation(@RequestBody LocationDTO locationDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
+
 
         String dong = locationService.reverseGeoCoder(
                 locationDTO.getLatitude(), locationDTO.getLongitude());
@@ -50,8 +51,8 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteLocation(@PathVariable Long id) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<String> deleteLocation(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         LocationDTO locationDTO = locationService.getLocation(id);
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -62,8 +63,8 @@ public class LocationRestController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody Map<String, Integer> json) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody Map<String, Integer> json,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         LocationDTO locationDTO = locationService.getLocation(json.get("locationId"));
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -73,8 +74,8 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
     @PostMapping("/rep/{id}")
-    public ResponseEntity<String> setRepLocation(@PathVariable Long id) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<String> setRepLocation(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         LocationDTO locationDTO = locationService.getLocation(id);
         if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("local")
 public class LocationApplicationTests {
 
     @Autowired
@@ -37,21 +39,21 @@ public class LocationApplicationTests {
     private MemberService memberService;
 
 
-//    @Test
-//    @DisplayName("위치 등록 테스트")
-//    @Transactional
-//    public void addLocation() throws Exception {
-//
-//        MemberDTO memberDTO = memberService.getMember(6L);
-//        locationService.addLocation(LocationDTO.builder()
-//                        .memberDTO(memberDTO)
-//                        .dong("인헌동")
-//                        .latitude(37.4923615)
-//                        .longitude(127.0292881)
-//                        .repAuthLocationFlag(true)
-//                        .searchRange(3)
-//                        .build());
-//    }
+    @Test
+    @DisplayName("위치 등록 테스트")
+    @Transactional
+    public void addLocation() throws Exception {
+
+        MemberDTO memberDTO = memberService.getMember(1L);
+        locationService.addLocation(memberDTO,LocationDTO.builder()
+                        .memberDTO(memberDTO)
+                        .dong("인헌동")
+                        .latitude(37.4923615)
+                        .longitude(127.0292881)
+                        .repAuthLocationFlag(true)
+                        .searchRange(3)
+                        .build());
+    }
 
 //    @Test
 //    @DisplayName("위치 리스트 테스트")
@@ -98,7 +100,7 @@ public class LocationApplicationTests {
     @DisplayName("멤버 대표 테스트")
     @Transactional
     public void getMemberRepLocation() throws Exception {
-        LocationDTO locationDTO = locationService.getMemberRepLocation(6L);
+        LocationDTO locationDTO = locationService.getMemberRepLocation(5L);
         System.out.println(locationDTO.toString());
     }
 

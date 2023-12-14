@@ -3,6 +3,7 @@ package com.fiveguys.koguma.repository.common;
 import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.*;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class QueryRepositoryImpl implements QueryRepository{
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<?> findAllByDistance(CategoryType target, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception {
+    public List<?> findAllByDistance(CategoryType target, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception {
         EntityPath<?> entity = null;
 
         switch (target) {
@@ -49,9 +51,13 @@ public class QueryRepositoryImpl implements QueryRepository{
         NumberPath<Double> longitudePath = pathBuilder.getNumber("longitude", Double.class);
         NumberPath<Double> latitudePath = pathBuilder.getNumber("latitude", Double.class);
         StringPath titlePath = pathBuilder.getString("title");
+
+        QImage image = QImage.image;
+
         JPAQuery<?> jpaQuery = jpaQueryFactory
-                .select(entity)
+                .select(entity, image)
                 .from(entity)
+                .leftJoin(image).on(getJoinCondition(entity, image))
                 .where(Expressions.numberTemplate(Double.class,
                         "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
                         locationDTO.getLongitude(), locationDTO.getLatitude(),
@@ -61,12 +67,27 @@ public class QueryRepositoryImpl implements QueryRepository{
             jpaQuery.where(titlePath.containsIgnoreCase(keyword));
         }
 
-        Page<?> filterList = (Page<?>) jpaQuery
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        List<Tuple> filterList = (List<Tuple>) jpaQuery.fetch();
 
-        return filterList;
+        List<Product> products = filterList.stream()
+                .map(tuple -> tuple.get(0, Product.class)) // 첫 번째 엔터티는 Product
+                .collect(Collectors.toList());
+        for (Product product : products) {
+            System.out.println(product.toString());
+        }
+        return products;
+    }
+    private com.querydsl.core.types.dsl.BooleanExpression getJoinCondition(EntityPath<?> entity, QImage image) {
+        switch (entity.getType().getSimpleName()) {
+            case "Product":
+                return QProduct.product.eq(image.product);
+            case "Club":
+                return QClub.club.eq(image.club);
+            case "Post":
+                return QPost.post.eq(image.post);
+            default:
+                throw new IllegalArgumentException("잘못된 엔티티 입력");
+        }
     }
 
 }

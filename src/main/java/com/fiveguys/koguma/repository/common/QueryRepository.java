@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface QueryRepository {
 
-    Page<?> findAllByDistance(CategoryType target, LocationDTO locationDTO,
+    List<?> findAllByDistance(CategoryType target, LocationDTO locationDTO,
                               Pageable pageable, String keyword) throws Exception;
 }

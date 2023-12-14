@@ -4,7 +4,7 @@ package com.fiveguys.koguma.service.common;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.*;
 import com.fiveguys.koguma.config.S3Config;
-import com.fiveguys.koguma.data.dto.ImageDTO;
+import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.Image;
 import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
@@ -32,6 +32,7 @@ public class ImageServiceImpl implements ImageService {
 
     public void addImage(List<ImageDTO> imageDTOS) {
         List<Image> images = imageDTOS.stream().map(ImageDTO::toEntity).collect(Collectors.toList());
+
         imageRepository.saveAll(images);
     }
 
@@ -145,6 +146,26 @@ public class ImageServiceImpl implements ImageService {
         setObjectACL(s3Config.getBucketName(), originalFilename);  // 저장하고 Access 권한까지 업데이트 해줘야함
         return s3Config.getS3().getUrl(s3Config.getBucketName(), originalFilename).toString();
     }
+    public List<String> tempFileUpload(List<MultipartFile> multipartFileList) throws IOException {
+        // axios로 받은 file의 정보를 사용해 NCP의 Object Storage에 저장
+        List<String> fileUrlList = new ArrayList<>();
+        multipartFileList.forEach(multipartFile -> {
+            String originalFilename = multipartFile.getOriginalFilename();
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
+
+            try {
+                s3Config.getS3().putObject(s3Config.getBucketName(), originalFilename, multipartFile.getInputStream(), metadata);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            setObjectACL(s3Config.getBucketName(), originalFilename);  // 저장하고 Access 권한까지 업데이트 해줘야함
+            fileUrlList.add(s3Config.getS3().getUrl(s3Config.getBucketName(), originalFilename).toString());
+        });
+        return fileUrlList;
+    }
     public void setObjectACL(String bucketName,String objectName){
         try {
             // 현재 ACL의 정보를 가져온다
@@ -160,5 +181,36 @@ public class ImageServiceImpl implements ImageService {
         } catch(SdkClientException e) {
             e.printStackTrace();
         }
+    }
+    public List<ImageDTO> createImageDTOList(Object object, List<String> imageList, ImageType imageType) {
+
+
+        return imageList.stream()
+                .map(url -> createImageDTO(object, url, imageType,url.equals(imageList.get(0)) ? true : false))
+                .collect(Collectors.toList());
+    }
+
+    public ImageDTO createImageDTO(Object object, String url,ImageType imageType,boolean repImageFlag) {
+
+        switch(imageType){
+            case PRODUCT: {
+                return ImageDTO.builder().productDTO((ProductDTO) object).activeFlag(true).imageType(ImageType.PRODUCT).URL(url).repImageFlag(repImageFlag).build();
+            }
+            case CLUB:{
+                return ImageDTO.builder().clubDTO((ClubDTO) object).activeFlag(true).imageType(ImageType.CLUB).URL(url).repImageFlag(repImageFlag).build();
+            }
+            case POST:{
+                return ImageDTO.builder().postDTO((PostDTO) object).activeFlag(true).imageType(ImageType.POST).URL(url).repImageFlag(repImageFlag).build();
+            }
+//            case MESSAGE:{
+//                List<Image> images = imageRepository.findAllByMessageId(targetId);
+//                imageDTOS = images.stream().map((x) -> ImageDTO.fromEntity(x)).collect(Collectors.toList());
+//                break;
+//            }
+            default:
+                System.out.println("createImageDTO 오류");
+        }
+
+        return null;
     }
 }

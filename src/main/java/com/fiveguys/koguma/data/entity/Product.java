@@ -41,8 +41,8 @@ public class Product {
     @Column(nullable = false)
     private int price;
 
-    @Column(name = "trade_status",nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "trade_status",nullable = false)
     private ProductStateType tradeStatus;
     @Column(nullable = false,length=20)
     private String dong;
@@ -53,6 +53,8 @@ public class Product {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int views;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Image> image = new ArrayList<>();
     @Column(name = "category_name",nullable = false,length=15)
     private String categoryName;
     @Column(name = "active_flag", nullable = false)

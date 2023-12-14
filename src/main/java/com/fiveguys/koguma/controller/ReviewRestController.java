@@ -6,6 +6,7 @@ import com.fiveguys.koguma.data.entity.Review;
 import com.fiveguys.koguma.service.common.AuthService;
 import com.fiveguys.koguma.service.product.ProductService;
 import com.fiveguys.koguma.service.product.ReviewService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -30,22 +31,22 @@ public class ReviewRestController {
         return ResponseEntity.status(HttpStatus.OK).body(reviewDTO);
     }
     @GetMapping("/list")
-    public ResponseEntity<Page<Review>> listReview(@RequestParam int page) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<Page<Review>> listReview(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         Page<Review> reviewList = reviewService.listReview(memberDTO,page);
         return ResponseEntity.status(HttpStatus.OK).body(reviewList);
     }
-    @PostMapping("/new")
-    public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO reviewDTO) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    @PostMapping("/new") //reviewDTO add시 productDTO와 buyerDTO 넣어야함
+    public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO reviewDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         reviewDTO = reviewService.addReview(reviewDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(reviewDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long id) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<String> deleteReview(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         ReviewDTO reviewDTO = reviewService.getReview(id);
 
         if (!Objects.equals(reviewDTO.getId().getMember().getId(), memberDTO.getId()))

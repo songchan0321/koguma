@@ -6,6 +6,7 @@ import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.service.common.AuthService;
 import com.fiveguys.koguma.service.member.MemberService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +60,7 @@ public class AuthRestController {
     }
     @GetMapping("/kakao/callback/check")
     public ResponseEntity getLogin(@RequestParam("code") String code,
+                                    @CurrentMember MemberDTO loginInfo,
                                     HttpServletRequest request, HttpServletResponse response ) throws Exception { //(1)
 
 
@@ -74,7 +76,6 @@ public class AuthRestController {
         System.out.println(kakaoAuthDTO);
         KakaoProfileDTO kakaoProfileDTO = authService.findProfile(kakaoAuthDTO.getAccess_token());
         MemberDTO memberDTO = memberService.getMemberByEmail(kakaoProfileDTO.getKakao_account().getEmail());
-        MemberDTO loginInfo = authService.getAuthMember();
         boolean valid = authService.validateSocialMember(memberDTO);
         if (valid){   // 소셜로그인으로 로그인
 

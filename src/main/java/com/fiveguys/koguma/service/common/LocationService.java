@@ -7,6 +7,8 @@ import com.fiveguys.koguma.data.entity.Location;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface LocationService {
 
     Page<Location> listLocation(MemberDTO memberDTO,int page);
@@ -18,5 +20,5 @@ public interface LocationService {
     LocationDTO getMemberRepLocation(Long memberId);
     void setRepLocation(Long memberId,Long locationId);
     String reverseGeoCoder(double latitude, double longitude);
-    Page<Object> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception;
+    List<?> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception;
 }

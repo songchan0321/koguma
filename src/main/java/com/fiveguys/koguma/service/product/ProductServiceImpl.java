@@ -1,7 +1,8 @@
 package com.fiveguys.koguma.service.product;
 
-import com.fiveguys.koguma.data.dto.MemberDTO;
-import com.fiveguys.koguma.data.dto.ProductDTO;
+import com.fiveguys.koguma.data.dto.*;
+import com.fiveguys.koguma.data.entity.Image;
+import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
 import com.fiveguys.koguma.repository.product.ProductRepository;
@@ -17,6 +18,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +29,8 @@ public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
 
 
-    public void addProduct(ProductDTO productDTO) {
-        productRepository.save(productDTO.toEntity());
+    public ProductDTO addProduct(ProductDTO productDTO) {
+        return ProductDTO.fromEntity(productRepository.save(productDTO.toEntity()));
     }
 
     public Page<Product> listProduct(Long memberId,int page, int size) {
@@ -37,8 +40,9 @@ public class ProductServiceImpl implements ProductService{
 
 
     public ProductDTO getProduct(Long productId) {              //시큐리티 본인 확인 대상
-        Product product = productRepository.findById(productId).orElseThrow(()->new NoResultException("해당 상품의 정보가 존재하지 않습니다."));
-        return ProductDTO.fromEntity(product);
+//        Product product = productRepository.findById(productId).orElseThrow(()->new NoResultException("해당 상품의 정보가 존재하지 않습니다."));
+//        return ProductDTO.fromEntity(product);
+        return ProductDTO.fromEntityContainImage(productRepository.findByProductIdWithImages(productId));
     }
 
     public ProductDTO updateProduct(ProductDTO productDTO) {
@@ -101,4 +105,5 @@ public class ProductServiceImpl implements ProductService{
         if (!sellerId.equals(memberId))
             throw new Exception("상품에 대한 권한이 없습니다");
     }
+
 }
