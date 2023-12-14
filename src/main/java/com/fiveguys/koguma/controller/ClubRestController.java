@@ -3,6 +3,7 @@ package com.fiveguys.koguma.controller;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.dto.club.MeetUpStateDTO;
 import com.fiveguys.koguma.data.entity.CategoryType;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.service.club.ClubMeetUpService;
 import com.fiveguys.koguma.service.club.ClubService;
 import com.fiveguys.koguma.service.common.CategoryService;
@@ -54,10 +55,6 @@ public class ClubRestController {
         return ResponseEntity.ok(clubService.listClub());
     }
 
-//    @GetMapping(path = "/list")
-//    public ResponseEntity<List<ClubDTO>> listClub(){
-//        return ResponseEntity.ok(clubService.listClub());
-//    }
 
     @GetMapping(path = "/list/category/{categoryId}")
     public ResponseEntity<List<ClubDTO>> listClubByCategory(@PathVariable Long categoryId){
@@ -83,10 +80,10 @@ public class ClubRestController {
         return ResponseEntity.ok(clubDTO);
     }
 
-    @PostMapping(path = "/join/{memberId}")
+    @PostMapping(path = "/join/request")
     public ResponseEntity<?> addJoinRequest(@RequestBody ClubJoinRequestDTO clubJoinRequestDTO,
-                                            @PathVariable Long memberId){
-        return ResponseEntity.ok(clubService.addJoinRequestClub(clubJoinRequestDTO, memberId));
+                                            @CurrentMember MemberDTO memberDTO){
+        return ResponseEntity.ok(clubService.addJoinRequestClub(clubJoinRequestDTO, memberDTO.getId()));
     }
 
     @DeleteMapping("/cancel/join/{memberId}")
@@ -95,9 +92,8 @@ public class ClubRestController {
     }
 
     //todo: leaderId 검증 작업 필요
-    @PostMapping("/list/join")
-    public ResponseEntity<List<ClubJoinRequestDTO>> listJoinRequest(@RequestParam Long clubId,
-                                             @RequestParam Long leaderId){
+    @GetMapping("/join/requests/{clubId}")
+    public ResponseEntity<List<ClubJoinRequestDTO>> listJoinRequest(@PathVariable Long clubId){
         return ResponseEntity.ok(clubService.listClubJoinRequest(clubId));
     }
 
@@ -125,7 +121,12 @@ public class ClubRestController {
         return ResponseEntity.ok(clubService.getClubMember(clubId, memberDTO.getId()));
     }
 
-    @GetMapping("/list/members/{clubId}")
+    @GetMapping("/member/profile/{clubMemberId}")
+    public ResponseEntity<ClubMemberDTO> getClubMember(@PathVariable Long clubMemberId){
+        return ResponseEntity.ok(clubService.getClubMember(clubMemberId));
+    }
+
+    @GetMapping("/members/{clubId}")
     public ResponseEntity<List<ClubMemberDTO>> listClubMember(@PathVariable Long clubId){
 
         return ResponseEntity.ok(clubService.listClubMember(clubId));
@@ -145,7 +146,6 @@ public class ClubRestController {
     @PostMapping (path = "/add/meet-up")
     public ResponseEntity<ClubMeetUpDTO> addClubMeetUp(@RequestBody ClubMeetUpDTO clubMeetUpDTO){
 
-        System.out.println("clubMeetUpDTO = " + clubMeetUpDTO);
 
         Long meetUpId = clubMeetUpService.addClubMeetUp(clubMeetUpDTO, clubMeetUpDTO.getClubDTO().getId());
 

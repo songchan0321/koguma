@@ -39,6 +39,8 @@ public interface ClubService {
 
     public ClubMemberDTO getClubMember(Long clubId, Long memberId);
 
+    public ClubMemberDTO getClubMember(Long clubMemberId);
+
     public List<ClubMemberDTO> listClubMember(Long clubId);
 
     public void updateClubMember(ClubMemberDTO clubMemberDTO);
