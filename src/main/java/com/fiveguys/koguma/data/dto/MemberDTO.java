@@ -53,6 +53,7 @@ public class MemberDTO {
         memberDTO.setActiveFlag(member.getActiveFlag());
         memberDTO.setScore(member.getScore());
         memberDTO.setMemberRoleType(member.getMemberRoleType());
+        memberDTO.setRegDate(member.getRegDate());
         return memberDTO;
     }
 

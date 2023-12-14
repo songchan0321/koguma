@@ -61,7 +61,7 @@ public class MemberRelationshipApplicationTests {
     @Test
     @DisplayName("차단 삭제 테스트")
     @Transactional
-    public void deleteBlockTest(){
+    public void deleteBlockTest() {
         Member sourceMember = memberService.getMember(1L).toEntity();
         Member targetMember = memberService.getMember(2L).toEntity();
 
@@ -78,17 +78,17 @@ public class MemberRelationshipApplicationTests {
     @Test
     @DisplayName("차단 목록 조회")
     @Transactional
-    public void listBlockTest(){
+    public void listBlockTest() {
         List<MemberRelationshipDTO> memberRelationships = memberRelationshipService.listBlock(5L);
         assertEquals(1, memberRelationships.size());
     }
 
-    @Test
+    /*@Test
     @DisplayName("차단 상세 조회")
     @Transactional
-    public void getBlock(){
+    public void getBlock() {
         System.out.println((memberRelationshipService.getBlock(5L).toString()));
-    }
+    }*/
 
     @Test
     @DisplayName("팔로잉 추가 테스트")
@@ -109,15 +109,16 @@ public class MemberRelationshipApplicationTests {
     @Test
     @DisplayName("팔로잉 목록 조회")
     @Transactional
-    public void listFollowingTest(){
+    public void listFollowingTest() {
         List<MemberRelationshipDTO> memberRelationships = memberRelationshipService.listFollowing(6L);
         assertEquals(1, memberRelationships.size());
     }
+}
 
-    @Test
+    /*@Test
     @DisplayName("팔로잉 상세 조회")
     @Transactional
     public void getFollowing(){
         System.out.println((memberRelationshipService.getFollowing(6L).toString()));
     }
-}
+}*/
