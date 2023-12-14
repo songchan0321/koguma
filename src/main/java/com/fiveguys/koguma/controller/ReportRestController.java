@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/report")
+@RequestMapping("/member/report")
 public class ReportRestController {
     private final ReportService reportService;
 

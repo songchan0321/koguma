@@ -30,20 +30,22 @@ public class MemberRelationshipRestController {
             @CurrentMember MemberDTO authenticatedMember,
             @RequestBody MemberRelationshipDTO memberRelationshipDTO
     ) {
+        memberRelationshipDTO.setSourceMember(authenticatedMember.toEntity()); // 현재 인증된 사용자를 sourceMember로 설정
         try {
             // 인증된 사용자 정보가 없거나 인증된 사용자의 ID와 요청의 sourceMember가 일치하지 않으면 권한 없음 응답
             if (authenticatedMember == null || !authenticatedMember.getId().equals(memberRelationshipDTO.getSourceMember().getId())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-
             // 차단 추가 로직 수행
-            memberRelationshipDTO.setSourceMember(authenticatedMember.toEntity()); // 현재 인증된 사용자를 sourceMember로 설정
+
             memberRelationshipService.addBlock(memberRelationshipDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(memberRelationshipDTO);
         }
     }
+
+
     /*{
   "sourceMember": {
     "id": 1,  // 현재 인증된 사용자의 ID
@@ -120,14 +122,14 @@ public class MemberRelationshipRestController {
             @CurrentMember MemberDTO authenticatedMember,
             @RequestBody MemberRelationshipDTO memberRelationshipDTO
     ) {
+        memberRelationshipDTO.setSourceMember(authenticatedMember.toEntity()); // 현재 인증된 사용자를 sourceMember로 설정
         try {
             // 인증된 사용자 정보가 없거나 인증된 사용자의 ID와 요청의 sourceMember가 일치하지 않으면 권한 없음 응답
             if (authenticatedMember == null || !authenticatedMember.getId().equals(memberRelationshipDTO.getSourceMember().getId())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+            // 차단 추가 로직 수행
 
-            // 팔로잉 추가 로직 수행
-            memberRelationshipDTO.setSourceMember(authenticatedMember.toEntity()); // 현재 인증된 사용자를 sourceMember로 설정
             memberRelationshipService.addFollowing(memberRelationshipDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
