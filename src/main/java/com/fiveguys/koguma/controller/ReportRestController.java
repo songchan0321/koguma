@@ -22,9 +22,16 @@ public class ReportRestController {
     private final ReportService reportService;
 
 
-    @PostMapping("/add/{reporter}")
-    public ResponseEntity<ReportDTO> addReport(@RequestBody ReportDTO reportDTO){
+    @PostMapping("/add")
+    public ResponseEntity<ReportDTO> addReport(
+            @CurrentMember MemberDTO authenticatedMember,
+            @RequestBody ReportDTO reportDTO
+    ){
+        reportDTO.setReporter(authenticatedMember.toEntity());
         try{
+            if( authenticatedMember == null || !authenticatedMember.getId().equals(reportDTO.getReporter())){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             reportService.addReport(reportDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
