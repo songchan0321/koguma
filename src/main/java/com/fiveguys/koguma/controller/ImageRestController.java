@@ -2,13 +2,17 @@ package com.fiveguys.koguma.controller;
 
 
 import com.fiveguys.koguma.data.dto.ImageDTO;
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.service.common.ImageService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,7 +27,12 @@ public class ImageRestController {
         return ResponseEntity.status(HttpStatus.OK).body(imageService.getImage(imageId));
     }
 
-//    @PostMapping("/new") //이미지 등록
+    @PostMapping("/new") //이미지 등록
+    public ResponseEntity<List<String>> uploadFile(@RequestParam("file") List<MultipartFile> file) throws IOException {
+        System.out.println("new 입장");
+        List<String> fileList = imageService.tempFileUpload(file);
+        return ResponseEntity.status(HttpStatus.OK).body(fileList);
+    }
 
     @GetMapping("/list") // 이미지 리스트 조회
     public ResponseEntity<List<ImageDTO>> listImage(Long targetId, ImageType imageType) throws Exception {

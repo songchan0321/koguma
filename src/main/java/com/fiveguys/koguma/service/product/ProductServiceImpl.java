@@ -26,8 +26,8 @@ public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
 
 
-    public void addProduct(ProductDTO productDTO) {
-        productRepository.save(productDTO.toEntity());
+    public ProductDTO addProduct(ProductDTO productDTO) {
+        return ProductDTO.fromEntity(productRepository.save(productDTO.toEntity()));
     }
 
     public Page<Product> listProduct(Long memberId,int page, int size) {

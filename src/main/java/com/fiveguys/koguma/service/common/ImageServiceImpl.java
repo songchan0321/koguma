@@ -5,6 +5,7 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.*;
 import com.fiveguys.koguma.config.S3Config;
 import com.fiveguys.koguma.data.dto.ImageDTO;
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.entity.Image;
 import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
@@ -32,6 +33,7 @@ public class ImageServiceImpl implements ImageService {
 
     public void addImage(List<ImageDTO> imageDTOS) {
         List<Image> images = imageDTOS.stream().map(ImageDTO::toEntity).collect(Collectors.toList());
+
         imageRepository.saveAll(images);
     }
 
@@ -144,6 +146,26 @@ public class ImageServiceImpl implements ImageService {
         s3Config.getS3().putObject(s3Config.getBucketName(), originalFilename, multipartFile.getInputStream(), metadata);
         setObjectACL(s3Config.getBucketName(), originalFilename);  // 저장하고 Access 권한까지 업데이트 해줘야함
         return s3Config.getS3().getUrl(s3Config.getBucketName(), originalFilename).toString();
+    }
+    public List<String> tempFileUpload(List<MultipartFile> multipartFileList) throws IOException {
+        // axios로 받은 file의 정보를 사용해 NCP의 Object Storage에 저장
+        List<String> fileUrlList = new ArrayList<>();
+        multipartFileList.forEach(multipartFile -> {
+            String originalFilename = multipartFile.getOriginalFilename();
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
+
+            try {
+                s3Config.getS3().putObject(s3Config.getBucketName(), originalFilename, multipartFile.getInputStream(), metadata);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            setObjectACL(s3Config.getBucketName(), originalFilename);  // 저장하고 Access 권한까지 업데이트 해줘야함
+            fileUrlList.add(s3Config.getS3().getUrl(s3Config.getBucketName(), originalFilename).toString());
+        });
+        return fileUrlList;
     }
     public void setObjectACL(String bucketName,String objectName){
         try {

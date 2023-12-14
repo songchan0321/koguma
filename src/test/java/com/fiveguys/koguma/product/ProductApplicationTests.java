@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
+@ActiveProfiles("local")
 public class ProductApplicationTests {
     @Autowired
     private ProductService productService;
@@ -48,11 +50,11 @@ public class ProductApplicationTests {
     public void addProduct() throws Exception {
 
 
-        Member seller = memberService.getMember(4L).toEntity();
+        Member seller = memberService.getMember(1L).toEntity();
         //Member buyer = memberService.getMember(5L).toEntity();
-        Member buyer = memberService.getMember(5L).toEntity();
+        Member buyer = memberService.getMember(2L).toEntity();
 
-        LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
+        LocationDTO locationDTO = locationService.getMemberRepLocation(1L);
 
 
         Product product = Product.builder()

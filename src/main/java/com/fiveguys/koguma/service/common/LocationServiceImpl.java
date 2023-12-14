@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class LocationServiceImpl implements LocationService{
 
 
-    private QueryRepository queryRepository;
+    private final QueryRepository queryRepository;
     private final LocationRepository locationRepository;
 
     @Value("${ncloud.reverseGeo.clientId}")
@@ -109,6 +109,7 @@ public class LocationServiceImpl implements LocationService{
     }
 
     public LocationDTO getMemberRepLocation(Long id) {
+        System.out.println("로케이션 멤버아이디 : "+id);
         Location location = locationRepository.findByMemberIdAndRepAuthLocationFlag(id,true);
         return LocationDTO.fromEntity(location);
     }
@@ -151,10 +152,10 @@ public class LocationServiceImpl implements LocationService{
         return dong;
     }
 
-    public Page<Object> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable,String keyword) throws Exception {
+    public List<Object> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable,String keyword) throws Exception {
 
         List<Object> objectByLocationDTOList = new ArrayList<>();
-        Page<?> objectByLocation = queryRepository.findAllByDistance(categoryType,locationDTO,pageable,keyword);
+        List<?> objectByLocation = queryRepository.findAllByDistance(categoryType,locationDTO,pageable,keyword);
 
         switch (categoryType){
             case PRODUCT:{
@@ -177,8 +178,9 @@ public class LocationServiceImpl implements LocationService{
             }
         }
 
-        Page<Object> page = new PageImpl<>(objectByLocationDTOList, pageable, objectByLocationDTOList.size());
-        return page;
+//        Page<Object> page = new PageImpl<>(objectByLocationDTOList, pageable, objectByLocationDTOList.size());
+//        return page;
+        return objectByLocationDTOList;
     }
 }
 

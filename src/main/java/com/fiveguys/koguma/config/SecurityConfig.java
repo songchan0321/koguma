@@ -39,6 +39,7 @@ public class SecurityConfig {
                         "/relationship/**",
                         "/paymenthistory/**",
                         "/review/**",
+                            "/image/**",
 //                        "/review/**"
 //                ).hasAnyRole("ROLE_AUTH_MEMBER","ROLE_ADMIN")
 //                .antMatchers(
@@ -46,8 +47,6 @@ public class SecurityConfig {
                         "/location/**"
                 ).authenticated();
 
-        http
-                .formLogin().loginPage("/auth/error");
 //                .and()
 //                .oauth2Login().loginPage("/api/auth/login");
         http.logout()
