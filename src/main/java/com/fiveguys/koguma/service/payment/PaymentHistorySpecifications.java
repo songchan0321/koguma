@@ -15,7 +15,7 @@ public class PaymentHistorySpecifications{
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             Arrays.stream(PaymentHistoryType.values()).forEach((paymentHistoryType) -> {
-                if(paymentHistoryType.name().equals(type)) {
+                if(paymentHistoryType.name().contains(type)) {
                     predicates.add(criteriaBuilder.equal(root.get("type"), paymentHistoryType));
                 }
             });

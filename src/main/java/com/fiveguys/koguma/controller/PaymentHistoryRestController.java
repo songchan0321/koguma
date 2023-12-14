@@ -12,6 +12,7 @@ import com.fiveguys.koguma.service.payment.PaymentService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -41,7 +42,7 @@ public class PaymentHistoryRestController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> deletePayment(
             @CurrentMember MemberDTO memberDTO,
             @RequestBody Map<String, String> json
@@ -79,8 +80,8 @@ public class PaymentHistoryRestController {
             @RequestParam(required = false) String type
     ) {
         List<PaymentHistoryDTO> paymentHistoryDTOList = (type != null)
-                ? paymentService.listPaymentHistory(memberDTO, PageRequest.of(page, 10), type)
-                : paymentService.listPaymentHistory(memberDTO, PageRequest.of(page, 10));
+                ? paymentService.listPaymentHistory(memberDTO, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "regDate")), type)
+                : paymentService.listPaymentHistory(memberDTO, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "regDate")));
         return ResponseEntity.ok().body(paymentHistoryDTOList);
     }
 
@@ -111,7 +112,7 @@ public class PaymentHistoryRestController {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/checkPw", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkPw", method = RequestMethod.POST)
     public ResponseEntity checkPaymentPw(
             @CurrentMember MemberDTO memberDTO,
             @RequestBody Map<String, String> json

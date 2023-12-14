@@ -58,9 +58,9 @@ public class ProductRestController {
         ProductDTO productDTO = productService.getProduct(no);
 
         MemberDTO memberDTO = authService.getAuthMember();
-        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-            return ResponseEntity.status(HttpStatus.CHECKPOINT).body(productDTO);
-        }
+//        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
+//            return ResponseEntity.status(HttpStatus.CHECKPOINT).body(productDTO);
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
