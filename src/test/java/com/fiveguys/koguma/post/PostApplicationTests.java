@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+//@ActiveProfiles("local")
 public class PostApplicationTests {
 
     @Autowired
@@ -121,6 +123,8 @@ public class PostApplicationTests {
         Member writer = memberService.getMember(4L).toEntity();
         LocationDTO locationDTO = locationService.getMemberRepLocation(4L);
         Category category = categoryRepository.findById(50L).get();
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setId(writer.getId());
 
         Post exsitingPost = Post.builder()
                 .member(writer)
@@ -146,7 +150,7 @@ public class PostApplicationTests {
         updatedPostDTO.setCategoryName("동네맛집");
 
         //when
-        postService.updatePost(updatedPostDTO);
+        postService.updatePost(updatedPostDTO, memberDTO);
 
         //then
         Post updatedPost = postRepository.findById(exsitingPost.getId()).orElse(null);
@@ -163,7 +167,7 @@ public class PostApplicationTests {
 
         PostDTO existingPost = postService.getPost(postId);
 
-        postService.deletePost(existingPost);
+        postService.deletePost(existingPost, new MemberDTO());
 
         PostDTO deletedPost = postService.getPost(postId);
 

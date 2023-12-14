@@ -28,13 +28,14 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public void addComment(CommentDTO commentDTO) {
+    public void addComment(CommentDTO commentDTO, MemberDTO memberDTO) {
 
 
         //부모가 있는 답글
         if(commentDTO.getParentDTO() != null && commentDTO.getParentDTO().getId() != null) {
             //부모 유효성 체크
             Comment parent = findVerifiedComment(commentDTO.getParentDTO().getId());
+            commentDTO.setMemberDTO(memberDTO);
 
             Comment saved = commentRepository.save(commentDTO.toEntity());
             saved.updateParent(parent);
@@ -56,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void updateComment(CommentDTO commentDTO) {
+    public void updateComment(CommentDTO commentDTO, MemberDTO memberDTO) {
 
         Long commentId = commentDTO.getId();
 

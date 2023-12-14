@@ -179,12 +179,12 @@ public class PaymentHistoryRestController {
 
     @RequestMapping(value = "/check/charge", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> checkCharge(
-            @RequestParam Long memberId,
+            @CurrentMember MemberDTO memberDTO,
             @RequestBody Map<String, String> json
     ) {
         String impUid = json.get("imp_uid");
         String merchantUid = json.get("merchant_uid");
-        MemberDTO memberDTO = memberService.getMember(memberId);
+//        MemberDTO memberDTO = memberService.getMember(memberId);
         try {
             Map<String, Object> response = Map.of("result", paymentService.checkPortOneChargeSuccess(memberDTO, impUid, merchantUid));
             return ResponseEntity.ok(response);

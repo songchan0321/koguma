@@ -1,14 +1,17 @@
 package com.fiveguys.koguma.controller;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ReportDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.service.common.ReportService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -38,21 +41,33 @@ public class ReportRestController {
     //    "categoryId" : "51",
     //    "categoryName" : "회원"
     //}
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteReport(@PathVariable Long id) {
-        reportService.deleteReport(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteReport(@CurrentMember MemberDTO authenticatedMember) {
+        try {
+            reportService.deleteReport(authenticatedMember);
+            return ResponseEntity.noContent().build();
+        } catch (NoResultException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-    @GetMapping("/get/{id}")
-    public ResponseEntity<ReportDTO> getReport(@PathVariable Long id){
-        ReportDTO existingReport = reportService.getReport(id);
-        if (existingReport == null){
+    @GetMapping("/get")
+    public ResponseEntity<ReportDTO> getReport(@CurrentMember MemberDTO authenticatedMember) {
+        Long reporterId = authenticatedMember.getId();
+
+        ReportDTO existingReport = reportService.getReport(authenticatedMember);
+
+        if (existingReport == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+
         return ResponseEntity.ok(existingReport);
     }
-    @GetMapping("/list/{reporterId}")
-    public List<ReportDTO> ListReport(@PathVariable Long reporterId){
+    @GetMapping("/list")
+    public List<ReportDTO> listReport(@CurrentMember MemberDTO authenticatedMember) {
+        Long reporterId = authenticatedMember.getId();
+
         return reportService.listReport(reporterId);
     }
 

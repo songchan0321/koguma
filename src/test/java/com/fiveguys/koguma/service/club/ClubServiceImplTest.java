@@ -17,8 +17,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
@@ -29,6 +34,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("local")
 class ClubServiceImplTest {
 
     @Autowired
@@ -93,7 +99,7 @@ class ClubServiceImplTest {
 //        Assertions.assertThat(findClub.getId()).isEqualTo(clubId);
 //    }
 //
-  // @Test
+   @Test
     public void 모임_생성_더미() throws Exception{
         Category category = categoryRepository.findById(29L).get();
 
@@ -115,6 +121,39 @@ class ClubServiceImplTest {
             clubRepository.save(club);
         }
     }
+
+    //@Test
+    public void 회원생성() throws Exception{
+        //given
+
+        for (long i = 5; i < 30; i++){
+            Club club =clubRepository.findById(i).get();
+            Member member = memberRepository.findById(i).get();
+            ClubMember clubMember = ClubMember.createClubMember(club, member, "모임원"+i, "모임원내용"+i);
+            clubMemberRepository.save(clubMember);
+        }
+
+
+        //when
+
+        //then
+    }
+
+//    @Test
+//    public void 모임원_생성() throws Exception{
+//        for (long i = 21; i < 70; i++ ){
+//
+//            for(int j = 0; j < 3; j++){
+//
+//                ClubMember.createClubMember()
+//
+//                clubMeetUpService.addClubMeetUp(cmuDTO, (Long) i);
+//
+//            }
+//
+//
+//        }
+//    }
 
 //
 //    //@Test

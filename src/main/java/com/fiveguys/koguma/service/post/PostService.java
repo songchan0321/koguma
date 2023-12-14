@@ -16,13 +16,13 @@ public interface PostService {
 
     Page<Post> listPostByMember(MemberDTO memberDTO, PageRequest pageRequest);
 
-    void addPost(PostDTO postDTO);
+    void addPost(PostDTO postDTO, MemberDTO memberDTO);
 
     PostDTO getPost(Long id);
 
-    void updatePost(PostDTO postDTO);
+    void updatePost(PostDTO postDTO, MemberDTO memberDTO);
 
-    void deletePost(PostDTO postDTO);
+    void deletePost(PostDTO postDTO, MemberDTO memberDTO);
 
     Page<Post> listPostByViews(Pageable pageRequest);
 

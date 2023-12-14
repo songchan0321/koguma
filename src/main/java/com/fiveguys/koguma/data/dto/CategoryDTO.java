@@ -25,6 +25,10 @@ public class CategoryDTO {
         this.categoryType = category.getCategoryType();
     }
 
+    public CategoryDTO() {
+
+    }
+
     public Category toEntity(){
         return Category.builder()
                 .id(this.id)

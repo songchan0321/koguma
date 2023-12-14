@@ -126,14 +126,14 @@ public class MemberServiceImpl implements MemberService {
         Member existingMember = memberRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
-        Member conflictingMember = memberRepository.findByNicknameAndActiveFlag(memberDTO.getNickname(), true)
+        Member conflictingMember = memberRepository.findByNicknameAndActiveFlag(nickname, true)
                 .orElse(null);
 
         if (conflictingMember != null && !conflictingMember.getId().equals(id)) {
             throw new RuntimeException("이미 사용 중인 닉네임입니다.");
         }
 
-        existingMember.setNickname(memberDTO.getNickname());
+        existingMember.setNickname(nickname);
         existingMember.setImageId(memberDTO.getImageId());
 
         memberRepository.save(existingMember);
@@ -162,5 +162,8 @@ public class MemberServiceImpl implements MemberService {
     public MemberDTO getMemberByEmail(String email) {
         return MemberDTO.fromEntity(memberRepository.findByEmail(email));
     }
+
+
+
 }
 

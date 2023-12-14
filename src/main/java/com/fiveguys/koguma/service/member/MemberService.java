@@ -19,7 +19,6 @@ public interface MemberService {
     MemberDTO getOtherMember(Long id);
     List<MemberDTO> listMember();
     MemberDTO getMemberByEmail(String email);
-
     boolean nicknameValidationCheck(String nickname);
 
 }

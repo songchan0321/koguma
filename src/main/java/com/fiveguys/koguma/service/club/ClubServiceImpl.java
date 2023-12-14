@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service @Transactional
@@ -89,7 +90,7 @@ public class ClubServiceImpl implements ClubService{
     public List<ClubDTO> listMyClub(Long memberId) {
 
         // 내 모임 리스트 조회
-        List<ClubMember> clubMembers = clubMemberRepository.findByMemberId(memberId);
+        List<ClubMember> clubMembers = clubMemberRepository.findAllByMemberId(memberId);
 
         // clubMember -> club 으로 전환
         List<Club> clubs = clubMembers.stream()
@@ -223,13 +224,12 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public ClubMemberDTO getClubMember(Long clubMemberId) {
+    public ClubMemberDTO getClubMember(Long clubId, Long memberId) {
 
-        //모임원 조회
-        ClubMember clubMember = clubMemberRepository.findById(clubMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("모임원이 없습니다."));
-
+        ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(clubId, memberId)
+                .orElseThrow(() -> new IllegalStateException("모임원에 구성되지 않았습니다."));
         return ClubMemberDTO.fromEntity(clubMember);
+
     }
 
     @Override
@@ -262,6 +262,21 @@ public class ClubServiceImpl implements ClubService{
 
         currentLeader.demoteClubMember();
         newLeader.promoteClubLeader();
+    }
+
+    @Override
+    public ClubMemberDTO checkJoinClub(Long clubId,Long memberId) {
+
+        Boolean isJoined = clubMemberRepository.existsByClubIdAndMemberId(clubId, memberId);
+
+        if(isJoined){
+
+            ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(clubId, memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("조회된 모임원이 없습니다."));
+            return ClubMemberDTO.fromEntity(clubMember);
+        }else {
+            return ClubMemberDTO.builder().build();
+        }
     }
 
 }
