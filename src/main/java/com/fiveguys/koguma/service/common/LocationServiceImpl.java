@@ -158,9 +158,15 @@ public class LocationServiceImpl implements LocationService{
         List<?> objectByLocation = queryRepository.findAllByDistance(categoryType,locationDTO,pageable,keyword);
 
         switch (categoryType){
+//            case PRODUCT:{
+//                objectByLocationDTOList = objectByLocation.stream()
+//                        .map(x -> ProductDTO.fromEntity((Product) x))
+//                        .collect(Collectors.toList());
+//                break;
+//            }
             case PRODUCT:{
                 objectByLocationDTOList = objectByLocation.stream()
-                        .map(x -> ProductDTO.fromEntity((Product) x))
+                        .map(x -> ProductDTO.fromEntityContainImage((Product) x))
                         .collect(Collectors.toList());
                 break;
             }

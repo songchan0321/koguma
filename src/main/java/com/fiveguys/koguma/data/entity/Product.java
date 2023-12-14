@@ -53,6 +53,8 @@ public class Product {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int views;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Image> image = new ArrayList<>();
     @Column(name = "category_name",nullable = false,length=15)
     private String categoryName;
     @Column(name = "active_flag", nullable = false)

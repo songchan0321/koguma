@@ -236,4 +236,14 @@ public class ProductApplicationTests {
 //
 //        productDTOList.forEach(System.out::println);
 //    }
+
+    @Test
+    public void testProduct() throws Exception{
+
+        Product byAllProduct = productRepository.findByProductIdWithImages(16L);
+
+//        System.out.println("byAllProduct = " + byAllProduct.getImage().stream().map(ImageDTO::fromEntity).collect(Collectors.toList()));
+        System.out.println("ProductDTO.fromEntityContainImage(byAllProduct) = " + ProductDTO.fromEntityContainImage(byAllProduct));
+    }
+    
 }
