@@ -1,13 +1,12 @@
 package com.fiveguys.koguma.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
-import com.fiveguys.koguma.service.common.AlertService;
-import com.fiveguys.koguma.service.common.AuthService;
-import com.fiveguys.koguma.service.common.LikeFilterAssociationService;
-import com.fiveguys.koguma.service.common.LocationService;
+import com.fiveguys.koguma.service.common.*;
 import com.fiveguys.koguma.service.product.MemberProductSuggestService;
 import com.fiveguys.koguma.service.product.ProductService;
+import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 
 @RestController
@@ -32,6 +35,7 @@ public class ProductRestController {
     private final LikeFilterAssociationService likeFilterAssociationService;
     private final MemberProductSuggestService memberProductSuggestService;
     private final AlertService alertService;
+    private final ImageService imageService;
 
     @GetMapping("/member")
     public ResponseEntity<MemberDTO> Product() throws Exception {
@@ -40,20 +44,30 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body(memberDTO);
     }
     @GetMapping("/list")
-    public ResponseEntity<Page<Object>> listProduct(@RequestParam int page, @RequestParam String keyword) throws Exception {
+    public ResponseEntity<List<?>> listProduct(@RequestParam String keyword, @CurrentMember MemberDTO memberDTO) throws Exception {
 
-        MemberDTO memberDTO = authService.getAuthMember();
+
         LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
 
-        Pageable pageable = PageRequest.of(page, 9);
+        Pageable pageable = PageRequest.of(0, 9);
 
-        Page<Object> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
+        List<?> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
+    @GetMapping("/list/hi")
+    public ResponseEntity<Page<Product>> listHIProduct(@RequestParam int page, @RequestParam String keyword,@CurrentMember MemberDTO memberDTO) throws Exception {
+
+
+//        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
+
+        Pageable pageable = PageRequest.of(page, 9);
+
+        return ResponseEntity.status(HttpStatus.OK).body(productService.listProduct(memberDTO.getId(),page,10));
+    }
 
     @GetMapping("/get/{no}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long no) throws Exception {
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
 
         ProductDTO productDTO = productService.getProduct(no);
 
@@ -65,19 +79,41 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
 
+//    @PostMapping("/new")
+//    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) {
+//        productDTO.setSellerDTO(memberDTO);
+//        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
+//
+//        productDTO.setDong(locationDTO.getDong());
+//        productDTO.setLatitude(locationDTO.getLatitude());
+//        productDTO.setLongitude(locationDTO.getLongitude());
+//        productDTO = productService.addProduct(productDTO);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+//    }
     @PostMapping("/new")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        productService.addProduct(productDTO);
+        List<String> urls = productDTO.getImages();
+        productDTO.setSellerDTO(memberDTO);
+        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
 
+        productDTO.setDong(locationDTO.getDong());
+        productDTO.setLatitude(locationDTO.getLatitude());
+        productDTO.setLongitude(locationDTO.getLongitude());
+        productDTO.setActiveFlag(true);
+        productDTO.setTradeStatus(ProductStateType.SALE);
+        productDTO = productService.addProduct(productDTO);
+        List<ImageDTO> imageDTOList = imageService.createImageDTOList(productDTO,urls,ImageType.PRODUCT);
+        imageDTOList.forEach(System.out::println);
+        imageService.addImage(imageDTOList);
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
-
     @GetMapping("/update/{no}")
-    public ResponseEntity<ProductDTO> getUpdateProductInfo(@PathVariable Long no) throws Exception {
+    public ResponseEntity<ProductDTO> getUpdateProductInfo(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);
 
-        MemberDTO memberDTO = authService.getAuthMember();
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -85,9 +121,9 @@ public class ProductRestController {
     }
 
     @DeleteMapping("/delete/{no}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long no) throws Exception {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);
-        MemberDTO memberDTO = authService.getAuthMember();
+
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -103,17 +139,17 @@ public class ProductRestController {
     }
 
     @GetMapping("/list/like")
-    public ResponseEntity<Page<Product>> likeProductList(@RequestParam int page) throws Exception {
+    public ResponseEntity<Page<Product>> likeProductList(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        MemberDTO memberDTO = authService.getAuthMember();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(likeFilterAssociationService.likeProductList(memberDTO.getId(),page));
     }
 
     @PostMapping("/like/{no}")
-    public ResponseEntity<String> addLikeProduct(@PathVariable Long no) throws Exception {
+    public ResponseEntity<String> addLikeProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);
-        MemberDTO memberDTO = authService.getAuthMember();
+
         LikeFilterAssociationDTO likeFilterAssociationDTO = LikeFilterAssociationDTO.builder().
                 productDTO(productDTO).memberDTO(memberDTO).build();
 
@@ -129,9 +165,9 @@ public class ProductRestController {
     }
 
     @PutMapping("/tradestate")
-    public ResponseEntity<String> updateStateProduct(@RequestBody Map<String,String> json) throws Exception {
+    public ResponseEntity<String> updateStateProduct(@RequestBody Map<String,String> json,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(Long.parseLong(json.get("productNo")));
-        MemberDTO memberDTO = authService.getAuthMember();
+
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -140,16 +176,16 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body("상태 업데이트 성공");
     }
     @GetMapping("/tradestate/list")
-    public ResponseEntity<Page<Product>> listStateProduct(@RequestParam int page,@RequestParam String type) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<Page<Product>> listStateProduct(@RequestParam int page,@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         Pageable pageable = PageRequest.of(page, 9);
         Page<Product> productList = productService.listStateProduct(memberDTO.getId(),pageable, ProductStateType.valueOf(type));
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
     @GetMapping("/buy/list")
-    public ResponseEntity<Page<Product>> listBuyProduct(@RequestParam int page) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<Page<Product>> listBuyProduct(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         Pageable pageable = PageRequest.of(page, 9);
         Page<Product> productList = productService.listBuyProduct(memberDTO.getId(),pageable);
 
@@ -157,8 +193,8 @@ public class ProductRestController {
     }
 
     @PostMapping("/suggest")
-    public ResponseEntity<String> addSugestProduct(@RequestBody ProductDTO productDTO) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<String> addSugestProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         MemberProductSuggestDTO memberProductSuggestDTO =
                 MemberProductSuggestDTO.builder().id(MemberProductSuggestId.builder()
                         .product(productDTO.toEntity())
@@ -171,16 +207,16 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body("가격제안 성공");
     }
     @GetMapping("/suggest/list")
-    public ResponseEntity<Page<MemberProductSuggest>> listSuggestProduct(@RequestParam int page) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<Page<MemberProductSuggest>> listSuggestProduct(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         Page<MemberProductSuggest> list = memberProductSuggestService.listSuggestPrice(memberDTO.getId(),page);
 
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
     @PostMapping("/raise/{productNo}")
-    public ResponseEntity<String> raiseProduct(@PathVariable Long productNo) throws Exception {
+    public ResponseEntity<String> raiseProduct(@PathVariable Long productNo,@CurrentMember MemberDTO memberDTO) throws Exception {
         try {
-            MemberDTO memberDTO = authService.getAuthMember();
+
             ProductDTO productDTO = productService.getProduct(productNo);
             if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -194,8 +230,8 @@ public class ProductRestController {
         }
     }
     @GetMapping("/buyer/list/{productNo}")
-    public ResponseEntity<Map<String,Object>> selectBuyer(@PathVariable Long productNo,@RequestParam int page) throws Exception {
-        MemberDTO memberDTO = authService.getAuthMember();
+    public ResponseEntity<Map<String,Object>> selectBuyer(@PathVariable Long productNo,@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+
         ProductDTO productDTO = productService.getProduct(productNo);
         if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
