@@ -11,6 +11,7 @@ import java.util.List;
 
 
 @Data
+@NoArgsConstructor
 public class ProductDTO {
     private Long id;
     private MemberDTO sellerDTO;
@@ -28,10 +29,11 @@ public class ProductDTO {
     private Boolean activeFlag;
     private LocalDateTime regDate;
     private LocalDateTime buyDate;
+    private List<String> images;
 
 
     @Builder
-    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate) {
+    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate, List<String> images) {
         this.id = id;
         this.sellerDTO = sellerDTO;
         this.buyerDTO = buyerDTO;
@@ -48,7 +50,9 @@ public class ProductDTO {
         this.activeFlag = activeFlag;
         this.regDate = regDate;
         this.buyDate = buyDate;
+        this.images = images;
     }
+
     public Product toEntity(){
         Product.ProductBuilder builder = Product.builder()
                 .id(id)
@@ -63,11 +67,14 @@ public class ProductDTO {
                 .longitude(longitude)
                 .views(views)
                 .categoryName(categoryName)
-                .activeFlag(activeFlag)
                 .buyDate(buyDate);
         if (buyerDTO != null) {
             builder.buyer(buyerDTO.toEntity());
         }
+        if (activeFlag != null){
+            builder.activeFlag(activeFlag);
+        }
+
 
         return builder.build();
     }
@@ -85,12 +92,14 @@ public class ProductDTO {
                 .longitude(product.getLongitude())
                 .views(product.getViews())
                 .categoryName(product.getCategoryName())
-                .activeFlag(product.getActiveFlag())
                 .regDate(product.getRegDate())
                 .buyDate(product.getBuyDate());
 
         if (product.getBuyer() != null) {
             builder.buyerDTO(MemberDTO.fromEntity(product.getBuyer()));
+        }
+        if (product.getActiveFlag() != null){
+            builder.activeFlag(product.getActiveFlag());
         }
 
         return builder.build();

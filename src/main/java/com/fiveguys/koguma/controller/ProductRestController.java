@@ -1,11 +1,9 @@
 package com.fiveguys.koguma.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
-import com.fiveguys.koguma.service.common.AlertService;
-import com.fiveguys.koguma.service.common.AuthService;
-import com.fiveguys.koguma.service.common.LikeFilterAssociationService;
-import com.fiveguys.koguma.service.common.LocationService;
+import com.fiveguys.koguma.service.common.*;
 import com.fiveguys.koguma.service.product.MemberProductSuggestService;
 import com.fiveguys.koguma.service.product.ProductService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
@@ -20,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 
 @RestController
@@ -34,6 +35,7 @@ public class ProductRestController {
     private final LikeFilterAssociationService likeFilterAssociationService;
     private final MemberProductSuggestService memberProductSuggestService;
     private final AlertService alertService;
+    private final ImageService imageService;
 
     @GetMapping("/member")
     public ResponseEntity<MemberDTO> Product() throws Exception {
@@ -70,26 +72,44 @@ public class ProductRestController {
         ProductDTO productDTO = productService.getProduct(no);
 
 
-        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-            return ResponseEntity.status(HttpStatus.CHECKPOINT).body(productDTO);
-        }
+//        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
+//            return ResponseEntity.status(HttpStatus.CHECKPOINT).body(productDTO);
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
 
+//    @PostMapping("/new")
+//    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) {
+//        productDTO.setSellerDTO(memberDTO);
+//        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
+//
+//        productDTO.setDong(locationDTO.getDong());
+//        productDTO.setLatitude(locationDTO.getLatitude());
+//        productDTO.setLongitude(locationDTO.getLongitude());
+//        productDTO = productService.addProduct(productDTO);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+//    }
     @PostMapping("/new")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<String> urls = productDTO.getImages();
         productDTO.setSellerDTO(memberDTO);
         LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
 
         productDTO.setDong(locationDTO.getDong());
         productDTO.setLatitude(locationDTO.getLatitude());
         productDTO.setLongitude(locationDTO.getLongitude());
+        productDTO.setActiveFlag(true);
+        productDTO.setTradeStatus(ProductStateType.SALE);
         productDTO = productService.addProduct(productDTO);
-
+        List<ImageDTO> imageDTOList = imageService.createImageDTOList(productDTO,urls,ImageType.PRODUCT);
+        imageDTOList.forEach(System.out::println);
+        imageService.addImage(imageDTOList);
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
-
     @GetMapping("/update/{no}")
     public ResponseEntity<ProductDTO> getUpdateProductInfo(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(no);

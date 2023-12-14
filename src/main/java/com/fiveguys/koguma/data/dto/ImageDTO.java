@@ -41,30 +41,51 @@ public class ImageDTO {
 
 
     public static ImageDTO fromEntity(Image image){
-        return ImageDTO.builder()
+        ImageDTO.ImageDTOBuilder builder = ImageDTO.builder()
                 .id(image.getId())
                 .URL(image.getURL())
-                .clubDTO(ClubDTO.fromEntity(image.getClub()))
-                .productDTO(ProductDTO.fromEntity(image.getProduct()))
-                .activeFlag(image.getActiveFlag())
-                .imageType(image.getImageType())
-                .postDTO(PostDTO.fromEntity(image.getPost()))
                 .repImageFlag(image.getRepImageFlag())
-                .regDate(image.getRegDate())
-                .build();
+                .imageType(image.getImageType());
+        if (image.getClub() != null) {
+            builder.clubDTO(ClubDTO.fromEntity(image.getClub()));
+        }
+        if (image.getPost() != null) {
+            builder.postDTO(PostDTO.fromEntity(image.getPost()));
+        }
+        if (image.getProduct() != null) {
+            builder.productDTO(ProductDTO.fromEntity(image.getProduct()));
+        }
+        if(image.getActiveFlag()!= null){
+            builder.activeFlag(image.getActiveFlag());
+        }
+
+        return builder.build();
+
+
     }
 
     public Image toEntity(){
-        return Image.builder()
+
+        Image.ImageBuilder builder = Image.builder()
                 .id(id)
                 .URL(URL)
-                .imageType(imageType)
-                .club(clubDTO.toEntity())
-                .activeFlag(activeFlag)
                 .repImageFlag(repImageFlag)
-                .post(postDTO.toEntity())
-                .product(productDTO.toEntity())
-                .build();
+                .imageType(imageType);
+        if (clubDTO != null) {
+            builder.club(clubDTO.toEntity());
+        }
+        if (postDTO != null) {
+            builder.post(postDTO.toEntity());
+        }
+        if (productDTO != null) {
+            builder.product(productDTO.toEntity());
+        }
+        if (activeFlag != null){
+            builder.activeFlag(activeFlag);
+        }
+
+
+        return builder.build();
     }
 
 }

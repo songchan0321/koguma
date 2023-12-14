@@ -4,8 +4,7 @@ package com.fiveguys.koguma.service.common;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.*;
 import com.fiveguys.koguma.config.S3Config;
-import com.fiveguys.koguma.data.dto.ImageDTO;
-import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.Image;
 import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
@@ -182,5 +181,36 @@ public class ImageServiceImpl implements ImageService {
         } catch(SdkClientException e) {
             e.printStackTrace();
         }
+    }
+    public List<ImageDTO> createImageDTOList(Object object, List<String> imageList, ImageType imageType) {
+
+
+        return imageList.stream()
+                .map(url -> createImageDTO(object, url, imageType,url.equals(imageList.get(0)) ? true : false))
+                .collect(Collectors.toList());
+    }
+
+    public ImageDTO createImageDTO(Object object, String url,ImageType imageType,boolean repImageFlag) {
+
+        switch(imageType){
+            case PRODUCT: {
+                return ImageDTO.builder().productDTO((ProductDTO) object).activeFlag(true).imageType(ImageType.PRODUCT).URL(url).repImageFlag(repImageFlag).build();
+            }
+            case CLUB:{
+                return ImageDTO.builder().clubDTO((ClubDTO) object).activeFlag(true).imageType(ImageType.CLUB).URL(url).repImageFlag(repImageFlag).build();
+            }
+            case POST:{
+                return ImageDTO.builder().postDTO((PostDTO) object).activeFlag(true).imageType(ImageType.POST).URL(url).repImageFlag(repImageFlag).build();
+            }
+//            case MESSAGE:{
+//                List<Image> images = imageRepository.findAllByMessageId(targetId);
+//                imageDTOS = images.stream().map((x) -> ImageDTO.fromEntity(x)).collect(Collectors.toList());
+//                break;
+//            }
+            default:
+                System.out.println("createImageDTO 오류");
+        }
+
+        return null;
     }
 }

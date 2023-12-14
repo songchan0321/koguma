@@ -22,4 +22,6 @@ public interface ImageService {
     public String tempFileUpload(MultipartFile multipartFile) throws IOException;
     List<String> tempFileUpload(List<MultipartFile> multipartFileListDTO) throws IOException;
     public void setObjectACL(String bucketName,String objectName);
+    List<ImageDTO> createImageDTOList(Object object, List<String> imageList, ImageType imageType);
+    ImageDTO createImageDTO(Object object, String url,ImageType imageType,boolean repImageFlag);
 }

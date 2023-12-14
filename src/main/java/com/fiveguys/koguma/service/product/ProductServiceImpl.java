@@ -1,7 +1,8 @@
 package com.fiveguys.koguma.service.product;
 
-import com.fiveguys.koguma.data.dto.MemberDTO;
-import com.fiveguys.koguma.data.dto.ProductDTO;
+import com.fiveguys.koguma.data.dto.*;
+import com.fiveguys.koguma.data.entity.Image;
+import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
 import com.fiveguys.koguma.repository.product.ProductRepository;
@@ -17,6 +18,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -101,4 +104,5 @@ public class ProductServiceImpl implements ProductService{
         if (!sellerId.equals(memberId))
             throw new Exception("상품에 대한 권한이 없습니다");
     }
+
 }
