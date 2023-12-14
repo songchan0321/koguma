@@ -233,6 +233,14 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    public ClubMemberDTO getClubMember(Long clubMemberId) {
+        ClubMember clubMember = clubMemberRepository.findById(clubMemberId).orElseThrow(() -> new IllegalArgumentException("모임원이 없습니다."));
+
+        return ClubMemberDTO.fromEntity(clubMember);
+    }
+
+
+    @Override
     public List<ClubMemberDTO> listClubMember(Long clubId) {
 
         // 모임원 리스트 조회
