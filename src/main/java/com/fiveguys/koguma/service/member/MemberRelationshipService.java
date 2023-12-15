@@ -15,5 +15,6 @@ public interface MemberRelationshipService {
     void deleteFollowing(Long sourceMember, Long targetMember);
     List<MemberRelationshipDTO> listFollowing(Long sourceMemberId);
     MemberRelationshipDTO getFollowing(Long sourceMemberId, Long targetMemberId);
+    boolean isBlocked(Long targetMemberId,Long sourceMemberId);
 
 }
