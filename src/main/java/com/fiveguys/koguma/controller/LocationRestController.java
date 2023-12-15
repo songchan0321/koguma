@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,10 +33,10 @@ public class LocationRestController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
-    @GetMapping("list")
-    public ResponseEntity<Page<Location>> listLocation(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+    @GetMapping("/list")
+    public ResponseEntity<List<LocationDTO>> listLocation(@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        Page<Location> listLocation = locationService.listLocation(memberDTO,page);
+        List<LocationDTO> listLocation = locationService.listLocation(memberDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(listLocation);
     }
@@ -46,40 +47,46 @@ public class LocationRestController {
         String dong = locationService.reverseGeoCoder(
                 locationDTO.getLatitude(), locationDTO.getLongitude());
         locationDTO.setDong(dong);
+        locationDTO.setSearchRange(2);
         locationDTO = locationService.addLocation(memberDTO,locationDTO);
-
+        System.out.println("locationDTO : "+locationDTO);
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLocation(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        LocationDTO locationDTO = locationService.getLocation(id);
-        if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         locationService.deleteLocation(memberDTO,id);
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("위치 삭제 완료");
+        return ResponseEntity.status(HttpStatus.OK).body("위치 삭제 완료");
+    }
+    @GetMapping("/rep")
+    public ResponseEntity<LocationDTO> getRepLocation(@CurrentMember MemberDTO memberDTO){
+        return ResponseEntity.status(HttpStatus.OK).body(locationService.getMemberRepLocation(memberDTO.getId()));
+
     }
 
+//    @PutMapping("/")
+//    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody Map<String, Integer> json,@CurrentMember MemberDTO memberDTO) throws Exception {
+//
+//        LocationDTO locationDTO = locationService.getLocation(json.get("locationId"));
+//        if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//        locationDTO = locationService.updateSearchRange(locationDTO,json.get("range"));
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
+//    }
     @PutMapping("/")
-    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody Map<String, Integer> json,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<LocationDTO> updateSearchRange(@RequestBody LocationDTO locationDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        LocationDTO locationDTO = locationService.getLocation(json.get("locationId"));
-        if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        locationDTO = locationService.updateSearchRange(locationDTO,json.get("range"));
+        locationDTO = locationService.updateSearchRange(locationDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
-    @PostMapping("/rep/{id}")
+    @PutMapping("/rep/{id}")
     public ResponseEntity<String> setRepLocation(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
 
         LocationDTO locationDTO = locationService.getLocation(id);
-        if (!Objects.equals(memberDTO.getId(), locationDTO.getMemberDTO().getId())){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         locationService.setRepLocation(memberDTO.getId(),id);
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO.getDong()+" 설정!!");
     }

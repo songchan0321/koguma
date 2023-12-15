@@ -86,16 +86,16 @@ public class LocationApplicationTests {
     public void setRepLocation() throws Exception {
         locationService.setRepLocation(4L,2L);
     }
-    @Test
-    @DisplayName("검색 범위 테스트")
-    @Transactional
-    public void updateSearchRange() throws Exception {
-        LocationDTO locationDTO = locationService.getLocation(1L);
-        System.out.println(locationDTO.toString());
-        locationService.updateSearchRange(locationDTO,4);
-
-        System.out.println(locationService.getLocation(1L).toString());
-    }
+//    @Test
+//    @DisplayName("검색 범위 테스트")
+//    @Transactional
+//    public void updateSearchRange() throws Exception {
+//        LocationDTO locationDTO = locationService.getLocation(1L);
+//        System.out.println(locationDTO.toString());
+//        locationService.updateSearchRange(locationDTO,4);
+//
+//        System.out.println(locationService.getLocation(1L).toString());
+//    }
     @Test
     @DisplayName("멤버 대표 테스트")
     @Transactional
