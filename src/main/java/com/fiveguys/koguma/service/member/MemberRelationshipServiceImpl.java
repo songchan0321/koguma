@@ -109,6 +109,14 @@ public class MemberRelationshipServiceImpl implements MemberRelationshipService 
         memberRelationshipRepository.saveAll(followingRelationships);
     }
 
+    @Override
+    public boolean isBlocked(Long targetMemberId, Long sourceMemberId) {
+        MemberRelationship relationship = memberRelationshipRepository
+                .findByTargetMemberIdAndSourceMemberIdAndMemberRelationshipType(targetMemberId, sourceMemberId, MemberRelationshipType.BLOCK);
+
+        return relationship != null && relationship.getMemberRelationshipType() == MemberRelationshipType.BLOCK;
+    }
+
 
 }
 

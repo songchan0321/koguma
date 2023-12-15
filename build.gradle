@@ -66,6 +66,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.2'
 
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'net.nurigo:sdk:4.2.7' // sms인증
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
