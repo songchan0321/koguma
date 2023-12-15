@@ -12,6 +12,7 @@ public interface ChatService {
     public boolean existChatroom(MemberDTO memberDTO, ProductDTO productDTO);
     public ChatroomDTO getChatroom(Long id) throws Exception;
     public List<ChatroomDTO> listChatroom(MemberDTO memberDTO);
+    public ChatroomDTO updateChatroom(ChatroomDTO chatroomDTO);
     public void enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO) throws Exception;
     public void exitChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO) throws Exception;
     public void deleteChatroom(ChatroomDTO chatroomDTO);
