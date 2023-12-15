@@ -211,11 +211,14 @@ public class PaymentServiceImpl implements PaymentService{
         JsonNode amountNode = rootNode.path("response").path("amount");
         JsonNode merchantUidNode = rootNode.path("response").path("merchant_uid");
         JsonNode buyerNameNode = rootNode.path("response").path("buyer_name");
+        JsonNode statusNode = rootNode.path("response").path("status");
+
         if(
                 paymentHistoryRepository.existsById(UUID.fromString(merchantUid))
                 || !merchantUidNode.asText().equals(merchantUid)
                 || !buyerNameNode.asText().equals(memberDTO.getNickname())
-        ) {
+                || !statusNode.asText().equals("paid"))
+        {
             throw new Exception("비정상적인 접근");
         }
         this.chargePoint(memberDTO, UUID.fromString(merchantUid), Integer.parseInt(amountNode.asText()));

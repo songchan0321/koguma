@@ -59,6 +59,11 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
+    public ChatroomDTO updateChatroom(ChatroomDTO chatroomDTO) {
+        return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+    }
+
+    @Override
     public ChatroomDTO getChatroom(Long id) throws Exception {
         ChatroomDTO chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findById(id).orElseThrow());
         if(!chatroomDTO.getActiveFlag()) {
