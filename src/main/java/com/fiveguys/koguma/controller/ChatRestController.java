@@ -166,7 +166,7 @@ public class ChatRestController {
         return ResponseEntity.ok().body(Map.of("result", count > 0));
     }
 
-    @RequestMapping(value = "/update/{roomId}")
+    @RequestMapping(value = "/update/{roomId}", method = RequestMethod.POST)
     public ResponseEntity updateChatRoomBySuggest(
             @CurrentMember MemberDTO memberDTO,
             @PathVariable Long roomId,
