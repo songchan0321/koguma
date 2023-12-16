@@ -193,4 +193,21 @@ public class MemberRelationshipRestController {
 
         return memberRelationshipService.listFollowing(sourceMemberId);
     }
+
+    @GetMapping("/member/relationship/block/check/{targetMemberId}")
+    public ResponseEntity<Boolean> checkBlockRelationship(
+            @PathVariable Long targetMemberId,
+            @CurrentMember MemberDTO authenticatedMember
+    ) {
+        if (authenticatedMember == null) {
+            // 사용자 정보가 없으면 예외처리 또는 다른 로직을 수행
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 현재 접속된 사용자의 정보를 가져옴
+        Long sourceMemberId = authenticatedMember.getId();
+
+        boolean isBlocked = memberRelationshipService.isBlocked(targetMemberId, sourceMemberId);
+        return ResponseEntity.ok(isBlocked);
+    }
 }

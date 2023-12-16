@@ -70,6 +70,7 @@ public class ImageDTO {
                 .id(id)
                 .URL(URL)
                 .repImageFlag(repImageFlag)
+                .activeFlag(true)
                 .imageType(imageType);
         if (clubDTO != null) {
             builder.club(clubDTO.toEntity());

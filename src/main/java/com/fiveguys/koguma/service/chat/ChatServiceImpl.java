@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +60,16 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
+    public ChatroomDTO getChatroomByProductAndMember(ProductDTO productDTO, MemberDTO buyerDTO) {
+        return ChatroomDTO.formEntity(chatroomRepository.findByProductAndBuyer(productDTO.toEntity(), buyerDTO.toEntity()).orElseThrow());
+    }
+
+    @Override
+    public ChatroomDTO updateChatroom(ChatroomDTO chatroomDTO) {
+        return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+    }
+
+    @Override
     public ChatroomDTO getChatroom(Long id) throws Exception {
         ChatroomDTO chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findById(id).orElseThrow());
         if(!chatroomDTO.getActiveFlag()) {
@@ -67,16 +78,17 @@ public class ChatServiceImpl implements ChatService{
         return chatroomDTO;
     }
 
+
     @Override
-    public void enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO) throws Exception {
-        if(this.isBuyer(chatroomDTO, memberDTO) && chatroomDTO.getBuyerEnterDate() == null) {
-            chatroomDTO.setBuyerEnterDate(LocalDateTime.now());
-        } else if(this.isSeller(chatroomDTO, memberDTO) && chatroomDTO.getSellerEnterDate() == null) {
+    public ChatroomDTO enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO){
+        if(this.isBuyer(chatroomDTO, memberDTO) && chatroomDTO.getSellerEnterDate() == null) {
             chatroomDTO.setSellerEnterDate(LocalDateTime.now());
-        } else {
-            throw new Exception("채팅방 입장 권한이 없습니다...");
+            return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+        } else if(this.isSeller(chatroomDTO, memberDTO) && chatroomDTO.getBuyerEnterDate() == null) {
+            chatroomDTO.setBuyerEnterDate(LocalDateTime.now());
+            return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
         }
-        chatroomRepository.save(chatroomDTO.toEntity());
+        return null;
     }
     @Override
     public List<ChatroomDTO> listChatroom(MemberDTO memberDTO) {
@@ -118,10 +130,10 @@ public class ChatServiceImpl implements ChatService{
     }
 
     private boolean isBuyer(ChatroomDTO chatroomDTO, MemberDTO memberDTO) {
-        return chatroomDTO.getBuyerDTO().getId() == memberDTO.getId();
+        return Objects.equals(chatroomDTO.getBuyerDTO().getId(), memberDTO.getId());
     }
 
     private boolean isSeller(ChatroomDTO chatroomDTO, MemberDTO memberDTO) {
-        return chatroomDTO.getProductDTO().getSellerDTO().getId() == memberDTO.getId();
+        return Objects.equals(chatroomDTO.getProductDTO().getSellerDTO().getId(), memberDTO.getId());
     }
 }

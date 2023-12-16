@@ -30,10 +30,10 @@ public class ImageServiceImpl implements ImageService {
 
     private final S3Config s3Config;
 
-    public void addImage(List<ImageDTO> imageDTOS) {
+    public List<ImageDTO> addImage(List<ImageDTO> imageDTOS) {
         List<Image> images = imageDTOS.stream().map(ImageDTO::toEntity).collect(Collectors.toList());
 
-        imageRepository.saveAll(images);
+        return imageRepository.saveAll(images).stream().map(ImageDTO::fromEntity).collect(Collectors.toList());
     }
 
 

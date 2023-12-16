@@ -84,8 +84,8 @@ public class PaymentServiceImpl implements PaymentService{
         receiverDTO.setPaymentBalance(receiverDTO.getPaymentBalance() + point);
         memberService.updateMember(senderDTO);
         memberService.updateMember(receiverDTO);
-        this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, chatRoomDTO.getProductDTO().getTitle());
-        this.addPaymentHistory(receiverDTO, PaymentHistoryType.TRANSFER, point, chatRoomDTO.getProductDTO().getTitle());
+        this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, receiverDTO.getNickname() + "," + chatRoomDTO.getProductDTO().getTitle());
+        this.addPaymentHistory(receiverDTO, PaymentHistoryType.TRANSFER, point, senderDTO.getNickname() + "," + chatRoomDTO.getProductDTO().getTitle());
     }
 
     @Override
@@ -211,11 +211,14 @@ public class PaymentServiceImpl implements PaymentService{
         JsonNode amountNode = rootNode.path("response").path("amount");
         JsonNode merchantUidNode = rootNode.path("response").path("merchant_uid");
         JsonNode buyerNameNode = rootNode.path("response").path("buyer_name");
+        JsonNode statusNode = rootNode.path("response").path("status");
+
         if(
                 paymentHistoryRepository.existsById(UUID.fromString(merchantUid))
                 || !merchantUidNode.asText().equals(merchantUid)
                 || !buyerNameNode.asText().equals(memberDTO.getNickname())
-        ) {
+                || !statusNode.asText().equals("paid"))
+        {
             throw new Exception("비정상적인 접근");
         }
         this.chargePoint(memberDTO, UUID.fromString(merchantUid), Integer.parseInt(amountNode.asText()));
