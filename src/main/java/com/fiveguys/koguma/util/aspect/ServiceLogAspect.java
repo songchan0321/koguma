@@ -15,7 +15,7 @@ import java.util.Map;
 @Aspect
 @Component
 public class ServiceLogAspect {
-    @Around(value = "execution(* com.fiveguys.koguma.service.*.*(..)) || execution(* com.fiveguys.koguma.config.*.*(..)) || execution(* com.fiveguys.koguma.controller.*.*(..))")
+    @Around(value = "execution(* com.fiveguys.koguma.service.*.*.*(..)) || execution(* com.fiveguys.koguma.config.*.*(..)) || execution(* com.fiveguys.koguma.controller.*.*(..))")
     public Object logMethodParameters(ProceedingJoinPoint joinPoint) throws Throwable {
         Signature signature = joinPoint.getSignature();
         Method method = signature instanceof MethodSignature ? ((MethodSignature) signature).getMethod() : null;

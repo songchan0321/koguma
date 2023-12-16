@@ -37,7 +37,15 @@ public class ChatRestController {
             @PathVariable Long roomId
     ) throws Exception {
         ChatroomDTO chatroomDTO = chatService.getChatroom(roomId);
-        if(!chatroomDTO.getBuyerDTO().getId().equals(memberDTO.getId()) && !chatroomDTO.getProductDTO().getSellerDTO().equals(memberDTO.getId())) {
+        if(!chatroomDTO
+                .getBuyerDTO()
+                .getId()
+                .equals(memberDTO.getId())
+                && !chatroomDTO
+                .getProductDTO()
+                .getSellerDTO()
+                .getId()
+                .equals(memberDTO.getId())) {
             throw new Exception("채팅방 접근 권한이 없습니다.");
         }
         return ResponseEntity.ok().body(chatService.getChatroom(roomId));
@@ -122,5 +130,38 @@ public class ChatRestController {
                 .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId))
                 .count();
         return ResponseEntity.ok().body(Map.of("result", count));
+    }
+
+    @RequestMapping(value = "/leave/{roomId}", method = RequestMethod.POST)
+    public ResponseEntity leaveChatRoom(
+            @CurrentMember MemberDTO memberDTO,
+            @PathVariable Long roomId
+    ) throws Exception {
+        ChatroomDTO chatroomDTO = chatService.getChatroom(roomId);
+        if(!isOwnerByChat(chatroomDTO, memberDTO)) {
+            throw new Exception("권한이 없습니다.");
+        }
+        chatService.exitChatroom(chatroomDTO, memberDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/enter/{roomId}", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Boolean>> enterChatRoom(
+            @CurrentMember MemberDTO memberDTO,
+            @PathVariable Long roomId
+    ) throws Exception {
+        ChatroomDTO chatroomDTO = chatService.getChatroom(roomId);
+        if(!isOwnerByChat(chatroomDTO, memberDTO)) {
+            throw new Exception("권한이 없습니다.");
+        }
+        ChatroomDTO updateChatroomDTO = chatService.enterChatroom(chatroomDTO, memberDTO);
+        if(updateChatroomDTO == null) return ResponseEntity.ok().body(Map.of("result", false));
+        return ResponseEntity.ok().body(Map.of("result", true));
+    }
+    private boolean isOwnerByChat(ChatroomDTO chatroomDTO, MemberDTO memberDTO) {
+        return isBuyerByChat(chatroomDTO, memberDTO) || chatroomDTO.getProductDTO().getSellerDTO().getId().equals(memberDTO.getId());
+    }
+    private boolean isBuyerByChat(ChatroomDTO chatroomDTO, MemberDTO memberDTO) {
+        return chatroomDTO.getBuyerDTO().getId().equals(memberDTO.getId());
     }
 }

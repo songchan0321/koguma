@@ -84,8 +84,8 @@ public class PaymentServiceImpl implements PaymentService{
         receiverDTO.setPaymentBalance(receiverDTO.getPaymentBalance() + point);
         memberService.updateMember(senderDTO);
         memberService.updateMember(receiverDTO);
-        this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, chatRoomDTO.getProductDTO().getTitle());
-        this.addPaymentHistory(receiverDTO, PaymentHistoryType.TRANSFER, point, chatRoomDTO.getProductDTO().getTitle());
+        this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, receiverDTO.getNickname() + "," + chatRoomDTO.getProductDTO().getTitle());
+        this.addPaymentHistory(receiverDTO, PaymentHistoryType.TRANSFER, point, senderDTO.getNickname() + "," + chatRoomDTO.getProductDTO().getTitle());
     }
 
     @Override

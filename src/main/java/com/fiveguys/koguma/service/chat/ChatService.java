@@ -13,7 +13,7 @@ public interface ChatService {
     public ChatroomDTO getChatroom(Long id) throws Exception;
     public List<ChatroomDTO> listChatroom(MemberDTO memberDTO);
     public ChatroomDTO updateChatroom(ChatroomDTO chatroomDTO);
-    public void enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO) throws Exception;
+    public ChatroomDTO enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO);
     public void exitChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO) throws Exception;
     public void deleteChatroom(ChatroomDTO chatroomDTO);
 }
