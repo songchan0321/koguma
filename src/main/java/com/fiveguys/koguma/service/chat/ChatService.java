@@ -11,6 +11,7 @@ public interface ChatService {
     public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price) throws Exception;
     public boolean existChatroom(MemberDTO memberDTO, ProductDTO productDTO);
     public ChatroomDTO getChatroom(Long id) throws Exception;
+    public ChatroomDTO getChatroomByProductAndMember(ProductDTO productDTO, MemberDTO buyerDTO);
     public List<ChatroomDTO> listChatroom(MemberDTO memberDTO);
     public ChatroomDTO updateChatroom(ChatroomDTO chatroomDTO);
     public ChatroomDTO enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO);

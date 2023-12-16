@@ -31,6 +31,34 @@ public class ChatRestController {
         return ResponseEntity.ok().body(chatService.listChatroom(memberDTO));
     }
 
+    @RequestMapping(value = "/list/{productId}", method = RequestMethod.GET)
+    public ResponseEntity<List<ChatroomDTO>> listChatRoomBySeller(
+            @CurrentMember MemberDTO memberDTO,
+            @PathVariable Long productId
+    ) throws Exception {
+        ProductDTO productDTO = productService.getProduct(productId);
+        if(!productDTO.getSellerDTO().getId().equals(memberDTO.getId())) {
+            throw new Exception("권한이 없습니다.");
+        }
+        List<ChatroomDTO> chatroomDTOList = chatService
+                .listChatroom(memberDTO)
+                .stream()
+                .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(chatroomDTOList);
+    }
+
+    @RequestMapping(value = "/get/{productId}/{buyerId}", method = RequestMethod.GET)
+    public ResponseEntity<ChatroomDTO> getChatRoomByProductAndMember(
+            @PathVariable Long productId,
+            @PathVariable Long buyerId
+    ) {
+        ProductDTO productDTO = productService.getProduct(productId);
+        MemberDTO buyerDTO = memberService.getMember(buyerId);
+        ChatroomDTO chatroomDTO = chatService.getChatroomByProductAndMember(productDTO, buyerDTO);
+        return ResponseEntity.ok().body(chatroomDTO);
+    }
+
     @RequestMapping(value = "/get/{roomId}", method = RequestMethod.GET)
     public ResponseEntity<ChatroomDTO> getChatRoom(
             @CurrentMember MemberDTO memberDTO,
@@ -103,7 +131,7 @@ public class ChatRestController {
     }
 
     @RequestMapping(value = "/exist/{productId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Long>> checkProductExistChatRoom(
+    public ResponseEntity<Map<String, Boolean>> checkProductExistChatRoom(
             @CurrentMember MemberDTO memberDTO,
             @PathVariable Long productId
     ) {
@@ -113,10 +141,45 @@ public class ChatRestController {
                 .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId) && chatroomDTO.getBuyerDTO().getId().equals(memberDTO.getId()))
                 .collect(Collectors.toList());
         if(chatroomDTOList.size() > 0) {
-            return ResponseEntity.ok().body(Map.of("result", chatroomDTOList.get(0).getId()));
+            return ResponseEntity.ok().body(Map.of("result", true));
         } else {
-            return ResponseEntity.ok().body(Map.of("result", null));
+            return ResponseEntity.ok().body(Map.of("result", false));
         }
+    }
+
+    @RequestMapping(value = "/exist/{productId}/{buyerId}")
+    public ResponseEntity<Map<String, Boolean>> checkProductAndBuyerExistChatRoom(
+            @CurrentMember MemberDTO memberDTO,
+            @PathVariable Long productId,
+            @PathVariable Long buyerId
+    ) throws Exception {
+        ProductDTO productDTO = productService.getProduct(productId);
+        if(!productDTO.getSellerDTO().getId().equals(memberDTO.getId())) {
+            throw new Exception("권한이 없습니다.");
+        }
+        MemberDTO buyerDTO = memberService.getMember(buyerId);
+        int count = (int) chatService
+                .listChatroom(buyerDTO)
+                .stream()
+                .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId))
+                .count();
+        return ResponseEntity.ok().body(Map.of("result", count > 0));
+    }
+
+    @RequestMapping(value = "/update/{roomId}")
+    public ResponseEntity updateChatRoomBySuggest(
+            @CurrentMember MemberDTO memberDTO,
+            @PathVariable Long roomId,
+            @RequestBody Map<String, String> json
+    ) throws Exception {
+        int price = Integer.parseInt(json.get("price"));
+        ChatroomDTO chatroomDTO = chatService.getChatroom(roomId);
+        if(!chatroomDTO.getProductDTO().getSellerDTO().getId().equals(memberDTO.getId())) {
+            throw new Exception("권한이 없습니다.");
+        }
+        chatroomDTO.setPrice(price);
+        chatService.updateChatroom(chatroomDTO);
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "/count/{productId}", method = RequestMethod.GET)

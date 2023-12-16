@@ -60,6 +60,11 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
+    public ChatroomDTO getChatroomByProductAndMember(ProductDTO productDTO, MemberDTO buyerDTO) {
+        return ChatroomDTO.formEntity(chatroomRepository.findByProductAndBuyer(productDTO.toEntity(), buyerDTO.toEntity()).orElseThrow());
+    }
+
+    @Override
     public ChatroomDTO updateChatroom(ChatroomDTO chatroomDTO) {
         return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
     }
@@ -72,6 +77,7 @@ public class ChatServiceImpl implements ChatService{
         }
         return chatroomDTO;
     }
+
 
     @Override
     public ChatroomDTO enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO){
