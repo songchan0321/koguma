@@ -36,9 +36,9 @@ public class ImageRestController {
         return ResponseEntity.status(HttpStatus.OK).body(fileList);
     }
     @PostMapping("/add")
-    public ResponseEntity<String> addImage(@RequestBody List<ImageDTO> imageDTO){
-        imageService.addImage(imageDTO);
-        return ResponseEntity.status(HttpStatus.OK).body("이미지 등록 성공");
+    public ResponseEntity<List<ImageDTO>> addImage(@RequestBody List<ImageDTO> imageDTO){
+        List<ImageDTO> list = imageService.addImage(imageDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
     @GetMapping("/list") // 이미지 리스트 조회

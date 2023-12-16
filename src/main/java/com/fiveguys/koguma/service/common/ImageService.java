@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ImageService {
 
-    void addImage(List<ImageDTO> imageDTOS);
+    List<ImageDTO> addImage(List<ImageDTO> imageDTOS);
     List<ImageDTO> listImage(ImageType imageType, Long targetId) throws Exception;
     ImageDTO getImage(Long imageId);
     ImageDTO getRepImage(ImageType imageType, Long productId) throws Exception;
