@@ -38,12 +38,11 @@ public class LocationServiceImpl implements LocationService{
     @Value("${ncloud.reverseGeo.clientSecret}")
     private String clientSecret;
 
-    public Page<Location> listLocation(MemberDTO memberDTO,int page) {
+    public List<LocationDTO> listLocation(MemberDTO memberDTO) {
 
-        Pageable pageable = PageRequest.of(page,9);
-        Page<Location> locations = locationRepository.findAllByMemberId(memberDTO.getId(),pageable);
+        List<Location> locations = locationRepository.findAllByMemberId(memberDTO.getId());
 
-        return locations;
+        return locations.stream().map(LocationDTO::fromEntity).collect(Collectors.toList());
     }
 
 
@@ -61,15 +60,16 @@ public class LocationServiceImpl implements LocationService{
 
 
     public LocationDTO addLocation(MemberDTO memberDTO,LocationDTO locationDTO) throws Exception {
-
+        locationDTO.setMemberDTO(memberDTO);
         Location location = null;
-        List<Location> locations =  locationRepository.findAllByMemberId(locationDTO.getMemberDTO().getId());
+        List<Location> locations =  locationRepository.findAllByMemberId(memberDTO.getId());
         if (locations.size() >= 3){
             throw new Exception("인증된 위치가 초과 됐습니다.");
         } else if (locations.isEmpty()) {
             locationDTO.setRepAuthLocationFlag(true);
             location = locationRepository.save(locationDTO.toEntity());
         } else {
+            System.out.println("else");
             locationDTO.setRepAuthLocationFlag(false);
             location = locationRepository.save(locationDTO.toEntity());
         }
@@ -78,15 +78,27 @@ public class LocationServiceImpl implements LocationService{
 
     @Transactional
     public void deleteLocation(MemberDTO memberDTO, Long id) throws Exception {
-        List<Location> locations =  locationRepository.findAllByMemberId(memberDTO.getId());
-        if (locations.size() == 1){
+        List<Location> locations = locationRepository.findAllByMemberId(memberDTO.getId());
+        if (locations.size() == 1) {
             throw new Exception("인증된 위치는 1개 이상 존재해야 합니다.");
-        }
-        else {
-            Location location = locationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 인증된 위치를 찾을 수 없습니다."));
+        } else {
+            Location location = locationRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 인증된 위치를 찾을 수 없습니다."));
+
             if (location.isRepAuthLocationFlag()) {
+                System.out.println("대표 위치라 첫번째 위치 대표로 설정");
                 locationRepository.deleteById(location.getId());
-                locations.get(0).setRepAuthLocationFlag(true);
+
+                // 대표 위치를 삭제한 후 나머지 위치 중 첫 번째 위치를 대표로 설정
+                Location newRepLocation = locations.stream()
+                        .filter(loc -> !loc.getId().equals(location.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new Exception("새로운 대표 위치를 찾을 수 없습니다."));
+
+                newRepLocation.setRepAuthLocationFlag(true);
+                locationRepository.save(newRepLocation);
+            } else {
+                locationRepository.deleteById(location.getId());
             }
         }
     }
@@ -96,11 +108,15 @@ public class LocationServiceImpl implements LocationService{
         return LocationDTO.fromEntity(location);
     }
 
-    @Transactional
-    public LocationDTO updateSearchRange(LocationDTO locationDTO,int range) {
-        Location location = locationRepository.findById(locationDTO.getId()).orElseThrow(()->new IllegalArgumentException("업데이트 할 수 없습니다."));
-        location.setSearchRange(range);
-        return LocationDTO.fromEntity(location);
+//    @Transactional
+//    public LocationDTO updateSearchRange(LocationDTO locationDTO,int range) {
+//        Location location = locationRepository.findById(locationDTO.getId()).orElseThrow(()->new IllegalArgumentException("업데이트 할 수 없습니다."));
+//        location.setSearchRange(range);
+//        return LocationDTO.fromEntity(location);
+//    }
+    public LocationDTO updateSearchRange(LocationDTO locationDTO) {
+        locationDTO.setRepAuthLocationFlag(true);
+        return LocationDTO.fromEntity(locationRepository.save(locationDTO.toEntity()));
     }
 
     public LocationDTO addShareLocation(Long latitude,Long longitude) {
@@ -158,12 +174,6 @@ public class LocationServiceImpl implements LocationService{
         List<?> objectByLocation = queryRepository.findAllByDistance(categoryType,locationDTO,pageable,keyword);
 
         switch (categoryType){
-//            case PRODUCT:{
-//                objectByLocationDTOList = objectByLocation.stream()
-//                        .map(x -> ProductDTO.fromEntity((Product) x))
-//                        .collect(Collectors.toList());
-//                break;
-//            }
             case PRODUCT:{
                 objectByLocationDTOList = objectByLocation.stream()
                         .map(x -> ProductDTO.fromEntityContainImage((Product) x))

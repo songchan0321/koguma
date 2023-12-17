@@ -72,6 +72,7 @@ public class ProductDTO {
                 .latitude(latitude)
                 .longitude(longitude)
                 .views(views)
+                .regDate(regDate)
                 .categoryName(categoryName)
                 .buyDate(buyDate);
         if (buyerDTO != null) {

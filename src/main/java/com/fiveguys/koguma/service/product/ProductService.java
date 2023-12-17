@@ -1,6 +1,5 @@
 package com.fiveguys.koguma.service.product;
 
-import com.fiveguys.koguma.data.dto.ImageDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
@@ -19,9 +18,9 @@ public interface ProductService {
     void updateState(ProductDTO productDTO, ProductStateType state);
     void updateView(Long productId);
 
-    Page<Product> listStateProduct(Long memberId, Pageable pageable, ProductStateType state) throws Exception;
+    List<ProductDTO> listStateProduct(Long memberId, ProductStateType state) throws Exception;
 
-    Page<Product> listBuyProduct(Long memberId, Pageable pageable) throws Exception;
+    List<ProductDTO> listBuyProduct(Long memberId) throws Exception;
     void newProductAlert();
 
     void raiseProduct(Long productId) throws Exception;

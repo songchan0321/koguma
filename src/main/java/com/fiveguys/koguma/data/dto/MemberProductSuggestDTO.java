@@ -11,20 +11,26 @@ import java.time.LocalDateTime;
 @Data
 public class MemberProductSuggestDTO {
 
-    private MemberProductSuggestId id;
+    private MemberDTO memberDTO;
+    private ProductDTO productDTO;
     private int price;
     private LocalDateTime regDate;
 
+
     @Builder
-    public MemberProductSuggestDTO(MemberProductSuggestId id, int price, LocalDateTime regDate) {
-        this.id = id;
+    public MemberProductSuggestDTO(MemberDTO memberDTO, ProductDTO productDTO, int price, LocalDateTime regDate) {
+        this.memberDTO = memberDTO;
+        this.productDTO = productDTO;
         this.price = price;
         this.regDate = regDate;
     }
 
+
+
     public static MemberProductSuggestDTO fromEntity(MemberProductSuggest memberProductSuggest){
         return MemberProductSuggestDTO.builder()
-                .id(memberProductSuggest.getId())
+                .memberDTO(MemberDTO.fromEntity(memberProductSuggest.getId().getMember()))
+                .productDTO(ProductDTO.fromEntity(memberProductSuggest.getId().getProduct()))
                 .price(memberProductSuggest.getPrice())
                 .regDate(memberProductSuggest.getRegDate())
                 .build();
@@ -33,8 +39,8 @@ public class MemberProductSuggestDTO {
     public MemberProductSuggest toEntity(){
         return MemberProductSuggest.builder()
                 .id(MemberProductSuggestId.builder()
-                        .member(id.getMember())
-                        .product(id.getProduct())
+                        .member(memberDTO.toEntity())
+                        .product(productDTO.toEntity())
                         .build())
                 .price(price)
                 .build();

@@ -134,26 +134,26 @@ public class ProductApplicationTests {
         System.out.println(reviewService.getReview(1L));
     }
 
-    @Test
-    @DisplayName("상품 가격제안추가 테스트")
-    @Transactional
-    public void 상품가격제안추가() throws Exception{
-
-        Member buyer = memberService.getMember(1L).toEntity();
-        Product product = productService.getProduct(7L).toEntity();
-
-        MemberProductSuggestDTO memberProductSuggestDTO =
-                MemberProductSuggestDTO.builder()
-                        .id(MemberProductSuggestId.builder()
-                                .member(buyer)
-                                .product(product)
-                                .build())
-                        .price(100000)
-                        .build();
-        memberProductSuggestService.addSuggetPrice(memberProductSuggestDTO);
-
-
-    }
+//    @Test
+//    @DisplayName("상품 가격제안추가 테스트")
+//    @Transactional
+//    public void 상품가격제안추가() throws Exception{
+//
+//        Member buyer = memberService.getMember(1L).toEntity();
+//        Product product = productService.getProduct(7L).toEntity();
+//
+//        MemberProductSuggestDTO memberProductSuggestDTO =
+//                MemberProductSuggestDTO.builder()
+//                        .id(MemberProductSuggestId.builder()
+//                                .member(buyer)
+//                                .product(product)
+//                                .build())
+//                        .price(100000)
+//                        .build();
+//        memberProductSuggestService.addSuggetPrice(memberProductSuggestDTO);
+//
+//
+//    }
 //    @Test
 //    @DisplayName("상품 가격제안리스트 테스트")
 //    @Transactional
@@ -245,5 +245,19 @@ public class ProductApplicationTests {
 //        System.out.println("byAllProduct = " + byAllProduct.getImage().stream().map(ImageDTO::fromEntity).collect(Collectors.toList()));
         System.out.println("ProductDTO.fromEntityContainImage(byAllProduct) = " + ProductDTO.fromEntityContainImage(byAllProduct));
     }
-    
+//    @Test
+//    public void memberSuggestPrice() throws Exception {
+//        List<MemberProductSuggestDTO> list =  memberProductSuggestService.listSuggestPrice(34L);
+//        for (MemberProductSuggestDTO memberProductSuggestDTO : list) {
+//            System.out.println("memberProductSuggestDTO = " + memberProductSuggestDTO);
+//        }
+////    }
+//    @Test
+//    public void memberSuggestPrice() throws Exception {
+//
+//        Pageable pageable = PageRequest.of(0, 10);
+//        Page<Product> productList = productService.listStateProduct(5L,pageable, ProductStateType.valueOf("SALE"));
+//        productList.stream().map(ProductDTO::fromEntity).forEach(System.out::println);
+//
+//    }
 }

@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface LocationService {
 
-    Page<Location> listLocation(MemberDTO memberDTO,int page);
+    List<LocationDTO> listLocation(MemberDTO memberDTO);
     LocationDTO getLocation(long locationId);
     LocationDTO addLocation(MemberDTO memberDTO,LocationDTO locationDTO) throws Exception;
     void deleteLocation(MemberDTO memberDTO, Long id) throws Exception;
-    LocationDTO updateSearchRange(LocationDTO locationDTO,int range);
+    LocationDTO updateSearchRange(LocationDTO locationDTO);
     LocationDTO addShareLocation(Long latitude,Long longitude);
     LocationDTO getMemberRepLocation(Long memberId);
     void setRepLocation(Long memberId,Long locationId);
