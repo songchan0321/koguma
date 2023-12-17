@@ -66,16 +66,30 @@ public class QueryRepositoryImpl implements QueryRepository{
         if (keyword != null) {
             jpaQuery.where(titlePath.containsIgnoreCase(keyword));
         }
+        switch (target) {
+            case PRODUCT:
+                jpaQuery.orderBy(QProduct.product.regDate.desc()); // QProduct.product.regDate.desc() 대신 entity.regDate.desc() 사용
 
-        List<Tuple> filterList = (List<Tuple>) jpaQuery.fetch();
 
-        List<Product> products = filterList.stream()
-                .map(tuple -> tuple.get(0, Product.class)) // 첫 번째 엔터티는 Product
-                .collect(Collectors.toList());
-        for (Product product : products) {
-            System.out.println(product.toString());
+                List<Tuple> filterList = (List<Tuple>) jpaQuery.fetch();
+
+                List<Product> products = filterList.stream()
+                        .map(tuple -> tuple.get(0, Product.class)) // 첫 번째 엔터티는 Product
+                        .collect(Collectors.toList());
+                for (Product product : products) {
+                    System.out.println(product.toString());
+                }
+                return products;
+            case CLUB:
+                entity = QClub.club;
+                break;
+            case POST:
+                entity = QPost.post;
+                break;
+            default:
+                throw new Exception("잘못된 엔티티 입력");
         }
-        return products;
+        return null;
     }
     private com.querydsl.core.types.dsl.BooleanExpression getJoinCondition(EntityPath<?> entity, QImage image) {
         switch (entity.getType().getSimpleName()) {

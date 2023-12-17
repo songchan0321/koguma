@@ -1,7 +1,9 @@
 package com.fiveguys.koguma.service.product;
 
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.MemberProductSuggestDTO;
+import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.MemberProductSuggest;
 import com.fiveguys.koguma.data.entity.MemberProductSuggestId;
 import com.fiveguys.koguma.data.entity.Product;
@@ -25,27 +27,52 @@ public class MemberProductSuggestServiceImpl implements MemberProductSuggestServ
 
 
     public void addSuggetPrice(MemberProductSuggestDTO memberProductSuggestDTO) throws Exception {  //buyer 일때 가능
-        System.out.println(memberProductSuggestDTO.toEntity().getId());
+
         Optional<MemberProductSuggest> memberProductSuggest = memberProductSuggestRepository.findById(memberProductSuggestDTO.toEntity().getId());
         if (memberProductSuggest.isPresent())
             throw new Exception("가격제안이 이미 있습니다.");
         memberProductSuggestRepository.save(memberProductSuggestDTO.toEntity());
     }
 
-    public Page<MemberProductSuggest> listSuggestPrice(Long productId, int page) {  //seller 일때 가능
+    public List<MemberProductSuggestDTO> listSuggestPrice(Long productId) {  //seller 일때 가능
 
         List<MemberProductSuggest> memberProductSuggestList = memberProductSuggestRepository.findAllByIdProductId(productId);
 
-        Pageable pageable = PageRequest.of(page,9);
 
-        memberProductSuggestList = memberProductSuggestList.stream().collect(Collectors.toList());
-        Page<MemberProductSuggest> list = new PageImpl<>(memberProductSuggestList, pageable, memberProductSuggestList.size());
-
+        List<MemberProductSuggestDTO> list = memberProductSuggestList.stream().map(MemberProductSuggestDTO::fromEntity).collect(Collectors.toList());
         return list;
     }
 
+    @Override
+    public int getSuggestPrice(Long suggestId) {
+        return 0;
+    }
 
-    public MemberProductSuggestDTO getSuggestPrice() {
+    @Override
+    public MemberDTO getSuggestMember(Long suggestId) {
         return null;
     }
+
+    @Override
+    public ProductDTO getSuggestProduct(Long suggestId) {
+        return null;
+    }
+
+//    @Override
+//    public int getSuggestPrice(Long suggestId) {
+//        return memberProductSuggestRepository.findByMemberProductSuggestId(suggestId).getPrice();
+//    }
+//
+//    @Override
+//    public MemberDTO getSuggestMember(Long suggestId) {
+//        return MemberDTO.fromEntity(memberProductSuggestRepository.findByMemberProductSuggestId(suggestId).getId().getMember());
+//    }
+//
+//    @Override
+//    public ProductDTO getSuggestProduct(Long suggestId) {
+//        return ProductDTO.fromEntity(memberProductSuggestRepository.findByMemberProductSuggestId(suggestId).getId().getProduct());
+//    }
+
+
+
 }

@@ -1,8 +1,6 @@
 package com.fiveguys.koguma.service.product;
 
 import com.fiveguys.koguma.data.dto.*;
-import com.fiveguys.koguma.data.entity.Image;
-import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
 import com.fiveguys.koguma.repository.product.ProductRepository;
@@ -17,7 +15,6 @@ import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,11 +65,17 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Page<Product> listStateProduct(Long memberId, Pageable pageable, ProductStateType state) throws Exception {
-        return productRepository.findBySellerIdAndTradeStatusContaining(memberId, pageable, state);
+    public List<ProductDTO> listStateProduct(Long memberId, ProductStateType state) throws Exception {
+        List<Product> productList = productRepository.findAllBySellerIdAndTradeStatusOrderByRegDateDesc(memberId,state);
+        return productList.stream()
+                .map(ProductDTO::fromEntityContainImage)
+                .collect(Collectors.toList());
     }
-    public Page<Product> listBuyProduct(Long memberId, Pageable pageable) throws Exception {
-        return productRepository.findByBuyerIdAndTradeStatusContaining(memberId, pageable, ProductStateType.SALED);
+    public List<ProductDTO> listBuyProduct(Long memberId) throws Exception {
+        List<Product> productList =  productRepository.findAllByBuyerIdAndTradeStatusOrderByRegDateDesc(memberId,ProductStateType.SALED);
+        return productList.stream()
+                .map(ProductDTO::fromEntityContainImage)
+                .collect(Collectors.toList());
     }
 
     public void newProductAlert() {     //이후 추가

@@ -14,14 +14,14 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long>{
 
-    Page<Product> findByBuyerIdAndTradeStatusContaining(Long memberId, Pageable pageable, ProductStateType state);
 
-
-    Page<Product> findBySellerIdAndTradeStatusContaining(Long memberId, Pageable pageable, ProductStateType state);
     @Query("SELECT p FROM Product p JOIN LikeFilterAssociation l ON p.id = l.product.id")
     List<Product> findProductsInAssociation();
 
     @Query("select p from Product p left join fetch p.image where p.id = :productId")
     Product findByProductIdWithImages(@Param("productId") Long productId);
 
+    List<Product> findAllBySellerIdAndTradeStatusOrderByRegDateDesc(Long memberId, ProductStateType state);
+
+    List<Product> findAllByBuyerIdAndTradeStatusOrderByRegDateDesc(Long memberId, ProductStateType state);
 }

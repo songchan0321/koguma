@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ProductStateType {
 
-    SALE("판매 중"),
-    SALED("거래 완료"),
-    RESERVATION("예약 중"),
-    HIDE("숨김");
+    SALE("SALE"),
+    SALED("SALED"),
+    RESERVATION("RESERVATION"),
+    HIDE("HIDE");
 
 
     private final String name;

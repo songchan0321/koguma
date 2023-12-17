@@ -55,16 +55,7 @@ public class ProductRestController {
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
-    @GetMapping("/list/hi")
-    public ResponseEntity<Page<Product>> listHIProduct(@RequestParam int page, @RequestParam String keyword,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-
-//        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
-
-        Pageable pageable = PageRequest.of(page, 9);
-
-        return ResponseEntity.status(HttpStatus.OK).body(productService.listProduct(memberDTO.getId(),page,10));
-    }
 
     @GetMapping("/get/{no}")
     public ResponseEntity<ProductDTO> getProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
@@ -72,25 +63,23 @@ public class ProductRestController {
         ProductDTO productDTO = productService.getProduct(no);
 
 
-//        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-//            return ResponseEntity.status(HttpStatus.CHECKPOINT).body(productDTO);
-//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
+    @GetMapping("/valid/{no}")
+    public ResponseEntity<Boolean> validProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-//    @PostMapping("/new")
-//    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) {
-//        productDTO.setSellerDTO(memberDTO);
-//        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
-//
-//        productDTO.setDong(locationDTO.getDong());
-//        productDTO.setLatitude(locationDTO.getLatitude());
-//        productDTO.setLongitude(locationDTO.getLongitude());
-//        productDTO = productService.addProduct(productDTO);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(productDTO);
-//    }
+        ProductDTO productDTO = productService.getProduct(no);
+
+        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
+            return ResponseEntity.status(HttpStatus.OK).body(false);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(true);
+
+    }
+
+
     @PostMapping("/new")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -165,62 +154,54 @@ public class ProductRestController {
     }
 
     @PutMapping("/tradestate")
-    public ResponseEntity<String> updateStateProduct(@RequestBody Map<String,String> json,@CurrentMember MemberDTO memberDTO) throws Exception {
-        ProductDTO productDTO = productService.getProduct(Long.parseLong(json.get("productNo")));
+    public ResponseEntity<String> updateStateProduct(@RequestParam String productId,@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
+        ProductDTO productDTO = productService.getProduct(Long.parseLong(productId));
+        System.out.println("productDTO = " + productDTO);
 
-        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        productService.updateState(productDTO, ProductStateType.valueOf(json.get("state")));
+        productService.updateState(productDTO, ProductStateType.valueOf(type.toUpperCase()));
         return ResponseEntity.status(HttpStatus.OK).body("상태 업데이트 성공");
     }
-    @GetMapping("/tradestate/list")
-    public ResponseEntity<Page<Product>> listStateProduct(@RequestParam int page,@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
+    @GetMapping("/sale/list")
+    public ResponseEntity<List<ProductDTO>> listStateProduct(@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        Pageable pageable = PageRequest.of(page, 9);
-        Page<Product> productList = productService.listStateProduct(memberDTO.getId(),pageable, ProductStateType.valueOf(type));
+        List<ProductDTO> productList = productService.listStateProduct(memberDTO.getId(),ProductStateType.valueOf(type.toUpperCase()));
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
     @GetMapping("/buy/list")
-    public ResponseEntity<Page<Product>> listBuyProduct(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<List<ProductDTO>> listBuyProduct(@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        Pageable pageable = PageRequest.of(page, 9);
-        Page<Product> productList = productService.listBuyProduct(memberDTO.getId(),pageable);
+        List<ProductDTO> productList = productService.listBuyProduct(memberDTO.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
 
     @PostMapping("/suggest")
-    public ResponseEntity<String> addSugestProduct(@RequestBody ProductDTO productDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<String> addSugestProduct(@RequestBody Map<String,String> json,@CurrentMember MemberDTO memberDTO) throws Exception {
 
+        ProductDTO productDTO = productService.getProduct(Long.valueOf(json.get("productId")));
         MemberProductSuggestDTO memberProductSuggestDTO =
-                MemberProductSuggestDTO.builder().id(MemberProductSuggestId.builder()
-                        .product(productDTO.toEntity())
-                        .member(memberDTO.toEntity()).build())
-                .price(productDTO.getPrice())
+                MemberProductSuggestDTO.builder()
+                        .productDTO(productDTO)
+                        .memberDTO(memberDTO)
+                .price(Integer.parseInt(json.get("price")))
                 .build();
 
         memberProductSuggestService.addSuggetPrice(memberProductSuggestDTO);
 //        alertService.addAlert(productDTO.getSellerDTO(),productDTO.getTitle(),memberDTO.getNickname()+"님이 가격제안을 했습니다"),
         return ResponseEntity.status(HttpStatus.OK).body("가격제안 성공");
     }
-    @GetMapping("/suggest/list")
-    public ResponseEntity<Page<MemberProductSuggest>> listSuggestProduct(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+    @GetMapping("/suggest/list/{productId}")
+    public ResponseEntity<List<MemberProductSuggestDTO>> listSuggestProduct(@PathVariable Long productId, @CurrentMember MemberDTO memberDTO) {
 
-        Page<MemberProductSuggest> list = memberProductSuggestService.listSuggestPrice(memberDTO.getId(),page);
 
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+        return ResponseEntity.status(HttpStatus.OK).body(memberProductSuggestService.listSuggestPrice(productId));
     }
     @PostMapping("/raise/{productNo}")
     public ResponseEntity<String> raiseProduct(@PathVariable Long productNo,@CurrentMember MemberDTO memberDTO) throws Exception {
         try {
 
             ProductDTO productDTO = productService.getProduct(productNo);
-            if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
             productService.raiseProduct(productNo);
 
             return ResponseEntity.status(HttpStatus.OK).body("상품 끌어올리기 완료");
@@ -230,20 +211,14 @@ public class ProductRestController {
         }
     }
     @GetMapping("/buyer/list/{productNo}")
-    public ResponseEntity<Map<String,Object>> selectBuyer(@PathVariable Long productNo,@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<List<MemberProductSuggestDTO>> selectBuyer(@PathVariable Long productNo,@CurrentMember MemberDTO memberDTO) throws Exception {
 
-        ProductDTO productDTO = productService.getProduct(productNo);
-        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        Page<MemberProductSuggest> list = memberProductSuggestService.listSuggestPrice(memberDTO.getId(),page);
-        Map<String,Object> map = new HashMap<>();
-        map.put("productDTO",productDTO);
-        map.put("suggestList",list);
+        List<MemberProductSuggestDTO> list = memberProductSuggestService.listSuggestPrice(productNo);
 
-        return ResponseEntity.status(HttpStatus.OK).body(map);
+        return ResponseEntity.status(HttpStatus.OK).body(list);
 
     }
+
 
 }
 
