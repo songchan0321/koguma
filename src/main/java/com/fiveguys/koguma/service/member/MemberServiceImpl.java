@@ -114,13 +114,13 @@ public class MemberServiceImpl implements MemberService {
         // 다른 회원의 경우 닉네임과 사진만 반환
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setNickname(otherMember.getNickname());
-        memberDTO.setImageId(otherMember.getImageId());
+        memberDTO.setProfileURL(otherMember.getProfileURL());
 
         return memberDTO;
     }
 
     @Override
-    public void updateMember(MemberDTO memberDTO, String nickname) {
+    public MemberDTO updateMember(MemberDTO memberDTO, String nickname, String profileURL) {
         Long id = memberDTO.getId();
 
         Member existingMember = memberRepository.findById(id)
@@ -134,9 +134,9 @@ public class MemberServiceImpl implements MemberService {
         }
 
         existingMember.setNickname(nickname);
-        existingMember.setImageId(memberDTO.getImageId());
+        existingMember.setProfileURL(profileURL);
 
-        memberRepository.save(existingMember);
+        return MemberDTO.fromEntity(memberRepository.save(existingMember));
     }
 
     @Override

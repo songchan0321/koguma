@@ -27,8 +27,6 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> imageId = createNumber("imageId", Long.class);
-
     public final EnumPath<MemberRoleType> memberRoleType = createEnum("memberRoleType", MemberRoleType.class);
 
     public final StringPath nickname = createString("nickname");
@@ -42,6 +40,8 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath paymentPw = createString("paymentPw");
 
     public final StringPath phone = createString("phone");
+
+    public final StringPath profileURL = createString("profileURL");
 
     public final StringPath pw = createString("pw");
 

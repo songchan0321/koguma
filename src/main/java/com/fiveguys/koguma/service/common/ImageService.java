@@ -1,7 +1,7 @@
 package com.fiveguys.koguma.service.common;
 
 import com.fiveguys.koguma.data.dto.ImageDTO;
-import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.entity.Image;
 import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +18,6 @@ public interface ImageService {
 
     void setRepImage(Long imageId) throws Exception;
 
-    void updateProfilePicture(Member member, Long imageId);
     public String tempFileUpload(MultipartFile multipartFile) throws IOException;
     List<String> tempFileUpload(List<MultipartFile> multipartFileListDTO) throws IOException;
     public void setObjectACL(String bucketName,String objectName);

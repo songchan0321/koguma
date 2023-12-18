@@ -3,11 +3,14 @@ package com.fiveguys.koguma.controller;
 import com.fiveguys.koguma.data.dto.KakaoAuthDTO;
 import com.fiveguys.koguma.data.dto.KakaoProfileDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.SmsDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.service.common.AuthService;
 import com.fiveguys.koguma.service.member.MemberService;
+import com.fiveguys.koguma.service.common.SmsService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -23,10 +26,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @RequestMapping("/auth")
+@Log4j2
 public class AuthRestController {
 
     private final MemberService memberService;
     private final AuthService authService;
+    private final SmsService smsService;
 
     @Value("${security.secret}")
     private String secret;
@@ -122,6 +127,18 @@ public class AuthRestController {
         memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag);
 
         return ResponseEntity.ok().build();
+    }
+    @PostMapping("/sendSms")
+    public String sendSms(@RequestBody SmsDTO smsDTO) throws Exception{
+        log.info("/member/sendOne : POST : {}", smsDTO);
+        smsService.sendSms(smsDTO);
+        return "{\"success\": true}";
+    }
+    @PostMapping("/verifySms")
+    public String verifySms(@RequestBody SmsDTO smsDTO) throws Exception{
+        log.info("/member/verifySms : POST : {}", smsDTO);
+        smsService.verifySms(smsDTO);
+        return "{\"success\": true}";
     }
 //    @PostMapping("/signup")
 //    public ResponseEntity<MemberDTO> signUp(@RequestBody MemberDTO memberDTO,
