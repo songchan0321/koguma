@@ -28,13 +28,22 @@ public class LikeFilterAssociationDTO {
     }
 
     public static LikeFilterAssociationDTO fromEntity(LikeFilterAssociation likeFilterAssociation){
-        return LikeFilterAssociationDTO.fromEntity(LikeFilterAssociation.builder()
-                        .id(likeFilterAssociation.getId())
-                        .member(likeFilterAssociation.getMember())
-                        .product(likeFilterAssociation.getProduct())
-                        .category(likeFilterAssociation.getCategory())
-                        .post(likeFilterAssociation.getPost())
-                        .build());
+        LikeFilterAssociationDTO.LikeFilterAssociationDTOBuilder builder = LikeFilterAssociationDTO.builder()
+                .id(likeFilterAssociation.getId())
+                .memberDTO(MemberDTO.fromEntity(likeFilterAssociation.getMember()));
+
+                if(likeFilterAssociation.getProduct() != null){
+                    builder.productDTO(ProductDTO.fromEntityContainImage(likeFilterAssociation.getProduct()));
+                }
+                if(likeFilterAssociation.getPost() != null){
+                    builder.postDTO(PostDTO.fromEntity(likeFilterAssociation.getPost()));
+                }
+                if (likeFilterAssociation.getCategory() != null)
+                    builder.categoryDTO(CategoryDTO.fromDTO(likeFilterAssociation.getCategory()));
+
+        return builder.build();
+
+
     }
 
     public LikeFilterAssociation toEntity() {

@@ -177,6 +177,7 @@ public class LocationServiceImpl implements LocationService{
             case PRODUCT:{
                 objectByLocationDTOList = objectByLocation.stream()
                         .map(x -> ProductDTO.fromEntityContainImage((Product) x))
+                        .filter(productDTO -> !ProductStateType.HIDE.equals(productDTO.getTradeStatus()))
                         .collect(Collectors.toList());
                 break;
             }
