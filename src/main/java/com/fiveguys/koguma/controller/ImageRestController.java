@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.xml.ws.Response;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ import java.util.List;
 public class ImageRestController {
 
     private final ImageService imageService;
+
 
     @GetMapping("/{imageId}") //이미지 가져오기
     public ResponseEntity<ImageDTO> getImage(@PathVariable Long imageId) {
@@ -40,7 +42,14 @@ public class ImageRestController {
         List<ImageDTO> list = imageService.addImage(imageDTO);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
-
+//    @PostMapping("/profile")
+//    public ResponseEntity<ImageDTO> profile(@RequestBody Map<String,String> json,@CurrentMember MemberDTO memberDTO){
+//        String imageUrl = json.get("URL");
+//        ImageDTO imageDTO =  ImageDTO.builder().memberDTO(memberDTO).imageType(ImageType.MEMBER).URL(imageUrl).repImageFlag(true).build();
+//
+//        ImageDTO image = ImageDTO.fromEntity(imageService.addProfileImage(imageDTO));
+//        return ResponseEntity.status(HttpStatus.OK).body(image);
+//    }
     @GetMapping("/list") // 이미지 리스트 조회
     public ResponseEntity<List<ImageDTO>> listImage(Long targetId, ImageType imageType) throws Exception {
         List<ImageDTO> listImage = imageService.listImage(imageType, targetId);
