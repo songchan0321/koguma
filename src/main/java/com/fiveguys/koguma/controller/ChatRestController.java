@@ -97,7 +97,24 @@ public class ChatRestController {
             throw new Exception("본인이 등록한 상품은 가격제안으로만 먼저 채팅을 할 수 있습니다.");
         }
 
-        return ResponseEntity.ok().body(chatService.addChatroom(memberDTO, productDTO));
+        return ResponseEntity.ok().body(chatService.addChatroom(memberDTO, productDTO, false));
+    }
+
+    @RequestMapping(value = "/add/solo", method = RequestMethod.POST)
+    public ResponseEntity<ChatroomDTO> addSoloChatRoom(
+            @CurrentMember MemberDTO memberDTO,
+            @RequestBody HashMap<String, String> json
+    ) throws Exception {
+        Long productId = Long.parseLong(json.get("productId"));
+        ProductDTO productDTO = productService.getProduct(productId);
+        if(chatService
+                .listChatroom(memberDTO)
+                .stream()
+                .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId) && chatroomDTO.getBuyerDTO().getId().equals(memberDTO.getId()))
+                .count() > 0) {
+            throw new Exception("이미 채팅방이 존재합니다.");
+        }
+        return ResponseEntity.ok().body(chatService.addChatroom(memberDTO, productDTO, true));
     }
 
     @RequestMapping(value = "/addFromSuggest", method = RequestMethod.POST)
@@ -110,7 +127,7 @@ public class ChatRestController {
         Integer price = Integer.parseInt(json.get("price"));
 
         ProductDTO productDTO = productService.getProduct(productId);
-        MemberDTO suggestedMember = memberService.getMember(suggestedMemberId);
+        MemberDTO suggestedMemberDTO = memberService.getMember(suggestedMemberId);
         if(!productDTO.getSellerDTO().getId().equals(productId)) {
             throw new Exception("가격 제안을 승인할 권한이 없습니다.");
         }
@@ -122,12 +139,33 @@ public class ChatRestController {
 //            ChatroomDTO chatroomDTO = chatService.getChatroom()
 //            throw new Exception("이미 채팅방이 존재합니다.");
 //        }
-        ChatroomDTO chatroomDTO = chatService.addChatroom(memberDTO, productDTO);
-        if(memberDTO.getId().equals(productDTO.getSellerDTO().getId())) {
-            chatroomDTO.setPrice(price);
-            chatService.updateChatroom(chatroomDTO);
+        ChatroomDTO chatroomDTO = chatService.addChatroom(suggestedMemberDTO, productDTO, price, false);
+//        if(memberDTO.getId().equals(productDTO.getSellerDTO().getId())) {
+//            chatroomDTO.setPrice(price);
+//            chatService.updateChatroom(chatroomDTO);
+//        }
+        return ResponseEntity.ok().body(chatroomDTO);
+    }
+
+    @RequestMapping(value = "/exist/absolute/{productId}", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Boolean>> checkProductExistAbsoluteChatRoom(
+            @CurrentMember MemberDTO memberDTO,
+            @PathVariable Long productId
+    ) {
+        ProductDTO productDTO = productService.getProduct(productId);
+        final boolean isBuyer = productDTO.getSellerDTO().getId() == memberDTO.getId() ? false : true;
+        List<ChatroomDTO>  chatroomDTOList = chatService.listChatroom()
+                .stream()
+                .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId) &&
+                        (!isBuyer ? chatroomDTO.getProductDTO().getSellerDTO().equals(memberDTO.getId())
+                                : chatroomDTO.getBuyerDTO().getId().equals(memberDTO.getId()))
+                )
+                .collect(Collectors.toList());
+        if(chatroomDTOList.size() > 0) {
+            return ResponseEntity.ok().body(Map.of("result", true));
+        } else {
+            return ResponseEntity.ok().body(Map.of("result", false));
         }
-        return ResponseEntity.ok().build() ;
     }
 
     @RequestMapping(value = "/exist/{productId}", method = RequestMethod.GET)
@@ -209,7 +247,7 @@ public class ChatRestController {
     }
 
     @RequestMapping(value = "/enter/{roomId}", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Boolean>> enterChatRoom(
+    public ResponseEntity<ChatroomDTO> enterChatRoom(
             @CurrentMember MemberDTO memberDTO,
             @PathVariable Long roomId
     ) throws Exception {
@@ -218,8 +256,8 @@ public class ChatRestController {
             throw new Exception("권한이 없습니다.");
         }
         ChatroomDTO updateChatroomDTO = chatService.enterChatroom(chatroomDTO, memberDTO);
-        if(updateChatroomDTO == null) return ResponseEntity.ok().body(Map.of("result", false));
-        return ResponseEntity.ok().body(Map.of("result", true));
+        if(updateChatroomDTO == null) return ResponseEntity.ok().body(updateChatroomDTO);
+        return ResponseEntity.ok().body(updateChatroomDTO);
     }
     private boolean isOwnerByChat(ChatroomDTO chatroomDTO, MemberDTO memberDTO) {
         return isBuyerByChat(chatroomDTO, memberDTO) || chatroomDTO.getProductDTO().getSellerDTO().getId().equals(memberDTO.getId());

@@ -26,7 +26,7 @@ public class ChatApplicationTests {
         ProductDTO productDTO = productService.getProduct(7L);
         System.out.println(productDTO);
         MemberDTO memberDTO = memberService.getMember(2L);
-        ChatroomDTO chatroomDTO = chatService.addChatroom(memberDTO, productDTO);
+        ChatroomDTO chatroomDTO = chatService.addChatroom(memberDTO, productDTO, false);
         assert chatroomDTO.getBuyerDTO().getId() == memberDTO.getId();
         assert chatroomDTO.getProductDTO().getId() == productDTO.getId();
         assert chatroomDTO.getPrice() == productDTO.getPrice();
@@ -43,7 +43,7 @@ public class ChatApplicationTests {
         ProductDTO productDTO = productService.getProduct(1L);
         MemberDTO memberDTO = memberService.getMember(1L);
         if(!chatService.existChatroom(memberDTO, productDTO)) {
-            chatService.addChatroom(memberDTO, productDTO);
+            chatService.addChatroom(memberDTO, productDTO, false);
         }
         List<ChatroomDTO> chatroomDTOList = chatService.listChatroom(memberDTO);
         assert chatroomDTOList.size() == 1;
@@ -52,7 +52,7 @@ public class ChatApplicationTests {
         assert chatroomDTOList.size() == 1;
 
         memberDTO = memberService.getMember(2L);
-        chatService.addChatroom(memberDTO, productDTO, 1000);
+        chatService.addChatroom(memberDTO, productDTO, 100, false);
 
         chatroomDTOList = chatService.listChatroom(memberDTO);
         assert chatroomDTOList.size() == 1;
