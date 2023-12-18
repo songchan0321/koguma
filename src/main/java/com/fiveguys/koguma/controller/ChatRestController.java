@@ -65,6 +65,7 @@ public class ChatRestController {
             @PathVariable Long roomId
     ) throws Exception {
         ChatroomDTO chatroomDTO = chatService.getChatroom(roomId);
+        chatroomDTO.setProductDTO(productService.getProduct(chatroomDTO.getProductDTO().getId()));
         if(!chatroomDTO
                 .getBuyerDTO()
                 .getId()
@@ -76,7 +77,7 @@ public class ChatRestController {
                 .equals(memberDTO.getId())) {
             throw new Exception("채팅방 접근 권한이 없습니다.");
         }
-        return ResponseEntity.ok().body(chatService.getChatroom(roomId));
+        return ResponseEntity.ok().body(chatroomDTO);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -128,7 +129,7 @@ public class ChatRestController {
 
         ProductDTO productDTO = productService.getProduct(productId);
         MemberDTO suggestedMemberDTO = memberService.getMember(suggestedMemberId);
-        if(!productDTO.getSellerDTO().getId().equals(productId)) {
+        if(!productDTO.getSellerDTO().getId().equals(memberDTO.getId())) {
             throw new Exception("가격 제안을 승인할 권한이 없습니다.");
         }
 //        if(chatService

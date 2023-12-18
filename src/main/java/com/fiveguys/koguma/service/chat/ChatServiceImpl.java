@@ -50,6 +50,7 @@ public class ChatServiceImpl implements ChatService{
             chatroomDTO = this.addChatroom(memberDTO, productDTO, soloFlag);
         }
         chatroomDTO.setPrice(price);
+        alertService.addAlert(chatroomDTO.getBuyerDTO(), "가격 제안",  memberDTO.getNickname() + "님이 가격제안을 수락했어요.", "/chat/get/" + chatroomDTO.getId());
         return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
     }
     @Override
