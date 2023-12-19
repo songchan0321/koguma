@@ -27,11 +27,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
-        //Long rawPw = memberDTO.getPw(); // 사용자가 입력한 비밀번호
-        //String encodedPw = passwordEncoder.encode(rawPw); // 비밀번호 해싱
+
         memberDTO.setNickname(nickname);
         memberDTO.setPw(pw);
-        //memberDTO.setPw(encodedPw);
         memberDTO.setPhone(phone);
         memberDTO.setScore(36.5F);
         memberDTO.setEmail(email);
