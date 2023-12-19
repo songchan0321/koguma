@@ -38,12 +38,13 @@ public class ClubMeetUp extends BaseTime{
     @Column(name = "road_addr", nullable = false, length = 90)
     private String roadAddr;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "active_flag", nullable = false)
-    private Boolean activeFlag;
+    private  MeetUpType meetUpType;
 
     @Builder
     public ClubMeetUp(Long id, Club club, String title, String content,
-                      Integer maxCapacity, LocalDateTime meetDate, String roadAddr, Boolean activeFlag){
+                      Integer maxCapacity, LocalDateTime meetDate, String roadAddr, MeetUpType meetUpType){
         this.id = id;
         this.club = club;
         this.title = title;
@@ -51,7 +52,19 @@ public class ClubMeetUp extends BaseTime{
         this.maxCapacity = maxCapacity;
         this.meetDate = meetDate;
         this.roadAddr = roadAddr;
-        this.activeFlag = activeFlag;
+        this.meetUpType = meetUpType;
+    }
+
+    public static ClubMeetUp createClubMeetUp(Club club, String title, String content, Integer maxCapacity, MeetUpType meetUpType, String roadAddr, LocalDateTime meetDate){
+        return ClubMeetUp.builder()
+                .club(club)
+                .title(title)
+                .content(content)
+                .maxCapacity(maxCapacity)
+                .meetUpType(meetUpType)
+                .roadAddr(roadAddr)
+                .meetDate(meetDate)
+                .build();
     }
 
     public void updateClubMeetUp(String title, String content, Integer maxCapacity,
@@ -65,7 +78,7 @@ public class ClubMeetUp extends BaseTime{
 
     public void changeActiveFlag(){
 
-        this.activeFlag = false;
+        this.meetUpType = MeetUpType.COMPLETE;
     }
 
     public void onPrePersist() {

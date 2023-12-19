@@ -33,7 +33,7 @@ public interface ClubService {
 
     public void rejectJoinRequest(Long cmJoinRequestId);
 
-    public void deleteByMemberId(Long cmJoinRequestId);
+    public void deleteJoinRequest(Long clubId, Long memberId);
 
     public Long addClubMember(ClubMemberDTO clubMemberDTO);
 
@@ -43,10 +43,13 @@ public interface ClubService {
 
     public List<ClubMemberDTO> listClubMember(Long clubId);
 
+    public Integer countClubMember(Long clubId);
     public void updateClubMember(ClubMemberDTO clubMemberDTO);
 
     public void changeClubLeader(Long currentLeaderId, Long newLeaderId);
 
     public ClubMemberDTO checkJoinClub(Long clubId, Long memberId);
+
+    public Boolean checkJoinRequest(Long clubId, Long memberId);
 
 }
