@@ -3,6 +3,7 @@ package com.fiveguys.koguma.service.product;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
+import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
-
+    private final QueryRepository queryRepository;
 
     public ProductDTO addProduct(ProductDTO productDTO) {
         return ProductDTO.fromEntity(productRepository.save(productDTO.toEntity()));
@@ -33,6 +34,10 @@ public class ProductServiceImpl implements ProductService{
     public Page<Product> listProduct(Long memberId,int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
+    }
+    public List<ProductDTO> listProductByLocation(LocationDTO locationDTO,String keyword) throws Exception {
+        List<Product> productList = queryRepository.findAllByDistanceProduct(locationDTO,keyword);
+        return productList.stream().map(ProductDTO::fromEntityContainImage).collect(Collectors.toList());
     }
 
 
@@ -72,7 +77,7 @@ public class ProductServiceImpl implements ProductService{
                 .collect(Collectors.toList());
     }
     public List<ProductDTO> listBuyProduct(Long memberId) throws Exception {
-        List<Product> productList =  productRepository.findAllByBuyerIdAndTradeStatusOrderByRegDateDesc(memberId,ProductStateType.SALED);
+        List<Product> productList =  productRepository.findAllByBuyerIdAndTradeStatusOrderByBuyDateDesc(memberId,ProductStateType.SALED);
         return productList.stream()
                 .map(ProductDTO::fromEntityContainImage)
                 .collect(Collectors.toList());

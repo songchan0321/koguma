@@ -9,10 +9,8 @@ import org.springframework.data.domain.Page;
 public interface ReviewService {
 
     ReviewDTO addReview(ReviewDTO reviewDTO) throws Exception;
-    ReviewDTO getReview(Long productId) throws Exception;
-    void deleteReview(ReviewId reviewId) throws Exception;
-
-    Page<Review> listReview(MemberDTO memberDTO,int page);
+    ReviewDTO getReview(Long productId,boolean seller);
+    Boolean isPossibleAdd(ReviewDTO reviewDTO);
 
 
 

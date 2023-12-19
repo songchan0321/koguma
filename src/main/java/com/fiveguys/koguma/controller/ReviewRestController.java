@@ -25,33 +25,23 @@ public class ReviewRestController {
     private final ReviewService reviewService;
     private final ProductService productService;
     private final AuthService authService;
-    @GetMapping("/{id}")
-    public ResponseEntity<ReviewDTO> getReview(@PathVariable Long id) throws Exception {
-        ReviewDTO reviewDTO = reviewService.getReview(id);
+    @GetMapping("/{productId}")
+    public ResponseEntity<ReviewDTO> getReview(@PathVariable Long productId,@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
+        ReviewDTO reviewDTO = reviewService.getReview(productId,Boolean.parseBoolean(type));
         return ResponseEntity.status(HttpStatus.OK).body(reviewDTO);
-    }
-    @GetMapping("/list")
-    public ResponseEntity<Page<Review>> listReview(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
-
-        Page<Review> reviewList = reviewService.listReview(memberDTO,page);
-        return ResponseEntity.status(HttpStatus.OK).body(reviewList);
     }
     @PostMapping("/new") //reviewDTO add시 productDTO와 buyerDTO 넣어야함
     public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO reviewDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
 
+        reviewDTO.setMemberDTO(reviewDTO.getProductDTO().getBuyerDTO());  // 판매자
+        if(reviewService.isPossibleAdd(reviewDTO)) { // true = 리뷰가 존재 false = 리뷰가 없음
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+
+        }
         reviewDTO = reviewService.addReview(reviewDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(reviewDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
-
-        ReviewDTO reviewDTO = reviewService.getReview(id);
-
-        if (!Objects.equals(reviewDTO.getId().getMember().getId(), memberDTO.getId()))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("삭제 할 권한이 없습니다.");
-        reviewService.deleteReview(reviewDTO.toEntity().getId());
-        return ResponseEntity.status(HttpStatus.OK).body("리뷰 삭제 완료");
-    }
 }

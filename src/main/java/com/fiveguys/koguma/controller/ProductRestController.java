@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.service.common.*;
+import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.product.MemberProductSuggestService;
 import com.fiveguys.koguma.service.product.ProductService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import static java.util.Arrays.stream;
 @RequestMapping("/product")
 public class ProductRestController {
 
+    private final MemberService memberService;
     private final ProductService productService;
     private final LocationService locationService;
     private final AuthService authService;
@@ -49,11 +52,12 @@ public class ProductRestController {
 
         LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
 
-        Pageable pageable = PageRequest.of(0, 9);
+//        Pageable pageable = PageRequest.of(0, 9);
+//
+//        List<?> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
+        List<ProductDTO> productDTOList = productService.listProductByLocation(locationDTO,keyword);
 
-        List<?> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
-
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        return ResponseEntity.status(HttpStatus.OK).body(productDTOList);
     }
 
 
@@ -109,14 +113,11 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
 
-    @DeleteMapping("/delete/{no}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
-        ProductDTO productDTO = productService.getProduct(no);
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO) throws Exception {
+        ProductDTO productDTO = productService.getProduct(productId);
 
-        if (!(productDTO.getSellerDTO().getId().equals(memberDTO.getId()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        productService.deleteProduct(no);
+        productService.deleteProduct(productId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -128,35 +129,58 @@ public class ProductRestController {
     }
 
     @GetMapping("/list/like")
-    public ResponseEntity<Page<Product>> likeProductList(@RequestParam int page,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<List<LikeFilterAssociationDTO>> likeProductList(@CurrentMember MemberDTO memberDTO) throws Exception {
 
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(likeFilterAssociationService.likeProductList(memberDTO.getId(),page));
+                .body(likeFilterAssociationService.likeProductList(memberDTO.getId()));
     }
 
-    @PostMapping("/like/{no}")
-    public ResponseEntity<String> addLikeProduct(@PathVariable Long no,@CurrentMember MemberDTO memberDTO) throws Exception {
-        ProductDTO productDTO = productService.getProduct(no);
-
-        LikeFilterAssociationDTO likeFilterAssociationDTO = LikeFilterAssociationDTO.builder().
-                productDTO(productDTO).memberDTO(memberDTO).build();
-
-        likeFilterAssociationService.addLikeProduct(likeFilterAssociationDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(productDTO.getTitle() + "좋아요 등록 완료");
+    @GetMapping("/get/like/{productId}")
+    public ResponseEntity<LikeFilterAssociationDTO> getLikeProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO){
+        return  ResponseEntity.status(HttpStatus.OK).body(likeFilterAssociationService.getLikeProduct(productId,memberDTO.getId()));
     }
 
-    @DeleteMapping("/like/{associationId}")
-    public ResponseEntity<String> deleteLikeProduct(@PathVariable Long associationId) {
-        likeFilterAssociationService.deleteLikeProduct(associationId);
+    @PostMapping("/like/{productId}")
+    public ResponseEntity<String> addLikeProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO) throws Exception {
+        ProductDTO productDTO = productService.getProduct(productId);
+        LikeFilterAssociationDTO likeFilterAssociationDTO = likeFilterAssociationService.getLikeProduct(productId, memberDTO.getId());
+
+        // 이미 좋아요가 등록되어 있는 경우
+        if (likeFilterAssociationDTO != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 좋아요가 등록되어 있습니다.");
+        }
+
+        LikeFilterAssociationDTO newLikeFilterAssociationDTO = LikeFilterAssociationDTO.builder()
+                .productDTO(productDTO)
+                .memberDTO(memberDTO)
+                .build();
+
+        likeFilterAssociationService.addLikeProduct(newLikeFilterAssociationDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(productDTO.getTitle() + " 좋아요 등록 완료");
+    }
+
+    @DeleteMapping("/like/{productId}")
+    public ResponseEntity<String> deleteLikeProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO) {
+        LikeFilterAssociationDTO likeFilterAssociationDTO = likeFilterAssociationService.getLikeProduct(productId,memberDTO.getId());
+        System.out.println("likeFilterAssociationDTO = " + likeFilterAssociationDTO);
+        likeFilterAssociationService.deleteLikeProduct(likeFilterAssociationDTO.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body("좋아요 삭제 완료");
     }
 
     @PutMapping("/tradestate")
-    public ResponseEntity<String> updateStateProduct(@RequestParam String productId,@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<String> updateStateProduct(@RequestParam String productId,@RequestParam(required = false) String buyerId, @RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(Long.parseLong(productId));
         System.out.println("productDTO = " + productDTO);
+        if (buyerId != null) {
+            productDTO.setBuyerDTO(memberService.getMember(Long.valueOf(buyerId)));
+            productDTO.setBuyDate(LocalDateTime.now());
+        }
+        if (type.equals(String.valueOf(ProductStateType.SALE))){
+            productDTO.setBuyerDTO(null);
+            productDTO.setBuyDate(null);
+        }
 
         productService.updateState(productDTO, ProductStateType.valueOf(type.toUpperCase()));
         return ResponseEntity.status(HttpStatus.OK).body("상태 업데이트 성공");
@@ -178,7 +202,8 @@ public class ProductRestController {
 
     @PostMapping("/suggest")
     public ResponseEntity<String> addSugestProduct(@RequestBody Map<String,String> json,@CurrentMember MemberDTO memberDTO) throws Exception {
-
+        System.out.println(json.get("productId"));
+        System.out.println(json.get("price"));
         ProductDTO productDTO = productService.getProduct(Long.valueOf(json.get("productId")));
         MemberProductSuggestDTO memberProductSuggestDTO =
                 MemberProductSuggestDTO.builder()

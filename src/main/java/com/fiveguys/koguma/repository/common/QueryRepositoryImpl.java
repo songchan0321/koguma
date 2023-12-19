@@ -91,6 +91,32 @@ public class QueryRepositoryImpl implements QueryRepository{
         }
         return null;
     }
+    public List<Product> findAllByDistanceProduct(LocationDTO locationDTO, String keyword) throws Exception {
+        QProduct product = QProduct.product;
+        QImage image = QImage.image;
+
+        JPAQuery<Product> jpaQuery = jpaQueryFactory
+                .selectFrom(product)
+                .leftJoin(image).on(getJoinCondition(product, image))
+                .where(
+                        Expressions.numberTemplate(Double.class,
+                                        "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
+                                        locationDTO.getLongitude(), locationDTO.getLatitude(),
+                                        product.longitude, product.latitude)
+                                .loe(locationDTO.getSearchRange() * 1000),
+                        keyword != null ? product.title.containsIgnoreCase(keyword) : null
+                )
+                .orderBy(product.regDate.desc());
+
+        List<Product> productList = jpaQuery.fetch();
+
+        return productList;
+    }
+
+//    private com.querydsl.core.types.dsl.BooleanExpression getJoinCondition(QProduct product, QImage image) {
+//        return product.eq(image.product);
+//    }
+
     private com.querydsl.core.types.dsl.BooleanExpression getJoinCondition(EntityPath<?> entity, QImage image) {
         switch (entity.getType().getSimpleName()) {
             case "Product":

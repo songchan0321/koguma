@@ -18,30 +18,19 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
 
     public ReviewDTO addReview(ReviewDTO reviewDTO) throws Exception {
-        if (getReview(reviewDTO.getId().getProduct().getId()) != null) {
-            throw new Exception("이미 리뷰를 작성했습니다");
-        }
 
         Review review = reviewRepository.save(reviewDTO.toEntity());
         return ReviewDTO.fromEntity(review);
     }
 
-    public ReviewDTO getReview(Long productId) {
-        return reviewRepository.findByIdProductId(productId)
-                .map(ReviewDTO::fromEntity)
-                .orElse(null);
+    public ReviewDTO getReview(Long productId,boolean seller) {
+        return ReviewDTO.fromEntity(reviewRepository.findByAndProductIdAndSeller(productId,seller));
     }
 
-
-
-    public void deleteReview(ReviewId reviewId) throws Exception {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(()->new Exception("상품을 찾을 수 없습니다"));
-        reviewRepository.delete(review);
+    @Override
+    public Boolean isPossibleAdd(ReviewDTO reviewDTO) {
+        return reviewRepository.existsByMemberIdAndProductIdAndSeller(reviewDTO.getMemberDTO().getId(),reviewDTO.getProductDTO().getId(),reviewDTO.isSeller());
     }
 
-    public Page<Review> listReview(MemberDTO memberDTO,int page) {
-        Pageable pageable = PageRequest.of(page,9);
-        return reviewRepository.findAllByIdProductSellerId(memberDTO.getId(),pageable);
-    }
 
 }

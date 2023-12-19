@@ -13,4 +13,5 @@ public interface QueryRepository {
 
     List<?> findAllByDistance(CategoryType target, LocationDTO locationDTO,
                               Pageable pageable, String keyword) throws Exception;
+    List<Product> findAllByDistanceProduct(LocationDTO locationDTO, String keyword) throws Exception;
 }

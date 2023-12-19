@@ -4,6 +4,7 @@ import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.repository.product.ProductRepository;
+import com.fiveguys.koguma.service.common.LikeFilterAssociationService;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.product.MemberProductSuggestService;
@@ -43,6 +44,8 @@ public class ProductApplicationTests {
     private ProductRepository productRepository;
     @Autowired
     private QueryRepository queryRepository;
+    @Autowired
+    private LikeFilterAssociationService likeFilterAssociationService;
 
     @Test
     @DisplayName("상품 등록 테스트")
@@ -104,35 +107,35 @@ public class ProductApplicationTests {
         ProductDTO productDTO = productService.getProduct(1L);
         productService.updateProduct(productDTO);
     }
-    @Test
-    @DisplayName("상품 리뷰 추가 테스트")
-    @Transactional
-    public void 상품리뷰() throws Exception{
+//    @Test
+//    @DisplayName("상품 리뷰 추가 테스트")
+//    @Transactional
+//    public void 상품리뷰() throws Exception{
+//
+//        Member seller = memberService.getMember(5L).toEntity();
+//        Product product = productService.getProduct(5L).toEntity();
+//
+//
+//        ReviewDTO reviewDTO = ReviewDTO.builder()
+//                .id(ReviewId.builder()
+//                        .product(product)
+//                        .member(seller)
+//                        .build())
+//                .content("김태현 돼지")
+//                .commet("ㅇㅈ")
+//                .rating('5')
+//                .activeFlag(true)
+//                .build();
+//        reviewService.addReview(reviewDTO);
+//    }
 
-        Member seller = memberService.getMember(5L).toEntity();
-        Product product = productService.getProduct(5L).toEntity();
 
-
-        ReviewDTO reviewDTO = ReviewDTO.builder()
-                .id(ReviewId.builder()
-                        .product(product)
-                        .member(seller)
-                        .build())
-                .content("김태현 돼지")
-                .commet("ㅇㅈ")
-                .rating('5')
-                .activeFlag(true)
-                .build();
-        reviewService.addReview(reviewDTO);
-    }
-
-
-    @Test
-    @DisplayName("상품 리뷰 조회 테스트")
-    @Transactional
-    public void 상품리뷰조회() throws Exception{
-        System.out.println(reviewService.getReview(1L));
-    }
+//    @Test
+//    @DisplayName("상품 리뷰 조회 테스트")
+//    @Transactional
+//    public void 상품리뷰조회() throws Exception{
+//        System.out.println(reviewService.getReview(1L));
+//    }
 
 //    @Test
 //    @DisplayName("상품 가격제안추가 테스트")
@@ -260,4 +263,10 @@ public class ProductApplicationTests {
 //        productList.stream().map(ProductDTO::fromEntity).forEach(System.out::println);
 //
 //    }
+@Test
+public void likeTest() throws Exception{
+
+//    System.out.println(likeFilterAssociationService.getLikeProduct(11L,5L));
+    System.out.println(likeFilterAssociationService.likeProductList(5L));
+}
 }

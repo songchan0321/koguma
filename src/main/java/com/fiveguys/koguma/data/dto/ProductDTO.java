@@ -1,11 +1,10 @@
 package com.fiveguys.koguma.data.dto;
 
-import com.fiveguys.koguma.data.entity.Image;
-import com.fiveguys.koguma.data.entity.Location;
-import com.fiveguys.koguma.data.entity.Product;
-import com.fiveguys.koguma.data.entity.ProductStateType;
+import com.fiveguys.koguma.data.entity.*;
 import lombok.*;
 
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,10 +31,12 @@ public class ProductDTO {
     private LocalDateTime buyDate;
     private List<String> images;
     private List<ImageDTO> imageDTO;
+    private int likeCount;
+    private int chatroomCount;
 
 
     @Builder
-    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate, List<String> images, List<ImageDTO> imageDTO) {
+    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate, List<String> images, List<ImageDTO> imageDTO, int likeCount, int chatroomCount) {
         this.id = id;
         this.sellerDTO = sellerDTO;
         this.buyerDTO = buyerDTO;
@@ -54,9 +55,13 @@ public class ProductDTO {
         this.buyDate = buyDate;
         this.images = images;
         this.imageDTO = imageDTO;
+        this.likeCount = likeCount;
+        this.chatroomCount = chatroomCount;
     }
 
-    @Builder
+
+
+
 
 
     public Product toEntity(){
@@ -136,6 +141,12 @@ public class ProductDTO {
         }
         if (product.getImage()!= null){
             builder.imageDTO(product.getImage().stream().map((ImageDTO::fromEntity)).collect(Collectors.toList()));
+        }
+        if (product.getLikeCount()!= null){
+            builder.likeCount(product.getLikeCount().size());
+        }
+        if (product.getChatroomCount() != null){
+            builder.chatroomCount(product.getChatroomCount().size());
         }
 
         return builder.build();
