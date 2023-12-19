@@ -124,19 +124,19 @@ public class AuthRestController {
         }
 
         // 중복이 아니면 회원 추가
-        memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag);
+        memberDTO = MemberDTO.fromEntity(memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag));
 
         return ResponseEntity.ok().build();
     }
     @PostMapping("/sendSms")
     public String sendSms(@RequestBody SmsDTO smsDTO) throws Exception{
-        log.info("/member/sendOne : POST : {}", smsDTO);
+        log.info("/auth/sendOne : POST : {}", smsDTO);
         smsService.sendSms(smsDTO);
         return "{\"success\": true}";
     }
     @PostMapping("/verifySms")
     public String verifySms(@RequestBody SmsDTO smsDTO) throws Exception{
-        log.info("/member/verifySms : POST : {}", smsDTO);
+        log.info("/auth/verifySms : POST : {}", smsDTO);
         smsService.verifySms(smsDTO);
         return "{\"success\": true}";
     }

@@ -5,9 +5,7 @@ import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 
 public interface SmsService {
 
-    public SingleMessageSentResponse sendSms(SmsDTO smsDTO);
-//  public void sendOne(String cellphone);
+    SingleMessageSentResponse sendSms(SmsDTO smsDTO);
 
-
-    public boolean verifySms(SmsDTO smsDTO) throws Exception;
+    boolean verifySms(SmsDTO smsDTO) throws Exception;
 }
