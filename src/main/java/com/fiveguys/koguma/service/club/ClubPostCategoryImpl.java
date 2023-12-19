@@ -26,6 +26,10 @@ public class ClubPostCategoryImpl implements ClubPostCategoryService{
     @Override
     public Long addClubPostCategory(Long clubId, Long clubMemberId, String categoryName) {
 
+        System.out.println("============================================");
+        System.out.println("categoryName => " + categoryName);
+        System.out.println("============================================");
+
         Club findClub = clubRepository.findById(clubId).orElseThrow();
 
         ClubMember clubMember = clubMemberRepository.findById(clubMemberId).orElseThrow();
@@ -52,7 +56,7 @@ public class ClubPostCategoryImpl implements ClubPostCategoryService{
         List<ClubPostCategory> clubCategories = clubPostCategoryRepository.findByClubId(clubId);
 
         return clubCategories.stream()
-                .map((c)-> ClubPostCategoryDTO.fromEntity(c))
+                .map(ClubPostCategoryDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 

@@ -2,16 +2,17 @@ package com.fiveguys.koguma.service.club;
 
 import com.fiveguys.koguma.data.dto.ClubMeetUpDTO;
 import com.fiveguys.koguma.data.dto.ClubMemberMeetUpJoinDTO;
+import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
 
 import java.util.List;
 
 public interface ClubMeetUpService {
 
-    public Long addClubMeetUp(ClubMeetUpDTO clubMeetUpDTO, Long clubId);
+    public Long addClubMeetUp(CreateClubMeetUpDTO clubMeetUpDTO, Long clubId);
 
     public ClubMeetUpDTO getClubMeetUp(Long clubMeetUpId);
 
-    public List<ClubMeetUpDTO> listClubMeetUp(Long clubId);
+    public List<ClubMeetUpDTO> listClubMeetUp(Long clubId, String meetUpType);
 
     public void updateClubMeetUp(Long meetUpId,ClubMeetUpDTO clubMeetUpDTO);
 

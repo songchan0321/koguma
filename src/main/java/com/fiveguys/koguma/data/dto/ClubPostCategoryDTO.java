@@ -8,20 +8,19 @@ import lombok.Data;
 public class ClubPostCategoryDTO {
 
     private Long id;
-    private ClubDTO clubDTO;
+    private Long clubId;
     private String name;
 
     @Builder
-    public ClubPostCategoryDTO(Long id, ClubDTO clubDTO, String name){
+    public ClubPostCategoryDTO(Long id, Long clubId, String name){
         this.id = id;
-        this.clubDTO = clubDTO;
+        this.clubId = clubId;
         this.name = name;
     }
 
     public ClubPostCategory toEntity(){
         return ClubPostCategory.builder()
                 .id(this.id)
-                .club(clubDTO.toEntity())
                 .name(this.name)
                 .build();
     }
@@ -29,7 +28,6 @@ public class ClubPostCategoryDTO {
     public static ClubPostCategoryDTO fromEntity(ClubPostCategory entity){
         return ClubPostCategoryDTO.builder()
                 .id(entity.getId())
-                .clubDTO(ClubDTO.fromEntity(entity.getClub()))
                 .name(entity.getName())
                 .build();
     }

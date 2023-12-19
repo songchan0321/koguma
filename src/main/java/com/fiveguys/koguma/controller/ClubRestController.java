@@ -1,8 +1,10 @@
 package com.fiveguys.koguma.controller;
 
 import com.fiveguys.koguma.data.dto.*;
+import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
 import com.fiveguys.koguma.data.dto.club.MeetUpStateDTO;
 import com.fiveguys.koguma.data.entity.CategoryType;
+import com.fiveguys.koguma.data.entity.MeetUpType;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.service.club.ClubMeetUpService;
 import com.fiveguys.koguma.service.club.ClubService;
@@ -55,6 +57,25 @@ public class ClubRestController {
         return ResponseEntity.ok(clubService.listClub());
     }
 
+    @GetMapping(path = "/all")
+    public ResponseEntity<?> listClubs(@CurrentMember MemberDTO memberDTO){
+
+        List<ClubDTO> clubDTOS = clubService.listClub();
+        for (ClubDTO clubDTO : clubDTOS) {
+            System.out.println("clubDTO = " + clubDTO);
+        }
+
+        return ResponseEntity.ok(clubDTOS);
+    }
+
+    @GetMapping(path = "/joins")
+
+    public ResponseEntity<?> listMyClub(@CurrentMember MemberDTO memberDTO){
+
+        List<ClubDTO> clubDTOS = clubService.listMyClub(memberDTO.getId());
+
+        return ResponseEntity.ok(clubDTOS);
+    }
 
     @GetMapping(path = "/list/category/{categoryId}")
     public ResponseEntity<List<ClubDTO>> listClubByCategory(@PathVariable Long categoryId){
@@ -72,7 +93,7 @@ public class ClubRestController {
         return ResponseEntity.ok(clubService.getClub(clubId));
     }
 
-    //todo:: 예외 로직 추가 필요, 리턴값 생각 필요
+
     @PutMapping(path = "/update/{memberId}")
     public ResponseEntity<ClubDTO> updateClub(@RequestBody ClubDTO clubDTO,
                                               @PathVariable Long memberId){
@@ -86,31 +107,28 @@ public class ClubRestController {
         return ResponseEntity.ok(clubService.addJoinRequestClub(clubJoinRequestDTO, memberDTO.getId()));
     }
 
-    @DeleteMapping("/cancel/join/{memberId}")
-    public void cancelJoinRequest(@PathVariable Long memberId){
-        clubService.deleteByMemberId(memberId);
+    @GetMapping("/join/request/cancel/{clubId}")
+    public void cancelJoinRequest(@PathVariable Long clubId, @CurrentMember MemberDTO memberDTO){
+        clubService.deleteJoinRequest(clubId,memberDTO.getId());
     }
 
-    //todo: leaderId 검증 작업 필요
+
     @GetMapping("/join/requests/{clubId}")
     public ResponseEntity<List<ClubJoinRequestDTO>> listJoinRequest(@PathVariable Long clubId){
         return ResponseEntity.ok(clubService.listClubJoinRequest(clubId));
     }
 
-    //todo: 시큐리티 후 재 진행 필요
-    @PostMapping("/accept/join")
-    public ResponseEntity<?> acceptJoinRequest(@RequestParam Long joinId,
-                                               @RequestParam Long clubId,
-                                               @RequestParam Long leaderId){
+    @GetMapping("/accept/join/{joinId}")
+    public ResponseEntity<?> acceptJoinRequest(@PathVariable Long joinId)
+                                               {
 
         clubService.acceptJoinRequest(joinId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/reject/join")
-    public ResponseEntity<?> rejectJoinRequest(@RequestParam Long joinId,
-                                               @RequestParam Long clubId,
-                                               @RequestParam Long leaderId){
+    @GetMapping("/reject/join/{joinId}")
+    public ResponseEntity<?> rejectJoinRequest(@PathVariable Long joinId
+                                               ){
         clubService.rejectJoinRequest(joinId);
         return ResponseEntity.ok().build();
     }
@@ -132,6 +150,14 @@ public class ClubRestController {
         return ResponseEntity.ok(clubService.listClubMember(clubId));
     }
 
+    @GetMapping("/members/count/{clubId}")
+    public ResponseEntity<?> countClubMember(@PathVariable Long clubId){
+
+        Integer test = clubService.countClubMember(clubId);
+        System.out.println("test = " + test);
+        return ResponseEntity.ok(clubService.countClubMember(clubId));
+    }
+
     @DeleteMapping("/delete/members")
     public ResponseEntity<?> deleteClubMember(@RequestParam Long clubMemberId){
         return ResponseEntity.ok().build();
@@ -144,14 +170,19 @@ public class ClubRestController {
     }
 
     @PostMapping (path = "/add/meet-up")
-    public ResponseEntity<ClubMeetUpDTO> addClubMeetUp(@RequestBody ClubMeetUpDTO clubMeetUpDTO){
+    public ResponseEntity<?> addClubMeetUp(@RequestBody CreateClubMeetUpDTO clubMeetUpDTO){
+
+        Long meetUpId = clubMeetUpService.addClubMeetUp(clubMeetUpDTO, clubMeetUpDTO.getClubId());
 
 
-        Long meetUpId = clubMeetUpService.addClubMeetUp(clubMeetUpDTO, clubMeetUpDTO.getClubDTO().getId());
+        return ResponseEntity.ok().build();
+    }
 
-        ClubMeetUpDTO clubMeetUp = clubMeetUpService.getClubMeetUp(meetUpId);
+    @GetMapping("/meet-up/list/{clubId}")
+    public ResponseEntity<?> listMeetUp(@PathVariable Long clubId, @RequestParam String meetUpType){
 
-        return ResponseEntity.ok(clubMeetUp);
+
+        return ResponseEntity.ok(clubMeetUpService.listClubMeetUp(clubId, meetUpType));
     }
 
     @GetMapping(path = "/meet-up/{meetUpId}")
@@ -176,10 +207,7 @@ public class ClubRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(path = "/meet-up/list/{clubId}")
-    public ResponseEntity<List<ClubMeetUpDTO>> listClubMeetUp(@PathVariable Long clubId){
-        return ResponseEntity.ok(clubMeetUpService.listClubMeetUp(clubId));
-    }
+
 
     @PostMapping(path = "/meet-up/join")
     public ResponseEntity<?> joinClubMeetUp(@RequestParam Long clubMeetUpId, @RequestParam Long clubMemberId){
@@ -234,4 +262,11 @@ public class ClubRestController {
         return ResponseEntity.ok(clubMemberDTO);
     }
 
+    @GetMapping("/check/join/request/{clubId}")
+    public ResponseEntity<?> checkJoinRequest(@PathVariable Long clubId, @CurrentMember MemberDTO memberDTO){
+
+        Boolean b = clubService.checkJoinRequest(clubId, memberDTO.getId());
+
+        return ResponseEntity.ok(b);
+    }
 }
