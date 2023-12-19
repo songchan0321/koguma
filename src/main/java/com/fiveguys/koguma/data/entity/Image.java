@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.data.entity;
 
+import com.fiveguys.koguma.data.dto.MemberDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +31,10 @@ public class Image extends BaseTime{
     private Boolean activeFlag;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -42,16 +47,20 @@ public class Image extends BaseTime{
     private Post post;
 
     @Builder
-    public Image(Long id, String URL, ImageType imageType, Boolean repImageFlag, Boolean activeFlag, Product product, Club club, Post post) {
+    public Image(Long id, String URL, ImageType imageType, Boolean repImageFlag, Boolean activeFlag, Member member, Product product, Club club, Post post) {
         this.id = id;
         this.URL = URL;
         this.imageType = imageType;
         this.repImageFlag = repImageFlag;
         this.activeFlag = activeFlag;
+        this.member = member;
         this.product = product;
         this.club = club;
         this.post = post;
     }
+
+
+
 
 
 

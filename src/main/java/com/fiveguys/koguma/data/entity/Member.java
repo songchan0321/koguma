@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,9 +24,8 @@ public class Member extends BaseTime{
     @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
-    @Column(name = "image_id")
-    private Long imageId;
-
+    @Column(name="profile_url")
+    private String profileURL;
     @Column(name = "pw")
     private String pw;
 
@@ -64,10 +65,10 @@ public class Member extends BaseTime{
 
 
     @Builder
-    public Member(Long id, String nickname, Long imageId, String pw, String phone, Float score, Boolean roleFlag, Boolean socialFlag, String email, String paymentAccount, String paymentBank, Integer paymentBalance, String paymentPw, Boolean activeFlag, MemberRoleType memberRoleType) {
+    public Member(Long id, String nickname, String profileURL, String pw, String phone, Float score, Boolean roleFlag, Boolean socialFlag, String email, String paymentAccount, String paymentBank, Integer paymentBalance, String paymentPw, Boolean activeFlag, MemberRoleType memberRoleType) {
         this.id = id;
         this.nickname = nickname;
-        this.imageId = imageId;
+        this.profileURL = profileURL;
         this.pw = pw;
         this.phone = phone;
         this.score = score;
@@ -81,6 +82,9 @@ public class Member extends BaseTime{
         this.activeFlag = activeFlag;
         this.memberRoleType = memberRoleType;
     }
+
+
+
 
     public void updateEmail(String email){
         this.email=email;

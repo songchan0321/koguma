@@ -27,11 +27,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
-        //Long rawPw = memberDTO.getPw(); // 사용자가 입력한 비밀번호
-        //String encodedPw = passwordEncoder.encode(rawPw); // 비밀번호 해싱
+
         memberDTO.setNickname(nickname);
         memberDTO.setPw(pw);
-        //memberDTO.setPw(encodedPw);
         memberDTO.setPhone(phone);
         memberDTO.setScore(36.5F);
         memberDTO.setEmail(email);
@@ -114,13 +112,13 @@ public class MemberServiceImpl implements MemberService {
         // 다른 회원의 경우 닉네임과 사진만 반환
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setNickname(otherMember.getNickname());
-        memberDTO.setImageId(otherMember.getImageId());
+        memberDTO.setProfileURL(otherMember.getProfileURL());
 
         return memberDTO;
     }
 
     @Override
-    public void updateMember(MemberDTO memberDTO, String nickname) {
+    public MemberDTO updateMember(MemberDTO memberDTO, String nickname, String profileURL) {
         Long id = memberDTO.getId();
 
         Member existingMember = memberRepository.findById(id)
@@ -134,9 +132,9 @@ public class MemberServiceImpl implements MemberService {
         }
 
         existingMember.setNickname(nickname);
-        existingMember.setImageId(memberDTO.getImageId());
+        existingMember.setProfileURL(profileURL);
 
-        memberRepository.save(existingMember);
+        return MemberDTO.fromEntity(memberRepository.save(existingMember));
     }
 
     @Override

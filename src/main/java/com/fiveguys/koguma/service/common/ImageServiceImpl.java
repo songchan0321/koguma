@@ -10,7 +10,6 @@ import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.common.ImageRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +33,7 @@ public class ImageServiceImpl implements ImageService {
 
         return imageRepository.saveAll(images).stream().map(ImageDTO::fromEntity).collect(Collectors.toList());
     }
+
 
 
     public List<ImageDTO> listImage(ImageType imageType,Long targetId) throws Exception {
@@ -129,9 +128,6 @@ public class ImageServiceImpl implements ImageService {
         newRepImage.setRepImageFlag(true);
     }
 
-    public void updateProfilePicture(Member member,Long imageId) {
-        member.setImageId(imageId);
-    }
 
 
     public String tempFileUpload(MultipartFile multipartFile) throws IOException {

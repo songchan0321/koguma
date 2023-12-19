@@ -10,7 +10,7 @@ public interface MemberService {
 
     Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
     void deleteMember(Long id);
-    void updateMember(MemberDTO memberDTO, String nickname);
+    MemberDTO updateMember(MemberDTO memberDTO, String nickname, String profileURL);
     void updateMember(MemberDTO memberDTO);
     MemberDTO login(String id, String pw) throws Exception;
     boolean validationCheckPw(String rawPw, String encodedPw);

@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.service.common;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriUtils;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -37,6 +40,9 @@ public class LocationServiceImpl implements LocationService{
 
     @Value("${ncloud.reverseGeo.clientSecret}")
     private String clientSecret;
+
+    @Value("${kakao.RESTKey}")
+    private String kakaoRESTKey;
 
     public List<LocationDTO> listLocation(MemberDTO memberDTO) {
 
@@ -166,6 +172,45 @@ public class LocationServiceImpl implements LocationService{
             e.printStackTrace();
         }
         return dong;
+    }
+
+    public Map<String, String> geoCoder(String address){   //좌표 입력하여 상세 주소 얻기
+//        String coord = longitude+","+latitude;
+        String dong = null;
+        final String requestMethod = "GET";
+        final String hostName = "https://dapi.kakao.com/v2/local/search/address.json";     //요청코드
+//        final String requestUrl= "/map-reversegeocode/v2/gc";                //https://api-gov.ncloud-docs.com/docs/ai-naver-mapsreversegeocoding-gc
+        String option = "?query=" + address;
+        String encodedQuery = UriUtils.encode(address, StandardCharsets.UTF_8);
+        final String requestFullUrl = hostName + "?query=" + encodedQuery;          //legalcode,addr,admcode,roadaddr
+
+        HttpClient httpClient = HttpClient.newHttpClient();                 //legalcode = 법정동 admcode = 행정동
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(requestFullUrl))
+                .header("Authorization", "KakaoAK " + kakaoRESTKey)
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            String responseBody = response.body();
+            System.out.println(responseBody);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+            // 필요한 값 추출
+            JsonNode longitudeNode = jsonNode.path("documents").get(0).path("x");
+            JsonNode latitudeNode = jsonNode.path("documents").get(0).path("y");
+            String longitude = longitudeNode.asText();
+            String latitude = latitudeNode.asText();
+            System.out.println("Area3 Name: " + longitude + "," + latitude);
+            return Map.of("latitude", latitude, "longitude", longitude);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Object> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable,String keyword) throws Exception {

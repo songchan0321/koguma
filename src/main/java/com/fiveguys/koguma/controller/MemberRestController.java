@@ -1,7 +1,9 @@
 package com.fiveguys.koguma.controller;
 
 
+import com.fiveguys.koguma.data.dto.ImageDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.service.member.MemberService;
@@ -46,7 +48,7 @@ public class MemberRestController {
 
     // 회원정보 수정
     @PutMapping("/update")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<MemberDTO> update(
             @CurrentMember MemberDTO authenticatedMember,
             @RequestBody MemberDTO updatedMemberDTO
     ) {
@@ -55,10 +57,11 @@ public class MemberRestController {
         }
 
         // 여기서 회원 정보 수정 로직을 수행
-        memberService.updateMember(authenticatedMember, updatedMemberDTO.getNickname());
+        MemberDTO memberDTO = memberService.updateMember(authenticatedMember, updatedMemberDTO.getNickname(), updatedMemberDTO.getProfileURL());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(memberDTO);
     }
+
 
     // 회원 삭제
     @PutMapping("/delete")

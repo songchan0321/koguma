@@ -32,6 +32,8 @@ public class QImage extends EntityPathBase<Image> {
 
     public final EnumPath<ImageType> imageType = createEnum("imageType", ImageType.class);
 
+    public final QMember member;
+
     public final QPost post;
 
     public final QProduct product;
@@ -62,6 +64,7 @@ public class QImage extends EntityPathBase<Image> {
     public QImage(Class<? extends Image> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.club = inits.isInitialized("club") ? new QClub(forProperty("club"), inits.get("club")) : null;
+        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
         this.post = inits.isInitialized("post") ? new QPost(forProperty("post"), inits.get("post")) : null;
         this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }

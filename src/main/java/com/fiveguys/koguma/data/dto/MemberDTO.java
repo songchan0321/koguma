@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -30,6 +31,7 @@ public class MemberDTO {
     private Boolean activeFlag;
     private LocalDateTime regDate;
     private MemberRoleType memberRoleType;
+    private String profileURL;
 
     public MemberDTO() {
 
@@ -42,7 +44,7 @@ public class MemberDTO {
         memberDTO.setEmail(member.getEmail());
         memberDTO.setPw(member.getPw());
         memberDTO.setNickname(member.getNickname());
-        memberDTO.setImageId(member.getImageId());
+        memberDTO.setProfileURL(member.getProfileURL());
         memberDTO.setPhone(member.getPhone());
         memberDTO.setRoleFlag(member.getRoleFlag());
         memberDTO.setSocialFlag(member.getSocialFlag());
@@ -62,7 +64,7 @@ public class MemberDTO {
         member.setId(id);
         member.setNickname(nickname);
         member.setPw(pw);
-        member.setImageId(imageId);
+        member.setProfileURL(profileURL);
         member.setPhone(phone);
         member.setScore(score);
         member.setRoleFlag(roleFlag);
@@ -75,6 +77,8 @@ public class MemberDTO {
         member.setActiveFlag(activeFlag);
         member.setMemberRoleType(memberRoleType);
         return member;
+
+
     }
 }
 

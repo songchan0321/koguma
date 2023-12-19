@@ -1,9 +1,6 @@
 package com.fiveguys.koguma.data.dto;
 
-import com.fiveguys.koguma.data.entity.Club;
-import com.fiveguys.koguma.data.entity.Image;
-import com.fiveguys.koguma.data.entity.ImageType;
-import com.fiveguys.koguma.data.entity.Product;
+import com.fiveguys.koguma.data.entity.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,11 +17,12 @@ public class ImageDTO {
     private ProductDTO productDTO;
     private ClubDTO clubDTO;
     private PostDTO postDTO;
+    private MemberDTO memberDTO;
     private Long messageId;
     private LocalDateTime regDate;
 
     @Builder
-    public ImageDTO(Long id, String URL, ImageType imageType, Boolean repImageFlag, Boolean activeFlag, ProductDTO productDTO, ClubDTO clubDTO, PostDTO postDTO, Long messageId, LocalDateTime regDate) {
+    public ImageDTO(Long id, String URL, ImageType imageType, Boolean repImageFlag, Boolean activeFlag, ProductDTO productDTO, ClubDTO clubDTO, PostDTO postDTO, MemberDTO memberDTO, Long messageId, LocalDateTime regDate) {
         this.id = id;
         this.URL = URL;
         this.imageType = imageType;
@@ -33,9 +31,12 @@ public class ImageDTO {
         this.productDTO = productDTO;
         this.clubDTO = clubDTO;
         this.postDTO = postDTO;
+        this.memberDTO = memberDTO;
         this.messageId = messageId;
         this.regDate = regDate;
     }
+
+
 
 
 
@@ -57,6 +58,9 @@ public class ImageDTO {
         }
         if(image.getActiveFlag()!= null){
             builder.activeFlag(image.getActiveFlag());
+        }
+        if(image.getMember()!=null){
+            builder.memberDTO(MemberDTO.fromEntity(image.getMember()));
         }
 
         return builder.build();
@@ -83,6 +87,9 @@ public class ImageDTO {
         }
         if (activeFlag != null){
             builder.activeFlag(activeFlag);
+        }
+        if(memberDTO!= null){
+            builder.member(memberDTO.toEntity());
         }
 
 

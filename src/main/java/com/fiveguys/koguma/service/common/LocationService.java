@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface LocationService {
 
@@ -20,5 +21,6 @@ public interface LocationService {
     LocationDTO getMemberRepLocation(Long memberId);
     void setRepLocation(Long memberId,Long locationId);
     String reverseGeoCoder(double latitude, double longitude);
+    Map<String, String> geoCoder(String address);
     List<?> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception;
 }
