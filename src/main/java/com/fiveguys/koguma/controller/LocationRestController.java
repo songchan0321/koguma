@@ -91,6 +91,13 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO.getDong()+" 설정!!");
     }
 
-
+    @RequestMapping(value = "/kakao/getDot", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, String>> getGeoDot(
+            @RequestParam String address
+//             @CurrentMember MemberDTO memberDTO
+    ) {
+        System.out.println("??");
+        return ResponseEntity.ok().body(locationService.geoCoder(address));
+    }
 
 }
