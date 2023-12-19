@@ -1,9 +1,11 @@
 package com.fiveguys.koguma.service.chat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fiveguys.koguma.data.dto.ChatroomDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.repository.chat.ChatroomRepository;
+import com.fiveguys.koguma.service.common.AlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +20,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService{
     private final ChatroomRepository chatroomRepository;
+    private final AlertService alertService;
     @Override
-    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO) {
+    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, boolean soloFlag) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         ChatroomDTO chatroomDTO = ChatroomDTO.builder()
                 .buyerDTO(memberDTO)
@@ -29,22 +32,27 @@ public class ChatServiceImpl implements ChatService{
                 .buyerEnterDate(now)
                 .activeFlag(true)
                 .build();
-        return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+        if(soloFlag) chatroomDTO.setSellerEnterDate(null);
+        // 무조건 구매자가 먼저 (가격 제안 제외)
+        ChatroomDTO newChatroomDTO = ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+        if(!soloFlag)
+            alertService.addAlert(productDTO.getSellerDTO(), "채팅",  memberDTO.getNickname() + "님이 새로운 채팅을 시작했어요.", "/chat/get/" + newChatroomDTO.getId());
+        return newChatroomDTO;
     }
 
     @Override
-    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price) throws Exception {
+    public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price, boolean soloFlag) throws Exception {
         ChatroomDTO chatroomDTO;
-        if(memberDTO.getId().equals(productDTO.getSellerDTO().getId())) throw new Exception("자신의 상품에 채팅할 수 없습니다.");
         if(this.existChatroom(memberDTO, productDTO)) {
-            chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findByBuyerAndProduct_Seller(memberDTO.toEntity(), productDTO.getSellerDTO().toEntity()).orElseThrow());
+            throw new Exception("기존 채팅방이 있습니다.");
+//            chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findByBuyerAndProduct_Seller(memberDTO.toEntity(), productDTO.getSellerDTO().toEntity()).orElseThrow());
         } else {
-            chatroomDTO = this.addChatroom(memberDTO, productDTO);
+            chatroomDTO = this.addChatroom(memberDTO, productDTO, soloFlag);
         }
         chatroomDTO.setPrice(price);
+        alertService.addAlert(chatroomDTO.getBuyerDTO(), "가격 제안",  memberDTO.getNickname() + "님이 가격제안을 수락했어요.", "/chat/get/" + chatroomDTO.getId());
         return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
     }
-
     @Override
     public boolean existChatroom(MemberDTO memberDTO, ProductDTO productDTO) {
         return chatroomRepository
@@ -81,13 +89,21 @@ public class ChatServiceImpl implements ChatService{
 
     @Override
     public ChatroomDTO enterChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO){
-        if(this.isBuyer(chatroomDTO, memberDTO) && chatroomDTO.getSellerEnterDate() == null) {
+        if(chatroomDTO.getSellerEnterDate() == null) {
             chatroomDTO.setSellerEnterDate(LocalDateTime.now());
             return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
-        } else if(this.isSeller(chatroomDTO, memberDTO) && chatroomDTO.getBuyerEnterDate() == null) {
+        }
+        if(chatroomDTO.getBuyerEnterDate() == null) {
             chatroomDTO.setBuyerEnterDate(LocalDateTime.now());
             return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
         }
+//        if(this.isBuyer(chatroomDTO, memberDTO) && chatroomDTO.getSellerEnterDate() == null) {
+//            chatroomDTO.setSellerEnterDate(LocalDateTime.now());
+//            return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+//        } else if(this.isSeller(chatroomDTO, memberDTO) && chatroomDTO.getBuyerEnterDate() == null) {
+//            chatroomDTO.setBuyerEnterDate(LocalDateTime.now());
+//            return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
+//        }
         return null;
     }
     @Override
@@ -107,6 +123,10 @@ public class ChatServiceImpl implements ChatService{
         );
         return chatroomDTOList;
     }
+    @Override
+    public List<ChatroomDTO> listChatroom() {
+        return chatroomRepository.findAll().stream().map(ChatroomDTO::formEntity).collect(Collectors.toList());
+    }
 
     @Override
     public void exitChatroom(ChatroomDTO chatroomDTO, MemberDTO memberDTO) throws Exception {
@@ -121,6 +141,26 @@ public class ChatServiceImpl implements ChatService{
         if(chatroomDTO.getBuyerEnterDate() == null && chatroomDTO.getSellerEnterDate() == null) {
             this.deleteChatroom(chatroomDTO);
         }
+    }
+
+    @Override
+    public void exitChatroomAllByBlockMember(MemberDTO soruceMemberDTO, MemberDTO targetMemberDTO) {
+        this.listChatroom()
+                .stream().filter(chatroomDTO ->
+                        (chatroomDTO.getBuyerDTO().equals(targetMemberDTO) && chatroomDTO.getProductDTO().getSellerDTO().equals(soruceMemberDTO)))
+                .map(chatroomDTO -> {
+                    chatroomDTO.setSellerEnterDate(null);
+                    return chatroomDTO;
+                })
+                .forEach(chatroomDTO -> chatroomRepository.save(chatroomDTO.toEntity()));
+        this.listChatroom()
+                .stream().filter(chatroomDTO ->
+                        (chatroomDTO.getProductDTO().getSellerDTO().equals(targetMemberDTO) && chatroomDTO.getBuyerDTO().equals(soruceMemberDTO)))
+                .map(chatroomDTO -> {
+                    chatroomDTO.setBuyerEnterDate(null);
+                    return chatroomDTO;
+                })
+                .forEach(chatRoomDTO -> chatroomRepository.save(chatRoomDTO.toEntity()));
     }
 
     @Override
