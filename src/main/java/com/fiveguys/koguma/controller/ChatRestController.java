@@ -257,7 +257,6 @@ public class ChatRestController {
             throw new Exception("권한이 없습니다.");
         }
         ChatroomDTO updateChatroomDTO = chatService.enterChatroom(chatroomDTO, memberDTO);
-        if(updateChatroomDTO == null) return ResponseEntity.ok().body(updateChatroomDTO);
         return ResponseEntity.ok().body(updateChatroomDTO);
     }
     private boolean isOwnerByChat(ChatroomDTO chatroomDTO, MemberDTO memberDTO) {
