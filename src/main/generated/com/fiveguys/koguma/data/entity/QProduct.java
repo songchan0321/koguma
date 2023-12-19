@@ -32,6 +32,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath categoryName = createString("categoryName");
 
+    public final ListPath<Chatroom, QChatroom> chatroomCount = this.<Chatroom, QChatroom>createList("chatroomCount", Chatroom.class, QChatroom.class, PathInits.DIRECT2);
+
     public final StringPath content = createString("content");
 
     public final StringPath dong = createString("dong");
@@ -41,6 +43,8 @@ public class QProduct extends EntityPathBase<Product> {
     public final ListPath<Image, QImage> image = this.<Image, QImage>createList("image", Image.class, QImage.class, PathInits.DIRECT2);
 
     public final NumberPath<Double> latitude = createNumber("latitude", Double.class);
+
+    public final ListPath<LikeFilterAssociation, QLikeFilterAssociation> likeCount = this.<LikeFilterAssociation, QLikeFilterAssociation>createList("likeCount", LikeFilterAssociation.class, QLikeFilterAssociation.class, PathInits.DIRECT2);
 
     public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
 

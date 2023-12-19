@@ -26,16 +26,22 @@ public class QReview extends EntityPathBase<Review> {
 
     public final BooleanPath activeFlag = createBoolean("activeFlag");
 
-    public final StringPath commet = createString("commet");
+    public final ListPath<String, StringPath> commet = this.<String, StringPath>createList("commet", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final StringPath content = createString("content");
 
-    public final QReviewId id;
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final ComparablePath<Character> rating = createComparable("rating", Character.class);
+    public final QMember member;
+
+    public final QProduct product;
+
+    public final NumberPath<Integer> rating = createNumber("rating", Integer.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
+
+    public final BooleanPath seller = createBoolean("seller");
 
     public QReview(String variable) {
         this(Review.class, forVariable(variable), INITS);
@@ -55,7 +61,8 @@ public class QReview extends EntityPathBase<Review> {
 
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.id = inits.isInitialized("id") ? new QReviewId(forProperty("id"), inits.get("id")) : null;
+        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.product = inits.isInitialized("product") ? new QProduct(forProperty("product"), inits.get("product")) : null;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.service.product;
 
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.ProductStateType;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface ProductService {
     ProductDTO addProduct(ProductDTO productDTO);
     Page<Product> listProduct(Long memberId,int page, int size);
+    List<ProductDTO> listProductByLocation(LocationDTO locationDTO, String keyword) throws Exception;
     ProductDTO getProduct(Long productId);
     ProductDTO updateProduct(ProductDTO productDTO);
     void deleteProduct(Long productId);

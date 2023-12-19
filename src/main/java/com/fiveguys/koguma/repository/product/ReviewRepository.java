@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.repository.product;
 
+import com.fiveguys.koguma.data.dto.ReviewDTO;
 import com.fiveguys.koguma.data.entity.Review;
 import com.fiveguys.koguma.data.entity.ReviewId;
 import org.springframework.data.domain.Page;
@@ -11,11 +12,11 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, ReviewId> {
-    void findByIdMemberId(Long id);
 
 
-    Optional<Review> findByIdProductId(Long productId);
 
 
-    Page<Review> findAllByIdProductSellerId(Long id, Pageable pageable);
+    Boolean existsByMemberIdAndProductIdAndSeller(Long id, Long id1, boolean seller);// true면 판매자 false면 구매자
+
+    Review findByAndProductIdAndSeller(Long productId, boolean seller);
 }

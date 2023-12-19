@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.service.common.*;
+import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.product.MemberProductSuggestService;
 import com.fiveguys.koguma.service.product.ProductService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import static java.util.Arrays.stream;
 @RequestMapping("/product")
 public class ProductRestController {
 
+    private final MemberService memberService;
     private final ProductService productService;
     private final LocationService locationService;
     private final AuthService authService;
@@ -49,11 +52,12 @@ public class ProductRestController {
 
         LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
 
-        Pageable pageable = PageRequest.of(0, 9);
+//        Pageable pageable = PageRequest.of(0, 9);
+//
+//        List<?> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
+        List<ProductDTO> productDTOList = productService.listProductByLocation(locationDTO,keyword);
 
-        List<?> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
-
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        return ResponseEntity.status(HttpStatus.OK).body(productDTOList);
     }
 
 
@@ -159,15 +163,24 @@ public class ProductRestController {
     @DeleteMapping("/like/{productId}")
     public ResponseEntity<String> deleteLikeProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO) {
         LikeFilterAssociationDTO likeFilterAssociationDTO = likeFilterAssociationService.getLikeProduct(productId,memberDTO.getId());
+        System.out.println("likeFilterAssociationDTO = " + likeFilterAssociationDTO);
         likeFilterAssociationService.deleteLikeProduct(likeFilterAssociationDTO.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body("좋아요 삭제 완료");
     }
 
     @PutMapping("/tradestate")
-    public ResponseEntity<String> updateStateProduct(@RequestParam String productId,@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<String> updateStateProduct(@RequestParam String productId,@RequestParam(required = false) String buyerId, @RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
         ProductDTO productDTO = productService.getProduct(Long.parseLong(productId));
         System.out.println("productDTO = " + productDTO);
+        if (buyerId != null) {
+            productDTO.setBuyerDTO(memberService.getMember(Long.valueOf(buyerId)));
+            productDTO.setBuyDate(LocalDateTime.now());
+        }
+        if (type.equals(String.valueOf(ProductStateType.SALE))){
+            productDTO.setBuyerDTO(null);
+            productDTO.setBuyDate(null);
+        }
 
         productService.updateState(productDTO, ProductStateType.valueOf(type.toUpperCase()));
         return ResponseEntity.status(HttpStatus.OK).body("상태 업데이트 성공");

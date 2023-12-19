@@ -65,6 +65,11 @@ public class Product {
     @CreatedDate
     @Column(name = "reg_date")
     private LocalDateTime regDate;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<LikeFilterAssociation> likeCount;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Chatroom> chatroomCount;
+
     @PrePersist
     public void onPrePersist() {
         String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -73,7 +78,7 @@ public class Product {
     }
 
     @Builder
-    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime buyDate, LocalDateTime regDate) {
+    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, List<Image> image, String categoryName, Boolean activeFlag, LocalDateTime buyDate, LocalDateTime regDate, List<LikeFilterAssociation> likeCount, List<Chatroom> chatroomCount) {
         this.id = id;
         this.seller = seller;
         this.buyer = buyer;
@@ -86,11 +91,19 @@ public class Product {
         this.latitude = latitude;
         this.longitude = longitude;
         this.views = views;
+        this.image = image;
         this.categoryName = categoryName;
         this.activeFlag = activeFlag;
         this.buyDate = buyDate;
         this.regDate = regDate;
+        this.likeCount = likeCount;
+        this.chatroomCount = chatroomCount;
     }
+
+
+
+
+
 
 
 

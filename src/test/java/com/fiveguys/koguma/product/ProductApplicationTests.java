@@ -107,35 +107,35 @@ public class ProductApplicationTests {
         ProductDTO productDTO = productService.getProduct(1L);
         productService.updateProduct(productDTO);
     }
-    @Test
-    @DisplayName("상품 리뷰 추가 테스트")
-    @Transactional
-    public void 상품리뷰() throws Exception{
+//    @Test
+//    @DisplayName("상품 리뷰 추가 테스트")
+//    @Transactional
+//    public void 상품리뷰() throws Exception{
+//
+//        Member seller = memberService.getMember(5L).toEntity();
+//        Product product = productService.getProduct(5L).toEntity();
+//
+//
+//        ReviewDTO reviewDTO = ReviewDTO.builder()
+//                .id(ReviewId.builder()
+//                        .product(product)
+//                        .member(seller)
+//                        .build())
+//                .content("김태현 돼지")
+//                .commet("ㅇㅈ")
+//                .rating('5')
+//                .activeFlag(true)
+//                .build();
+//        reviewService.addReview(reviewDTO);
+//    }
 
-        Member seller = memberService.getMember(5L).toEntity();
-        Product product = productService.getProduct(5L).toEntity();
 
-
-        ReviewDTO reviewDTO = ReviewDTO.builder()
-                .id(ReviewId.builder()
-                        .product(product)
-                        .member(seller)
-                        .build())
-                .content("김태현 돼지")
-                .commet("ㅇㅈ")
-                .rating('5')
-                .activeFlag(true)
-                .build();
-        reviewService.addReview(reviewDTO);
-    }
-
-
-    @Test
-    @DisplayName("상품 리뷰 조회 테스트")
-    @Transactional
-    public void 상품리뷰조회() throws Exception{
-        System.out.println(reviewService.getReview(1L));
-    }
+//    @Test
+//    @DisplayName("상품 리뷰 조회 테스트")
+//    @Transactional
+//    public void 상품리뷰조회() throws Exception{
+//        System.out.println(reviewService.getReview(1L));
+//    }
 
 //    @Test
 //    @DisplayName("상품 가격제안추가 테스트")
