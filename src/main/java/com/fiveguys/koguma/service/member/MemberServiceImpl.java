@@ -27,7 +27,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
-
         memberDTO.setNickname(nickname);
         memberDTO.setPw(pw);
         memberDTO.setPhone(phone);
@@ -45,10 +44,12 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("이미 사용 중인 닉네임입니다.");
         }
 
-        memberDTO.setNickname(memberDTO.getNickname());
+        // 중복이 없는 경우에만 저장
         memberRepository.save(memberDTO.toEntity());
 
-        return existingMember;
+        // 저장된 회원 정보를 반환
+        return memberRepository.findByNicknameAndActiveFlag(memberDTO.getNickname(), memberDTO.getActiveFlag())
+                .orElse(null);
     }
 
     @Override

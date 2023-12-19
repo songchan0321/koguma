@@ -3,9 +3,8 @@ package com.fiveguys.koguma.service.club;
 import com.fiveguys.koguma.data.dto.ClubDTO;
 import com.fiveguys.koguma.data.dto.ClubMeetUpDTO;
 import com.fiveguys.koguma.data.dto.ClubMemberMeetUpJoinDTO;
-import com.fiveguys.koguma.data.entity.ClubMeetUp;
-import com.fiveguys.koguma.data.entity.ClubMember;
-import com.fiveguys.koguma.data.entity.ClubMemberMeetUpJoin;
+import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
+import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.club.ClubMeetUpRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberMeetUpJoinRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
@@ -31,10 +30,8 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
     private final ClubMeetUpRepository clubMeetUpRepository;
     private final ClubMemberMeetUpJoinRepository clubMemberMeetUpJoinRepository;
 
-
-
     @Override
-    public Long addClubMeetUp(ClubMeetUpDTO clubMeetUpDTO, Long clubId) {
+    public Long addClubMeetUp(CreateClubMeetUpDTO cmd, Long clubId) {
 
 
         Long meetUpCounts = clubMeetUpRepository.countActiveMeetUpsByClubId(clubId);
@@ -44,14 +41,13 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
             throw new IllegalStateException("종료되지 않은 일정이 3개 이상");
         }
 
-        //일정을 생성하는 모임 조회
-        ClubDTO clubDTO = clubService.getClub(clubId);
+        Club club = clubRepository.findById(clubId).get();
 
-        clubMeetUpDTO.setClubDTO(clubDTO);
-        clubMeetUpDTO.setActiveFlag(true);
-        ClubMeetUp cmu = clubMeetUpDTO.toEntity();
+        ClubMeetUp clubMeetUp = ClubMeetUp.createClubMeetUp(club, cmd.getTitle(), cmd.getContent(), cmd.getMaxCapacity(),
+                MeetUpType.SCHEDULE, cmd.getRoadAddr(), cmd.getMeetData());
 
-        return  clubMeetUpRepository.save(cmu).getId();
+
+        return  clubMeetUpRepository.save(clubMeetUp).getId();
     }
 
     @Override
@@ -64,11 +60,27 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
     }
 
     @Override
-    public List<ClubMeetUpDTO> listClubMeetUp(Long clubId) {
+    public List<ClubMeetUpDTO> listClubMeetUp(Long clubId, String meetUpType) {
 
-        return clubMeetUpRepository.findByClubId(clubId).stream()
-                .map((c)-> ClubMeetUpDTO.fromEntity(c))
-                .collect(Collectors.toList());
+        System.out.println("============================");
+        System.out.println("Paramater meetUpType = > " + meetUpType);
+        System.out.println("============================");
+        System.out.println("MeetUpType => " + MeetUpType.SCHEDULE.getName());
+        System.out.println("============================");
+        System.out.println(" 비교 - > " + meetUpType==MeetUpType.SCHEDULE.getName());
+        System.out.println("============================");
+
+        if(meetUpType.equals(MeetUpType.SCHEDULE.getName())){
+            List<ClubMeetUp> schedules = clubMeetUpRepository.findByClubIdAndMeetUpType(clubId, MeetUpType.SCHEDULE);
+            return  schedules.stream().map(ClubMeetUpDTO::fromEntity).collect(Collectors.toList());
+        } else {
+
+            List<ClubMeetUp> completes = clubMeetUpRepository.findByClubIdAndMeetUpType(clubId, MeetUpType.COMPLETE);
+            return completes.stream().map(ClubMeetUpDTO::fromEntity).collect(Collectors.toList());
+        }
+
+
+
     }
 
     @Override
@@ -135,12 +147,10 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
         LocalDateTime endDate = LocalDateTime.now();
 
         //종료가 필요한 일정 조회
-        Boolean status = true;
-        List<ClubMeetUp> endMeetUps = clubMeetUpRepository.findByChangeState(endDate, status);
+        List<ClubMeetUp> endMeetUps = clubMeetUpRepository.findByChangeState(endDate, MeetUpType.SCHEDULE.getName());
 
         //상태 종료 처리
         for (ClubMeetUp endMeetUp : endMeetUps) {
-            System.out.println("endMeetUp = " + endMeetUp.getTitle());
             endMeetUp.changeActiveFlag();
         }
 

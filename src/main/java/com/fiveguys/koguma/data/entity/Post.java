@@ -50,6 +50,7 @@ public class Post extends BaseTime{
     @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag = true;
 
+
     public void increaseViews(int views){
         this.views++;
     }
@@ -90,4 +91,5 @@ public class Post extends BaseTime{
     public void setContent(String content) {
         this.content = content;
     }
+
 }

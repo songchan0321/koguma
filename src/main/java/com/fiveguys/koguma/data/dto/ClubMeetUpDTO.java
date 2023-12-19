@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.data.dto;
 
 import com.fiveguys.koguma.data.entity.ClubMeetUp;
+import com.fiveguys.koguma.data.entity.MeetUpType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,11 +18,11 @@ public class ClubMeetUpDTO {
     private Integer maxCapacity;
     private LocalDateTime meetDate;
     private String roadAddr;
-    private Boolean activeFlag;
+    private String meetUpType;
 
     @Builder
     public ClubMeetUpDTO(Long id, ClubDTO clubDTO, String title, String content,
-                         Integer maxCapacity, LocalDateTime meetDate, String roadAddr, Boolean activeFlag){
+                         Integer maxCapacity, LocalDateTime meetDate, String roadAddr, MeetUpType meetUpType){
 
         this.id = id;
         this.clubDTO = clubDTO;
@@ -30,7 +31,7 @@ public class ClubMeetUpDTO {
         this.maxCapacity = maxCapacity;
         this.meetDate = meetDate;
         this.roadAddr = roadAddr;
-        this.activeFlag = activeFlag;
+        this.meetUpType = meetUpType.getName();
     }
 
     public ClubMeetUp toEntity(){
@@ -42,7 +43,7 @@ public class ClubMeetUpDTO {
                 .maxCapacity(this.maxCapacity)
                 .meetDate(this.meetDate)
                 .roadAddr(this.roadAddr)
-                .activeFlag(this.activeFlag)
+                .meetUpType(MeetUpType.valueOf(this.getMeetUpType()))
                 .build();
     }
 
@@ -55,7 +56,7 @@ public class ClubMeetUpDTO {
                 .maxCapacity(entity.getMaxCapacity())
                 .meetDate(entity.getMeetDate())
                 .roadAddr(entity.getRoadAddr())
-                .activeFlag(entity.getActiveFlag())
+                .meetUpType(MeetUpType.valueOf(entity.getMeetUpType().getName()))
                 .build();
     }
 

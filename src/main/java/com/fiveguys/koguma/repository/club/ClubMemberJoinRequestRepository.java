@@ -12,6 +12,10 @@ public interface ClubMemberJoinRequestRepository extends JpaRepository<ClubMembe
 
     List<ClubMemberJoinRequest> findByClubId(Long clubID);
 
-    void deleteByMemberId(Long requestMemberId);
+    void deleteByClubIdAndMemberId(Long clubId, Long memberId);
+
+    Boolean existsByClubIdAndMemberId(Long clubId, Long memberId);
+
+
 
 }
