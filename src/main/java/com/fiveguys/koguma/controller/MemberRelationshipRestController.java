@@ -5,6 +5,7 @@ import com.fiveguys.koguma.data.dto.MemberRelationshipDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.MemberRelationship;
 import com.fiveguys.koguma.data.entity.MemberRelationshipType;
+import com.fiveguys.koguma.service.chat.ChatService;
 import com.fiveguys.koguma.service.member.MemberRelationshipService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 @CrossOrigin("*")
 public class MemberRelationshipRestController {
     private final MemberRelationshipService memberRelationshipService;
+    private final ChatService chatService;
 
     @PostMapping("/member/relationship/block/add")
     public ResponseEntity<MemberRelationshipDTO> addBlock(
@@ -39,6 +41,7 @@ public class MemberRelationshipRestController {
             // 차단 추가 로직 수행
 
             memberRelationshipService.addBlock(memberRelationshipDTO);
+            chatService.exitChatroomAllByBlockMember(authenticatedMember, MemberDTO.fromEntity(memberRelationshipDTO.targetMember));
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(memberRelationshipDTO);
@@ -91,6 +94,26 @@ public class MemberRelationshipRestController {
     //}
 
     //차단 정보 조회
+    // KTH 로그인한 사람이 상대방에게 차단 당했는지 여부 따지는 함수
+    @GetMapping("/member/relationship/block/get/reverse/{sourceMemberId}")
+    public CompletableFuture<ResponseEntity<MemberRelationshipDTO>> getBlockReverse(
+            @CurrentMember MemberDTO authenticatedMember,
+            @PathVariable Long sourceMemberId
+    ) {
+        Long targetMemberId = authenticatedMember.getId();
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                MemberRelationshipDTO existingMember = memberRelationshipService.getBlock(sourceMemberId, targetMemberId);
+                return ResponseEntity.ok(existingMember);
+            } catch (NoResultException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+        });
+    }
+
     @GetMapping("/member/relationship/block/get/{targetMemberId}")
     public CompletableFuture<ResponseEntity<MemberRelationshipDTO>> getBlock(
             @CurrentMember MemberDTO authenticatedMember,
@@ -109,6 +132,7 @@ public class MemberRelationshipRestController {
             }
         });
     }
+
 
     @GetMapping("/member/relationship/block/list")
     public List<MemberRelationshipDTO> listBlock(@CurrentMember MemberDTO authenticatedMember) {

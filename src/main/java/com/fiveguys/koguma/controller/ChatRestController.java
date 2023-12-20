@@ -186,6 +186,25 @@ public class ChatRestController {
         }
     }
 
+    @RequestMapping(value = "/enter/check/{roomId}/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Boolean>> checkEnterRoomByMember(
+            @PathVariable Long roomId,
+            @PathVariable Long memberId
+    ) throws Exception {
+        ChatroomDTO chatroomDTO = chatService.getChatroom(roomId);
+        MemberDTO memberDTO = memberService.getMember(memberId);
+        if(!isOwnerByChat(chatroomDTO, memberDTO)) {
+            throw new Exception("채팅방 참여자가 아닙니다.");
+        }
+        if(isBuyerByChat(chatroomDTO, memberDTO)){
+            if(chatroomDTO.getBuyerEnterDate() == null) return ResponseEntity.ok().body(Map.of("result", false));
+            return ResponseEntity.ok().body(Map.of("result", true));
+        } else {
+            if(chatroomDTO.getSellerEnterDate() == null) return ResponseEntity.ok().body(Map.of("result", false));
+            return ResponseEntity.ok().body(Map.of("result", true));
+        }
+    }
+
     @RequestMapping(value = "/exist/{productId}/{buyerId}")
     public ResponseEntity<Map<String, Boolean>> checkProductAndBuyerExistChatRoom(
             @CurrentMember MemberDTO memberDTO,
@@ -200,7 +219,7 @@ public class ChatRestController {
         int count = (int) chatService
                 .listChatroom(buyerDTO)
                 .stream()
-                .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId))
+                .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId) && chatroomDTO.getActiveFlag())
                 .count();
         return ResponseEntity.ok().body(Map.of("result", count > 0));
     }

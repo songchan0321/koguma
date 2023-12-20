@@ -43,12 +43,7 @@ public class ChatServiceImpl implements ChatService{
     @Override
     public ChatroomDTO addChatroom(MemberDTO memberDTO, ProductDTO productDTO, Integer price, boolean soloFlag) throws Exception {
         ChatroomDTO chatroomDTO;
-        if(this.existChatroom(memberDTO, productDTO)) {
-            throw new Exception("기존 채팅방이 있습니다.");
-//            chatroomDTO = ChatroomDTO.formEntity(chatroomRepository.findByBuyerAndProduct_Seller(memberDTO.toEntity(), productDTO.getSellerDTO().toEntity()).orElseThrow());
-        } else {
-            chatroomDTO = this.addChatroom(memberDTO, productDTO, soloFlag);
-        }
+        chatroomDTO = this.addChatroom(memberDTO, productDTO, soloFlag);
         chatroomDTO.setPrice(price);
         alertService.addAlert(chatroomDTO.getBuyerDTO(), "가격 제안",  memberDTO.getNickname() + "님이 가격제안을 수락했어요.", "/chat/get/" + chatroomDTO.getId());
         return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
@@ -147,7 +142,7 @@ public class ChatServiceImpl implements ChatService{
     public void exitChatroomAllByBlockMember(MemberDTO soruceMemberDTO, MemberDTO targetMemberDTO) {
         this.listChatroom()
                 .stream().filter(chatroomDTO ->
-                        (chatroomDTO.getBuyerDTO().equals(targetMemberDTO) && chatroomDTO.getProductDTO().getSellerDTO().equals(soruceMemberDTO)))
+                        (chatroomDTO.getBuyerDTO().getId().equals(targetMemberDTO.getId()) && chatroomDTO.getProductDTO().getSellerDTO().getId().equals(soruceMemberDTO.getId())))
                 .map(chatroomDTO -> {
                     chatroomDTO.setSellerEnterDate(null);
                     return chatroomDTO;
@@ -155,7 +150,7 @@ public class ChatServiceImpl implements ChatService{
                 .forEach(chatroomDTO -> chatroomRepository.save(chatroomDTO.toEntity()));
         this.listChatroom()
                 .stream().filter(chatroomDTO ->
-                        (chatroomDTO.getProductDTO().getSellerDTO().equals(targetMemberDTO) && chatroomDTO.getBuyerDTO().equals(soruceMemberDTO)))
+                        (chatroomDTO.getProductDTO().getSellerDTO().getId().equals(targetMemberDTO.getId()) && chatroomDTO.getBuyerDTO().getId().equals(soruceMemberDTO.getId())))
                 .map(chatroomDTO -> {
                     chatroomDTO.setBuyerEnterDate(null);
                     return chatroomDTO;
