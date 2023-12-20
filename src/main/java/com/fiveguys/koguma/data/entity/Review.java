@@ -22,9 +22,6 @@ public class Review extends BaseTime {
     @Column(nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id",nullable = false)
-    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id",nullable = false)
@@ -43,20 +40,19 @@ public class Review extends BaseTime {
 
     @Column(name = "active_flag", nullable = false)
     private boolean activeFlag;
-    @Column(name = "seller", nullable = false)
-    private boolean seller;
+    @Column(name = "seller_flag", nullable = false)
+    private boolean sellerFlag;
 
 
 
     @Builder
-    public Review(Long id, Member member, Product product, int rating, String content, List<String> commet, boolean activeFlag, boolean seller) {
+    public Review(Long id, Product product, int rating, String content, List<String> commet, boolean activeFlag, boolean sellerFlag) {
         this.id = id;
-        this.member = member;
         this.product = product;
         this.rating = rating;
         this.content = content;
         this.commet = commet;
         this.activeFlag = activeFlag;
-        this.seller = seller;
+        this.sellerFlag = sellerFlag;
     }
 }

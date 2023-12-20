@@ -21,5 +21,7 @@ public interface MemberService {
     MemberDTO getMemberByEmail(String email);
     boolean nicknameValidationCheck(String nickname);
 
+    void setScore(float culculateScore, MemberDTO memberDTO);
+
 }
 
