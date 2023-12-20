@@ -157,6 +157,19 @@ public class MemberServiceImpl implements MemberService {
 
         return existingMember == null;
     }
+
+    @Override
+    public void setScore(float culculateScore, MemberDTO memberDTO) {
+
+        float oldScore = memberDTO.getScore();
+        if (culculateScore > 0)
+            memberDTO.setScore(oldScore + culculateScore);
+        else
+            memberDTO.setScore(oldScore - culculateScore);
+
+        memberRepository.save(memberDTO.toEntity());
+    }
+
     public MemberDTO getMemberByEmail(String email) {
         return MemberDTO.fromEntity(memberRepository.findByEmail(email));
     }

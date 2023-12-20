@@ -11,12 +11,26 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, ReviewId> {
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 
 
 
 
-    Boolean existsByMemberIdAndProductIdAndSeller(Long id, Long id1, boolean seller);// true면 판매자 false면 구매자
 
-    Review findByAndProductIdAndSeller(Long productId, boolean seller);
+    Review findByProductBuyerIdAndProductId(Long id, Long id1);
+
+    Review findByProductSellerIdAndProductId(Long id, Long id1);
+
+    boolean existsByProductBuyerIdAndProductId(Long id, Long id1);
+
+    boolean existsByProductSellerIdAndProductId(Long id, Long id1);
+
+
+    Boolean existsByProductBuyerIdAndProductIdAndSellerFlag(Long id, Long id1, boolean b);
+
+    Boolean existsByProductSellerIdAndProductIdAndSellerFlag(Long id, Long id1, boolean b);
+
+    Review findByProductBuyerIdAndProductIdAndSellerFlag(Long id, Long id1, boolean b);
+
+    Review findByProductSellerIdAndProductIdAndSellerFlag(Long id, Long id1, boolean b);
 }
