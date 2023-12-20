@@ -55,6 +55,8 @@ public class Product {
     private int views;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Image> image = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review> review = new ArrayList<>();
     @Column(name = "category_name",nullable = false,length=15)
     private String categoryName;
     @Column(name = "active_flag", nullable = false)
@@ -67,8 +69,6 @@ public class Product {
     private LocalDateTime regDate;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<LikeFilterAssociation> likeCount;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Chatroom> chatroomCount;
 
     @PrePersist
     public void onPrePersist() {
@@ -78,7 +78,7 @@ public class Product {
     }
 
     @Builder
-    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, List<Image> image, String categoryName, Boolean activeFlag, LocalDateTime buyDate, LocalDateTime regDate, List<LikeFilterAssociation> likeCount, List<Chatroom> chatroomCount) {
+    public Product(Long id, Member seller, Member buyer, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, List<Image> image, List<Review> review, String categoryName, Boolean activeFlag, LocalDateTime buyDate, LocalDateTime regDate, List<LikeFilterAssociation> likeCount) {
         this.id = id;
         this.seller = seller;
         this.buyer = buyer;
@@ -92,13 +92,15 @@ public class Product {
         this.longitude = longitude;
         this.views = views;
         this.image = image;
+        this.review = review;
         this.categoryName = categoryName;
         this.activeFlag = activeFlag;
         this.buyDate = buyDate;
         this.regDate = regDate;
         this.likeCount = likeCount;
-        this.chatroomCount = chatroomCount;
     }
+
+
 
 
 

@@ -17,7 +17,6 @@ public class Commet {
     private Long id;
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "review_member_id", referencedColumnName = "member_id"),
             @JoinColumn(name = "review_product_id", referencedColumnName = "product_id")
     })
     private Review review;

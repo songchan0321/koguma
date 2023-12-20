@@ -32,8 +32,6 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath categoryName = createString("categoryName");
 
-    public final ListPath<Chatroom, QChatroom> chatroomCount = this.<Chatroom, QChatroom>createList("chatroomCount", Chatroom.class, QChatroom.class, PathInits.DIRECT2);
-
     public final StringPath content = createString("content");
 
     public final StringPath dong = createString("dong");
@@ -51,6 +49,8 @@ public class QProduct extends EntityPathBase<Product> {
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
+
+    public final ListPath<Review, QReview> review = this.<Review, QReview>createList("review", Review.class, QReview.class, PathInits.DIRECT2);
 
     public final QMember seller;
 
