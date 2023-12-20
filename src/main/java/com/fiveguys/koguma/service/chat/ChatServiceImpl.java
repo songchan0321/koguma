@@ -104,7 +104,7 @@ public class ChatServiceImpl implements ChatService{
 //            chatroomDTO.setBuyerEnterDate(LocalDateTime.now());
 //            return ChatroomDTO.formEntity(chatroomRepository.save(chatroomDTO.toEntity()));
 //        }
-        return null;
+        return chatroomDTO;
     }
     @Override
     public List<ChatroomDTO> listChatroom(MemberDTO memberDTO) {

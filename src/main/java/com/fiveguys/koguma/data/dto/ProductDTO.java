@@ -36,7 +36,7 @@ public class ProductDTO {
 
 
     @Builder
-    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate, List<String> images, List<ImageDTO> imageDTO, int likeCount, int chatroomCount) {
+    public ProductDTO(Long id, MemberDTO sellerDTO, MemberDTO buyerDTO, Long categoryId, String title, String content, int price, ProductStateType tradeStatus, String dong, Double latitude, Double longitude, int views, String categoryName, Boolean activeFlag, LocalDateTime regDate, LocalDateTime buyDate, List<String> images, List<ImageDTO> imageDTO,  int likeCount, int chatroomCount) {
         this.id = id;
         this.sellerDTO = sellerDTO;
         this.buyerDTO = buyerDTO;
@@ -58,6 +58,9 @@ public class ProductDTO {
         this.likeCount = likeCount;
         this.chatroomCount = chatroomCount;
     }
+
+
+
 
 
 
@@ -144,9 +147,6 @@ public class ProductDTO {
         }
         if (product.getLikeCount()!= null){
             builder.likeCount(product.getLikeCount().size());
-        }
-        if (product.getChatroomCount() != null){
-            builder.chatroomCount(product.getChatroomCount().size());
         }
 
         return builder.build();

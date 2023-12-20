@@ -12,16 +12,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LikeFilterAssociationServiceImpl implements LikeFilterAssociationService{
 
 
     private final LikeFilterAssociationRepository likeFilterAssociationRepository;
+
 
     public List<LikeFilterAssociationDTO> likeProductList(Long memberId) {
         List<LikeFilterAssociation> listProduct = likeFilterAssociationRepository.findAllWithProductAndImagesByMemberId(memberId);
@@ -46,6 +53,8 @@ public class LikeFilterAssociationServiceImpl implements LikeFilterAssociationSe
     }
 
     public void deleteLikeProduct(Long id) {
-        likeFilterAssociationRepository.deleteById(id);
+        System.out.println(id);
+            likeFilterAssociationRepository.deleteById(id);
+
     }
 }
