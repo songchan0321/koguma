@@ -11,6 +11,7 @@ import com.fiveguys.koguma.data.dto.PaymentHistoryDTO;
 import com.fiveguys.koguma.data.entity.PaymentHistory;
 import com.fiveguys.koguma.data.entity.PaymentHistoryType;
 import com.fiveguys.koguma.repository.payment.PaymentHistoryRepository;
+import com.fiveguys.koguma.service.common.AlertService;
 import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ import java.util.*;
 public class PaymentServiceImpl implements PaymentService{
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final MemberService memberService;
+    private final AlertService alertService;
     private final ObjectMapper objectMapper;
     @Value("${portone.imp-key}")
     private String IMP_KEY;
@@ -79,13 +81,17 @@ public class PaymentServiceImpl implements PaymentService{
         return this.addPaymentHistory(memberDTO, null, type, point, info);
     }
     @Override
-    public void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point) {
+    public void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point) throws JsonProcessingException {
         senderDTO.setPaymentBalance(senderDTO.getPaymentBalance() - point);
         receiverDTO.setPaymentBalance(receiverDTO.getPaymentBalance() + point);
         memberService.updateMember(senderDTO);
         memberService.updateMember(receiverDTO);
         this.addPaymentHistory(senderDTO, PaymentHistoryType.TRANSFER, -1 * point, receiverDTO.getNickname() + "," + chatRoomDTO.getProductDTO().getTitle());
         this.addPaymentHistory(receiverDTO, PaymentHistoryType.TRANSFER, point, senderDTO.getNickname() + "," + chatRoomDTO.getProductDTO().getTitle());
+        alertService.addAlert(receiverDTO, "송금", senderDTO.getNickname() + "님이 " + point + "원을 보냈습니다.", "/payment/get");
+        if(chatRoomDTO.getProductDTO().getSellerDTO().getId().equals(receiverDTO.getId())) {
+            alertService.addAlert(receiverDTO, "거래", senderDTO.getNickname() + "님과 '" + chatRoomDTO.getProductDTO().getTitle() + "'상품에 대해 거래를 하셨나요?", "/product/get/seller/" + chatRoomDTO.getProductDTO().getId());
+        }
     }
 
     @Override

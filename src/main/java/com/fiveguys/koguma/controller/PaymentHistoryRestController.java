@@ -7,6 +7,7 @@ import com.fiveguys.koguma.data.dto.PaymentHistoryDTO;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.PaymentHistoryType;
 import com.fiveguys.koguma.service.chat.ChatService;
+import com.fiveguys.koguma.service.common.AlertService;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.payment.PaymentService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
@@ -29,7 +30,6 @@ public class PaymentHistoryRestController {
     private final PaymentService paymentService;
     private final MemberService memberService;
     private final ChatService chatService;
-
     // login 필요
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> existPayment(
@@ -109,6 +109,7 @@ public class PaymentHistoryRestController {
         if(point < 0)
             throw new Exception("이체는 0원 초과만 가능합니다.");
         paymentService.transferPoint(senderMemberDTO, receiverMemberDTO, chatroomDTO, point);
+
         return ResponseEntity.ok().build();
     }
 

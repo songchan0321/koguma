@@ -17,7 +17,7 @@ public interface PaymentService {
     boolean existPayment(MemberDTO memberDTO);
     PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, UUID id, PaymentHistoryType type, Integer point, String info);
     PaymentHistoryDTO addPaymentHistory(MemberDTO memberDTO, PaymentHistoryType type, Integer point, String info);
-    void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point);
+    void transferPoint(MemberDTO senderDTO, MemberDTO receiverDTO, ChatroomDTO chatRoomDTO, Integer point) throws JsonProcessingException;
     PaymentHistoryDTO chargePoint(MemberDTO memberDTO, UUID id, Integer point);
     PaymentHistoryDTO requestRefundPoint(MemberDTO memberDTO, Integer point);
     void successRefundPoint(PaymentHistoryDTO paymentHistoryDTO);
