@@ -67,7 +67,7 @@ public class ProductRestController {
 
         ProductDTO productDTO = productService.getProduct(no);
 
-        productDTO.toEntity().appendView(productDTO.getViews()+1);
+
 
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }

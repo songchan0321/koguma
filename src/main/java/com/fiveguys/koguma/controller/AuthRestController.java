@@ -25,7 +25,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin("*")
-@RequestMapping("/auth")
 @Log4j2
 public class AuthRestController {
 
@@ -39,7 +38,7 @@ public class AuthRestController {
     private String headerString;
 
     // 회원가입
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<String> add(HttpServletRequest request, HttpServletResponse response,
                                           @RequestBody Map<String,String> loginform) {
         try {
@@ -59,11 +58,11 @@ public class AuthRestController {
         }
     }
 
-    @GetMapping("/error")
+    @GetMapping("/auth/error")
     public ResponseEntity<String> handleUnauthorized() {
         return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/kakao/callback/check")
+    @GetMapping("/common/kakao/callback/check")
     public ResponseEntity getLogin(@RequestParam("code") String code,
                                     @CurrentMember MemberDTO loginInfo,
                                     HttpServletRequest request, HttpServletResponse response ) throws Exception { //(1)
@@ -108,7 +107,7 @@ public class AuthRestController {
         return responseEntity;
     }
 
-    @PostMapping("/member/add")
+    @PostMapping("/auth/member/add")
     public ResponseEntity<MemberDTO> add(@RequestBody MemberDTO memberDTO) {
         String nickname = memberDTO.getNickname();
         String pw = memberDTO.getPw();
@@ -128,13 +127,13 @@ public class AuthRestController {
 
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/sendSms")
+    @PostMapping("/auth/sendSms")
     public String sendSms(@RequestBody SmsDTO smsDTO) throws Exception{
         log.info("/auth/sendOne : POST : {}", smsDTO);
         smsService.sendSms(smsDTO);
         return "{\"success\": true}";
     }
-    @PostMapping("/verifySms")
+    @PostMapping("/auth/verifySms")
     public String verifySms(@RequestBody SmsDTO smsDTO) throws Exception{
         log.info("/auth/verifySms : POST : {}", smsDTO);
         smsService.verifySms(smsDTO);
