@@ -52,7 +52,8 @@ public class PostRestController {
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
+//        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
+//        List<PostDTO> postDTOS = postService.listPostByLocation(locationDTO,keyword,categoryId)
     }
 
     @GetMapping("/list/member")

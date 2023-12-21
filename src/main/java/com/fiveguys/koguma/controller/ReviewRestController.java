@@ -31,7 +31,7 @@ public class ReviewRestController {
     private final ReviewService reviewService;
     private final MemberService memberService;
     @GetMapping("/get/{reviewId}")
-    public ResponseEntity<Map<String,Object>> getReview(@PathVariable Long reviewId,@CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<Map<String,Object>> getReview(@PathVariable Long reviewId,@CurrentMember MemberDTO memberDTO) {
         ReviewDTO reviewDTO = reviewService.getReview(reviewId);
         String role = reviewService.checkMemberRole(reviewDTO,memberDTO);
         Map<String,Object> map = new HashMap<>();       // getReview 했을때 누가 판매자인지 구매자인지 몰라서 role 추가함
@@ -40,14 +40,14 @@ public class ReviewRestController {
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
     @PostMapping("/get/opp/reviewid")
-    public ResponseEntity<Long> getOppReviewId(@RequestBody ProductDTO productDTO, @CurrentMember MemberDTO sourceDTO) throws Exception {
+    public ResponseEntity<Long> getOppReviewId(@RequestBody ProductDTO productDTO, @CurrentMember MemberDTO sourceDTO)  {
         Map<String,Object> target = getTargetDTO(productDTO,sourceDTO);
 
          Long targetToSourceReviewId = reviewService.getOppReviewId((MemberDTO)target.get("targetDTO"),productDTO,(String)target.get("targetType"));
         return ResponseEntity.status(HttpStatus.OK).body(targetToSourceReviewId);
     }
     @PostMapping("/get/my/reviewid")
-    public ResponseEntity<Long> getMyReviewId(@RequestBody ProductDTO productDTO, @CurrentMember MemberDTO sourceDTO) throws Exception {
+    public ResponseEntity<Long> getMyReviewId(@RequestBody ProductDTO productDTO, @CurrentMember MemberDTO sourceDTO) {
         Map<String,Object> source = getSourceDTO(productDTO,sourceDTO);
 
         Long SourceTotargetReviewId = reviewService.getMyReviewId((MemberDTO)source.get("sourceDTO"),productDTO,(String)source.get("sourceType"));

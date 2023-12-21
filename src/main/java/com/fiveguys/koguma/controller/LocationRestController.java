@@ -24,6 +24,11 @@ public class LocationRestController {
     private final LocationService locationService;
     private final AuthService authService;
 
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> loginMemberhasLocation(@CurrentMember MemberDTO memberDTO){
+        return ResponseEntity.status(HttpStatus.OK).body(locationService.loginMemberhasLocation(memberDTO.getId()));
+
+    }
     @GetMapping("/{id}")
     public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id,@CurrentMember MemberDTO memberDTO) throws Exception {
 
@@ -60,7 +65,7 @@ public class LocationRestController {
         return ResponseEntity.status(HttpStatus.OK).body("위치 삭제 완료");
     }
     @GetMapping("/rep")
-    public ResponseEntity<LocationDTO> getRepLocation(@CurrentMember MemberDTO memberDTO){
+    public ResponseEntity<LocationDTO> getRepLocation(@CurrentMember MemberDTO memberDTO) throws Exception {
         return ResponseEntity.status(HttpStatus.OK).body(locationService.getMemberRepLocation(memberDTO.getId()));
 
     }

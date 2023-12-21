@@ -91,7 +91,7 @@ public class QueryRepositoryImpl implements QueryRepository{
         }
         return null;
     }
-    public List<Product> findAllByDistanceProduct(LocationDTO locationDTO, String keyword) throws Exception {
+    public List<Product> findAllByDistanceProduct(LocationDTO locationDTO, String keyword,Long categoryId) throws Exception {
         QProduct product = QProduct.product;
         QImage image = QImage.image;
 
@@ -104,14 +104,54 @@ public class QueryRepositoryImpl implements QueryRepository{
                                         locationDTO.getLongitude(), locationDTO.getLatitude(),
                                         product.longitude, product.latitude)
                                 .loe(locationDTO.getSearchRange() * 1000),
-                        keyword != null ? product.title.containsIgnoreCase(keyword) : null
+                        keyword != null ? product.title.containsIgnoreCase(keyword) : null,
+                        categoryId != null ? product.categoryId.eq(categoryId) : null
                 )
                 .orderBy(product.regDate.desc());
 
-        List<Product> productList = jpaQuery.fetch();
-
-        return productList;
+        return jpaQuery.fetch();
     }
+
+    @Override
+    public List<Post> findAllByDistancePost(LocationDTO locationDTO, String keyword,Long categoryId) throws Exception {
+        QPost post = QPost.post;
+
+        JPAQuery<Post> jpaQuery = jpaQueryFactory
+                .selectFrom(post)
+                .where(
+                        Expressions.numberTemplate(Double.class,
+                                        "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
+                                        locationDTO.getLongitude(), locationDTO.getLatitude(),
+                                        post.longitude, post.latitude)
+                                .loe(locationDTO.getSearchRange() * 1000),
+                        keyword != null ? post.title.containsIgnoreCase(keyword) : null,
+                        categoryId != null ? post.category.id.eq(categoryId) : null
+                )
+                .orderBy(post.regDate.desc());
+
+        return jpaQuery.fetch();
+    }
+
+    @Override
+    public List<Club> findAllByDistanceClub(LocationDTO locationDTO, String keyword,Long categoryId) throws Exception {
+        QClub club = QClub.club;
+
+        JPAQuery<Club> jpaQuery = jpaQueryFactory
+                .selectFrom(club)
+                .where(
+                        Expressions.numberTemplate(Double.class,
+                                        "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
+                                        locationDTO.getLongitude(), locationDTO.getLatitude(),
+                                        club.longitude, club.latitude)
+                                .loe(locationDTO.getSearchRange() * 1000),
+                        keyword != null ? club.title.containsIgnoreCase(keyword) : null,
+                        categoryId != null ? club.category.id.eq(categoryId) : null
+                )
+                .orderBy(club.regDate.desc());
+
+        return jpaQuery.fetch();
+    }
+
 
 //    private com.querydsl.core.types.dsl.BooleanExpression getJoinCondition(QProduct product, QImage image) {
 //        return product.eq(image.product);

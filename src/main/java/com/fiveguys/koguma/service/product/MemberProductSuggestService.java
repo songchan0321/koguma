@@ -14,7 +14,7 @@ public interface MemberProductSuggestService {
 
     void addSuggetPrice(MemberProductSuggestDTO memberProductSuggestDTO) throws Exception;
     List<MemberProductSuggestDTO> listSuggestPrice(Long productId);
-    int getSuggestPrice(Long suggestId);
+    int getSuggestCount(Long productId);
     MemberDTO getSuggestMember(Long suggestId);
     ProductDTO getSuggestProduct(Long suggestId);
 

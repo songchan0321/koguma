@@ -129,7 +129,11 @@ public class LocationServiceImpl implements LocationService{
         //이미지 추가후 구현
         return null;
     }
+    public boolean loginMemberhasLocation(Long id) {
+        System.out.println("로케이션 멤버아이디 : "+id);
+        return locationRepository.existsByMemberIdAndRepAuthLocationFlag(id,true);
 
+    }
     public LocationDTO getMemberRepLocation(Long id) {
         System.out.println("로케이션 멤버아이디 : "+id);
         Location location = locationRepository.findByMemberIdAndRepAuthLocationFlag(id,true);

@@ -1,6 +1,7 @@
 package com.fiveguys.koguma.service.post;
 
 import com.fiveguys.koguma.data.dto.CategoryDTO;
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Post;
@@ -13,6 +14,7 @@ import java.util.List;
 public interface PostService {
 
     Page<Post> listPost(PageRequest pageRequest);
+    List<PostDTO> listPostByLocation(LocationDTO locationDTO, String keyword, Long categoryId) throws Exception;
 
     Page<Post> listPostByMember(MemberDTO memberDTO, PageRequest pageRequest);
 

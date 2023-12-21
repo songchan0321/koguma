@@ -3,7 +3,9 @@ package com.fiveguys.koguma.service.post;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.CategoryType;
 import com.fiveguys.koguma.data.entity.Post;
+import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.repository.common.CategoryRepository;
+import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
 import com.fiveguys.koguma.service.common.CategoryService;
@@ -18,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,6 +30,7 @@ public class PostServiceImpl implements PostService {
 
     private final CategoryService categoryService;
     private final PostRepository postRepository;
+    private final QueryRepository queryRepository;
 
 
     @Override
@@ -41,6 +45,11 @@ public class PostServiceImpl implements PostService {
 
         return  postRepository.findAllByMember(memberDTO.toEntity(), pageRequest);
 
+    }
+    @Override
+    public List<PostDTO> listPostByLocation(LocationDTO locationDTO,String keyword,Long categoryId) throws Exception {
+        List<Post> postList = queryRepository.findAllByDistancePost(locationDTO,keyword,categoryId);
+        return postList.stream().filter(Post::getActiveFlag).map(PostDTO::fromEntity).collect(Collectors.toList());
     }
 
 

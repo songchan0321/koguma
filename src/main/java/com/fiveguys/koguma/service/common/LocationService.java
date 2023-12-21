@@ -18,6 +18,7 @@ public interface LocationService {
     void deleteLocation(MemberDTO memberDTO, Long id) throws Exception;
     LocationDTO updateSearchRange(LocationDTO locationDTO);
     LocationDTO addShareLocation(Long latitude,Long longitude);
+    boolean loginMemberhasLocation(Long id);
     LocationDTO getMemberRepLocation(Long memberId);
     void setRepLocation(Long memberId,Long locationId);
     String reverseGeoCoder(double latitude, double longitude);
