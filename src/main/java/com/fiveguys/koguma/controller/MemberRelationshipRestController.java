@@ -152,7 +152,6 @@ public class MemberRelationshipRestController {
             if (authenticatedMember == null || !authenticatedMember.getId().equals(memberRelationshipDTO.getSourceMember().getId())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-            // 차단 추가 로직 수행
 
             memberRelationshipService.addFollowing(memberRelationshipDTO);
             return ResponseEntity.ok().build();
@@ -177,10 +176,10 @@ public class MemberRelationshipRestController {
             @RequestBody Map<String, Long> requestBody,
             @CurrentMember MemberDTO authenticatedMember
     ) {
-        // requestBody에서 targetMemberId를 추출합니다.
+
         Long sourceMemberId = authenticatedMember.getId();
         Long targetMemberId = requestBody.get("targetMemberId");
-        // authenticatedMember를 사용하여 현재 인증된 사용자의 정보를 활용할 수 있습니다.
+
 
         try {
             // 예외 처리 등 필요한 로직 추가
