@@ -267,6 +267,8 @@ public class ProductApplicationTests {
 public void likeTest() throws Exception{
 
 //    System.out.println(likeFilterAssociationService.getLikeProduct(11L,5L));
-    System.out.println(likeFilterAssociationService.likeProductList(5L));
+//    System.out.println(likeFilterAssociationService.likeProductList(5L));
+    System.out.println(memberProductSuggestService.getSuggestCount(34L));
 }
+
 }

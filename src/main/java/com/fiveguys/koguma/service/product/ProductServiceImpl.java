@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findAll(pageable);
     }
     public List<ProductDTO> listProductByLocation(LocationDTO locationDTO,String keyword) throws Exception {
-        List<Product> productList = queryRepository.findAllByDistanceProduct(locationDTO,keyword);
+        List<Product> productList = queryRepository.findAllByDistanceProduct(locationDTO,keyword,null);
         return productList.stream().map(ProductDTO::fromEntityContainImage).collect(Collectors.toList());
     }
 

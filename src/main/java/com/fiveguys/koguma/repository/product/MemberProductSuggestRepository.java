@@ -16,4 +16,6 @@ public interface MemberProductSuggestRepository extends JpaRepository<MemberProd
     List<MemberProductSuggest> findAllByIdProductId(Long productId);
 
     MemberProductSuggest findByIdProductIdAndIdMemberId(Long productId,Long memberId);
+
+    int countByIdProductId(Long productId);
 }

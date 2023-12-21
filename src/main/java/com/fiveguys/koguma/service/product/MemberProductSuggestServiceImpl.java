@@ -44,8 +44,8 @@ public class MemberProductSuggestServiceImpl implements MemberProductSuggestServ
     }
 
     @Override
-    public int getSuggestPrice(Long suggestId) {
-        return 0;
+    public int getSuggestCount(Long productId) {
+        return memberProductSuggestRepository.countByIdProductId(productId);
     }
 
     @Override

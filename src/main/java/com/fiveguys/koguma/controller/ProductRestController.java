@@ -67,7 +67,7 @@ public class ProductRestController {
 
         ProductDTO productDTO = productService.getProduct(no);
 
-
+        productDTO.toEntity().appendView(productDTO.getViews()+1);
 
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
@@ -222,6 +222,11 @@ public class ProductRestController {
 
 
         return ResponseEntity.status(HttpStatus.OK).body(memberProductSuggestService.listSuggestPrice(productId));
+    }
+    @GetMapping("/suggest/count/{productId}")
+    public ResponseEntity<Integer> listSuggestCount(@PathVariable Long productId, @CurrentMember MemberDTO memberDTO) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(memberProductSuggestService.getSuggestCount(productId));
     }
     @PostMapping("/raise/{productNo}")
     public ResponseEntity<String> raiseProduct(@PathVariable Long productNo,@CurrentMember MemberDTO memberDTO) throws Exception {
