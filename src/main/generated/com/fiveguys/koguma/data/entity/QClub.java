@@ -36,6 +36,8 @@ public class QClub extends EntityPathBase<Club> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final ListPath<Image, QImage> images = this.<Image, QImage>createList("images", Image.class, QImage.class, PathInits.DIRECT2);
+
     public final BooleanPath joinActiveFlag = createBoolean("joinActiveFlag");
 
     public final NumberPath<Double> latitude = createNumber("latitude", Double.class);

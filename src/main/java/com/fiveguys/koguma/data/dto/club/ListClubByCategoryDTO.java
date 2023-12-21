@@ -1,14 +1,17 @@
-package com.fiveguys.koguma.data.dto;
+package com.fiveguys.koguma.data.dto.club;
 
-import com.fiveguys.koguma.data.entity.Category;
+import com.fiveguys.koguma.data.dto.CategoryDTO;
+import com.fiveguys.koguma.data.dto.ImageDTO;
 import com.fiveguys.koguma.data.entity.Club;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
-public class ClubDTO {
+public class ListClubByCategoryDTO {
+
 
     private Long id;
     private String title;
@@ -21,13 +24,13 @@ public class ClubDTO {
     private Boolean activeFlag;
     private String categoryName;
     private CategoryDTO categoryDTO;
-    private List<String> profileImage;
+    private List<ImageDTO> profileImage;
 
     @Builder
-    public ClubDTO(Long id, String title, String content, Integer maxCapacity,
+    public ListClubByCategoryDTO(Long id, String title, String content, Integer maxCapacity,
                    Double latitude, Double longitude, String dong,
                    Boolean joinActiveFlag, Boolean activeFlag,
-                   String categoryName, CategoryDTO categoryDTO){
+                   String categoryName, CategoryDTO categoryDTO, List<ImageDTO> profileImage){
         this.id = id;
         this.title = title;
         this.content = content;
@@ -39,9 +42,10 @@ public class ClubDTO {
         this.activeFlag = activeFlag;
         this.categoryName = categoryName;
         this.categoryDTO = categoryDTO;
+        this.profileImage = profileImage;
     }
 
-    public ClubDTO(Club club){
+    public ListClubByCategoryDTO(Club club){
         this.id = club.getId();
         this.title = club.getTitle();
         this.content = club.getContent();
@@ -71,8 +75,8 @@ public class ClubDTO {
                 .build();
     }
 
-    public static ClubDTO fromEntity(Club entity){
-        return ClubDTO.builder()
+    public static ListClubByCategoryDTO fromEntity(Club entity){
+        return ListClubByCategoryDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .content(entity.getContent())
@@ -84,6 +88,7 @@ public class ClubDTO {
                 .activeFlag(entity.isActiveFlag())
                 .categoryName(entity.getCategoryName())
                 .categoryDTO(CategoryDTO.fromDTO(entity.getCategory()))
+                .profileImage(entity.getImages().stream().map(ImageDTO::fromEntity).collect(Collectors.toList()))
                 .build();
     }
 

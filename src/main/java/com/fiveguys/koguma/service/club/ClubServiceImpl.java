@@ -1,6 +1,8 @@
 package com.fiveguys.koguma.service.club;
 
 import com.fiveguys.koguma.data.dto.*;
+import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
+import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.club.ClubMemberJoinRequestRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
@@ -29,6 +31,7 @@ public class ClubServiceImpl implements ClubService{
     private final LocationService locationService;
     private final CategoryService categoryService;
     private final ImageService imageService;
+    private final ClubPostCategoryService clubPostCategoryService;
 
 
 
@@ -67,7 +70,10 @@ public class ClubServiceImpl implements ClubService{
 
 
         //clubMember 추가
-        this.addClubMember(clubMemberDTO);
+        Long clubMemberId = this.addClubMember(clubMemberDTO);
+
+        clubPostCategoryService.defaultClubPostCategory(clubDTO.getId(), "자유게시판");
+
 
         return savedClub.getId();
     }
@@ -78,9 +84,11 @@ public class ClubServiceImpl implements ClubService{
         //모임 리스트 조회
         List<Club> clubs = clubRepository.findClubsByLocation(latitude, longitude);
 
+
+        System.out.println("clubs = " + clubs.get(0));
         // Entity -> Dto로 전환
         List<ClubDTO> clubDTOS = clubs.stream()
-                .map((o) -> new ClubDTO(o))
+                .map(ClubDTO::new)
                 .collect(Collectors.toList());
 
         return clubDTOS;
@@ -115,10 +123,15 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public List<ClubDTO> listClubByCategory(Long categoryId) {
-        return clubRepository.findClubsByCategoryId(categoryId).stream()
-                .map((club) -> ClubDTO.fromEntity(club))
+    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId) {
+
+        List<ListClubByCategoryDTO> collect = clubRepository.findClubsByCategoryId(categoryId).stream()
+                .map(ListClubByCategoryDTO::fromEntity)
                 .collect(Collectors.toList());
+
+        System.out.println("collect = " + collect.get(0));
+
+        return collect;
     }
 
     @Override
@@ -130,6 +143,16 @@ public class ClubServiceImpl implements ClubService{
         // DTO -> Entity return
         return ClubDTO.fromEntity(club);
     }
+
+    @Override
+    public ListClubByCategoryDTO findClub(Long clubId) {
+
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 모임이 없습니다."));
+
+        return ListClubByCategoryDTO.fromEntity(club);
+    }
+
 
     @Override
     public void updateClub(ClubDTO clubDTO) {
@@ -235,14 +258,15 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public ClubMemberDTO getClubMember(Long clubId, Long memberId) {
+    public GetClubMemberDTO getClubMember(Long clubId, Long memberId) {
 
         MemberDTO memberDTO = memberService.getMember(memberId);
+
 
         ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(clubId, memberId)
                 .orElseThrow(() -> new IllegalStateException("모임원에 구성되지 않았습니다."));
 
-        ClubMemberDTO clubMemberDTO = ClubMemberDTO.fromEntity(clubMember);
+        GetClubMemberDTO clubMemberDTO = GetClubMemberDTO.fromEntity(clubMember);
 
         clubMemberDTO.setProfileURL(memberDTO.getProfileURL());
         return clubMemberDTO;
@@ -295,7 +319,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public ClubMemberDTO checkJoinClub(Long clubId,Long memberId) {
+    public GetClubMemberDTO checkJoinClub(Long clubId,Long memberId) {
 
         Boolean isJoined = clubMemberRepository.existsByClubIdAndMemberId(clubId, memberId);
 
@@ -303,9 +327,9 @@ public class ClubServiceImpl implements ClubService{
 
             ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(clubId, memberId)
                     .orElseThrow(() -> new IllegalArgumentException("조회된 모임원이 없습니다."));
-            return ClubMemberDTO.fromEntity(clubMember);
+            return GetClubMemberDTO.fromEntity(clubMember);
         }else {
-            return ClubMemberDTO.builder().build();
+            return GetClubMemberDTO.builder().build();
         }
     }
 

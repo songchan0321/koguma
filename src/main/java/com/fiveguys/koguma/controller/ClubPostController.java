@@ -4,6 +4,7 @@ import com.fiveguys.koguma.data.dto.ClubMemberDTO;
 import com.fiveguys.koguma.data.dto.ClubPostCategoryDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.club.ClubPostDTO;
+import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.service.club.ClubPostCategoryImpl;
 import com.fiveguys.koguma.service.club.ClubPostService;
 import com.fiveguys.koguma.service.club.ClubService;
@@ -71,7 +72,7 @@ public class ClubPostController {
 
         System.out.println("ccd = " + ccd);
 
-        ClubMemberDTO clubMember = clubService.getClubMember(ccd.getClubId(), memberDTO.getId());
+        GetClubMemberDTO clubMember = clubService.getClubMember(ccd.getClubId(), memberDTO.getId());
 
         Long categoryId = clubPostCategory.addClubPostCategory(ccd.getClubId(), clubMember.getId(), ccd.getName());
 
