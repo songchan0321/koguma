@@ -28,6 +28,7 @@ import java.util.Objects;
 @RequestMapping("/review")
 public class ReviewRestController {
 
+    private final ProductService productService;
     private final ReviewService reviewService;
     private final MemberService memberService;
     @GetMapping("/get/{reviewId}")
@@ -48,6 +49,14 @@ public class ReviewRestController {
     }
     @PostMapping("/get/my/reviewid")
     public ResponseEntity<Long> getMyReviewId(@RequestBody ProductDTO productDTO, @CurrentMember MemberDTO sourceDTO) {
+        Map<String,Object> source = getSourceDTO(productDTO,sourceDTO);
+
+        Long SourceTotargetReviewId = reviewService.getMyReviewId((MemberDTO)source.get("sourceDTO"),productDTO,(String)source.get("sourceType"));
+        return ResponseEntity.status(HttpStatus.OK).body(SourceTotargetReviewId);
+    }
+    @GetMapping("/get/my/reviewid/{productId}")
+    public ResponseEntity<Long> getMyReviewId(@PathVariable Long productId, @CurrentMember MemberDTO sourceDTO) {
+        ProductDTO productDTO = productService.getProduct(productId);
         Map<String,Object> source = getSourceDTO(productDTO,sourceDTO);
 
         Long SourceTotargetReviewId = reviewService.getMyReviewId((MemberDTO)source.get("sourceDTO"),productDTO,(String)source.get("sourceType"));
