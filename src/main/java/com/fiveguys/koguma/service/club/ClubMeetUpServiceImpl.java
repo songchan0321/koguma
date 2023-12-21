@@ -67,7 +67,7 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
         System.out.println("============================");
         System.out.println("MeetUpType => " + MeetUpType.SCHEDULE.getName());
         System.out.println("============================");
-        System.out.println(" 비교 - > " + meetUpType==MeetUpType.SCHEDULE.getName());
+        System.out.println(" 비교 - > " + meetUpType.equals(MeetUpType.SCHEDULE.getName()));
         System.out.println("============================");
 
         if(meetUpType.equals(MeetUpType.SCHEDULE.getName())){

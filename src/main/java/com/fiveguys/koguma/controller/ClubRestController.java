@@ -3,10 +3,12 @@ package com.fiveguys.koguma.controller;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
 import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
+import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
 import com.fiveguys.koguma.data.dto.club.MeetUpStateDTO;
 import com.fiveguys.koguma.data.entity.CategoryType;
 import com.fiveguys.koguma.data.entity.MeetUpType;
 import com.fiveguys.koguma.data.entity.Member;
+import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.service.club.ClubMeetUpService;
 import com.fiveguys.koguma.service.club.ClubService;
 import com.fiveguys.koguma.service.common.CategoryService;
@@ -30,6 +32,7 @@ public class ClubRestController {
     private final CategoryService categoryService;
     private final LocationService locationService;
     private final MemberService memberService;
+    private final ClubMemberRepository clubMemberRepository;
 
     @GetMapping(path = "/add")
     public ResponseEntity<?> addClub(){
@@ -85,6 +88,8 @@ public class ClubRestController {
 
     @GetMapping(path = "/list/category/{categoryId}")
     public ResponseEntity<?> listClubByCategory(@PathVariable Long categoryId){
+        List<ListClubByCategoryDTO> listClubByCategoryDTOS = clubService.listClubByCategory(categoryId);
+
         return ResponseEntity.ok(clubService.listClubByCategory(categoryId));
     }
 
@@ -184,8 +189,9 @@ public class ClubRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/meet-up/list/{clubId}")
-    public ResponseEntity<?> listMeetUp(@PathVariable Long clubId, @RequestParam String meetUpType){
+    @GetMapping("/meet-up/list/{clubId}/{meetUpType}")
+    public ResponseEntity<?> listMeetUp(@PathVariable Long clubId, @PathVariable String meetUpType){
+
 
 
         return ResponseEntity.ok(clubMeetUpService.listClubMeetUp(clubId, meetUpType));
