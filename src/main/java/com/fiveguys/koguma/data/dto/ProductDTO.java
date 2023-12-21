@@ -148,6 +148,9 @@ public class ProductDTO {
         if (product.getLikeCount()!= null){
             builder.likeCount(product.getLikeCount().size());
         }
+        if (product.getChatroomCount() != null){
+            builder.chatroomCount(product.getChatroomCount().size());
+        }
 
         return builder.build();
     }

@@ -44,7 +44,9 @@ public class ProductServiceImpl implements ProductService{
     public ProductDTO getProduct(Long productId) {              //시큐리티 본인 확인 대상
 //        Product product = productRepository.findById(productId).orElseThrow(()->new NoResultException("해당 상품의 정보가 존재하지 않습니다."));
 //        return ProductDTO.fromEntity(product);
-        return ProductDTO.fromEntityContainImage(productRepository.findByProductIdWithImages(productId));
+        Product product = productRepository.findByProductIdWithImages(productId);
+        product.appendView(product.getViews());
+        return ProductDTO.fromEntityContainImage(product);
     }
 
     public ProductDTO updateProduct(ProductDTO productDTO) {

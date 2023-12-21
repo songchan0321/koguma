@@ -32,6 +32,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath categoryName = createString("categoryName");
 
+    public final ListPath<Chatroom, QChatroom> chatroomCount = this.<Chatroom, QChatroom>createList("chatroomCount", Chatroom.class, QChatroom.class, PathInits.DIRECT2);
+
     public final StringPath content = createString("content");
 
     public final StringPath dong = createString("dong");
