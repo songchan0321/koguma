@@ -10,6 +10,7 @@ import com.fiveguys.koguma.service.club.ClubService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,10 +34,33 @@ public class ClubPostController {
         return ResponseEntity.ok(clubPostService.addClubPost(clubPostDTO, memberDTO));
     }
 
+    @GetMapping("/{clubPostId}")
+    public ResponseEntity<?> getPost(@PathVariable Long clubPostId, @CurrentMember MemberDTO memberDTO){
+
+        ClubPostDTO clubPost = clubPostService.getClubPost(clubPostId);
+
+        return ResponseEntity.ok(clubPost);
+    }
+
+    @GetMapping("/list/{clubId}")
+    public ResponseEntity<?> listClubPost(@PathVariable Long clubId){
+
+        List<ClubPostDTO> clubPostDTOS = clubPostService.listClubPost(clubId);
+
+        return ResponseEntity.ok(clubPostDTOS);
+    }
+
     @PostMapping("/list/my")
     public ResponseEntity<?> listMyClubPost(@CurrentMember MemberDTO memberDTO){
 
         List<ClubPostDTO> clubPostDTOS = clubPostService.listMyClubPost(memberDTO.getId());
+
+        return ResponseEntity.ok(clubPostDTOS);
+    }
+
+    @GetMapping("/list/category/{categoryId}")
+    public ResponseEntity<?> listClubPostByCategory(@PathVariable Long categoryId){
+        List<ClubPostDTO> clubPostDTOS = clubPostService.listClubPostByCategory(categoryId);
 
         return ResponseEntity.ok(clubPostDTOS);
     }
@@ -68,4 +92,5 @@ public class ClubPostController {
         ClubPostCategoryDTO findClubPostCate = clubPostCategory.getClubPostCategory(categoryId);
         return ResponseEntity.ok(findClubPostCate);
     }
+
 }

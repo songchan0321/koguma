@@ -1,14 +1,12 @@
 package com.fiveguys.koguma.service.club;
 
 import com.fiveguys.koguma.data.dto.*;
-import com.fiveguys.koguma.data.entity.Club;
-import com.fiveguys.koguma.data.entity.ClubMember;
-import com.fiveguys.koguma.data.entity.ClubMemberJoinRequest;
-import com.fiveguys.koguma.data.entity.Member;
+import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.club.ClubMemberJoinRequestRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.repository.club.ClubRepository;
 import com.fiveguys.koguma.service.common.CategoryService;
+import com.fiveguys.koguma.service.common.ImageService;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +28,8 @@ public class ClubServiceImpl implements ClubService{
     private final MemberService memberService;
     private final LocationService locationService;
     private final CategoryService categoryService;
+    private final ImageService imageService;
+
 
 
     @Override
@@ -42,11 +42,20 @@ public class ClubServiceImpl implements ClubService{
         CategoryDTO category = categoryService.getCategory(ccd.getCategoryId());
 
 
+
+
         Club savedClub = Club.createClub(ccd.getTitle(), ccd.getContent(), ccd.getMaxCapacity(),
                 lorepo.getLatitude(), lorepo.getLatitude(), lorepo.getDong(),
                 category.getName(), category.toEntity());
 
         Club save = clubRepository.save(savedClub);
+
+        ClubDTO clubDTO = ClubDTO.fromEntity(save);
+
+        List<ImageDTO> imageDTOList = imageService.createImageDTOList(clubDTO, ccd.getUrls(), ImageType.CLUB);
+
+        imageService.addImage(imageDTOList);
+
 
         ClubMemberDTO clubMemberDTO = ClubMemberDTO.builder()
                 .memberDTO(memberDto)
@@ -217,6 +226,8 @@ public class ClubServiceImpl implements ClubService{
         clubMemberDTO.setActiveFlag(true);
         ClubMember clubMember = clubMemberDTO.toEntity();
 
+        System.out.println("clubMemberDTO = " + clubMemberDTO);
+
         //모임원 등록
         ClubMember saveClubMember = clubMemberRepository.save(clubMember);
 
@@ -226,9 +237,15 @@ public class ClubServiceImpl implements ClubService{
     @Override
     public ClubMemberDTO getClubMember(Long clubId, Long memberId) {
 
+        MemberDTO memberDTO = memberService.getMember(memberId);
+
         ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(clubId, memberId)
                 .orElseThrow(() -> new IllegalStateException("모임원에 구성되지 않았습니다."));
-        return ClubMemberDTO.fromEntity(clubMember);
+
+        ClubMemberDTO clubMemberDTO = ClubMemberDTO.fromEntity(clubMember);
+
+        clubMemberDTO.setProfileURL(memberDTO.getProfileURL());
+        return clubMemberDTO;
 
     }
 
