@@ -6,6 +6,7 @@ import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.dto.ReviewDTO;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.data.entity.Review;
+import com.fiveguys.koguma.service.common.AlertService;
 import com.fiveguys.koguma.service.common.AuthService;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.product.ProductService;
@@ -31,6 +32,7 @@ public class ReviewRestController {
     private final ProductService productService;
     private final ReviewService reviewService;
     private final MemberService memberService;
+    private final AlertService alertService;
     @GetMapping("/get/{reviewId}")
     public ResponseEntity<Map<String,Object>> getReview(@PathVariable Long reviewId,@CurrentMember MemberDTO memberDTO) {
         ReviewDTO reviewDTO = reviewService.getReview(reviewId);
@@ -66,12 +68,6 @@ public class ReviewRestController {
     public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO reviewDTO,@CurrentMember MemberDTO memberDTO) throws Exception {
 
 
-//        String memberRole = reviewService.checkMemberRole(reviewDTO,memberDTO);  // 현재 접속한 사용자가 판매자인지 구매자인지
-//        ProductDTO productDTO = reviewDTO.getProductDTO();
-//
-//        if (reviewService.isPossibleAdd(memberRole,productDTO)){ // 리뷰가 존재하면 리뷰 못쓰게 해야함
-//            return ResponseEntity.status(HttpStatus.OK).build();
-//        }
         Map<String,Object> myRole = getSourceDTO(reviewDTO.getProductDTO(),memberDTO);  // 현재 접속한 사용자가 판매자인지 구매자인지
         if (myRole.get("sourceType").equals("seller"))
             reviewDTO.setSellerFlag(true);
@@ -82,7 +78,11 @@ public class ReviewRestController {
         if (reviewService.isPossibleAdd((String) myRole.get("sourceType"),reviewDTO.getProductDTO())){ // 리뷰가 존재하면 리뷰 못쓰게 해야함
             return ResponseEntity.status(HttpStatus.OK).build();
         }
+        MemberDTO targetDTO = (MemberDTO) myRole.get("targetDTO"); // 리뷰를 보내기위해 타겟 dto 가져옴
+
         reviewDTO = reviewService.addReview(reviewDTO);
+
+        alertService.addAlert((MemberDTO) myRole.get("targetDTO"),"후기",targetDTO.getNickname()+"님이 리뷰를 작성했어요.","/product/get/review/"+reviewDTO.getId());
         float score = reviewService.calculateScore(reviewDTO);
         MemberDTO target = (MemberDTO) getTargetDTO(reviewDTO.getProductDTO(),memberDTO).get("targetDTO");
         memberService.setScore(score,target);

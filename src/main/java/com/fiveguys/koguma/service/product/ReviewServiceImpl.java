@@ -5,6 +5,7 @@ import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.dto.ReviewDTO;
 import com.fiveguys.koguma.data.entity.Review;
 import com.fiveguys.koguma.repository.product.ReviewRepository;
+import com.fiveguys.koguma.service.common.AlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class ReviewServiceImpl implements ReviewService{
 
     private final ReviewRepository reviewRepository;
+
 
     public ReviewDTO addReview(ReviewDTO reviewDTO) throws Exception {
 
@@ -76,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService{
     public float calculateScore(ReviewDTO reviewDTO) {
         float baseScore = (float) (Float.parseFloat(String.valueOf(reviewDTO.getCommet().size())) * 0.5);
 
-        if (reviewDTO.getRating() >= 2) {
+        if (reviewDTO.getRating() > 2) {
             return baseScore;
         } else {
             return -baseScore;
