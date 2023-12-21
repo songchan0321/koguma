@@ -24,8 +24,6 @@ public class QClubMeetUp extends EntityPathBase<ClubMeetUp> {
 
     public final QBaseTime _super = new QBaseTime(this);
 
-    public final BooleanPath activeFlag = createBoolean("activeFlag");
-
     public final QClub club;
 
     public final StringPath content = createString("content");
@@ -35,6 +33,8 @@ public class QClubMeetUp extends EntityPathBase<ClubMeetUp> {
     public final NumberPath<Integer> maxCapacity = createNumber("maxCapacity", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> meetDate = createDateTime("meetDate", java.time.LocalDateTime.class);
+
+    public final EnumPath<MeetUpType> meetUpType = createEnum("meetUpType", MeetUpType.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;

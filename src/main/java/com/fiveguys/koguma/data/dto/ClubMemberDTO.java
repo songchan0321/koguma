@@ -15,6 +15,7 @@ public class ClubMemberDTO {
     private String content;
     private Boolean memberRole;
     private Boolean activeFlag;
+    private Integer count;
 
 
     @Builder

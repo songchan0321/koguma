@@ -205,8 +205,8 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public void deleteByMemberId(Long requestMemberId) {
-        clubMemberJoinRequestRepository.deleteByMemberId(requestMemberId);
+    public void deleteJoinRequest(Long clubId, Long memberId) {
+        clubMemberJoinRequestRepository.deleteByClubIdAndMemberId(clubId, memberId);
     }
 
 
@@ -247,8 +247,13 @@ public class ClubServiceImpl implements ClubService{
         List<ClubMember> clubMembers = clubMemberRepository.findByClubId(clubId);
 
         return clubMembers.stream()
-                .map((c) -> new ClubMemberDTO(c))
+                .map(ClubMemberDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer countClubMember(Long clubId) {
+        return clubMemberRepository.countByClubId (clubId);
     }
 
     @Override
@@ -285,6 +290,12 @@ public class ClubServiceImpl implements ClubService{
         }else {
             return ClubMemberDTO.builder().build();
         }
+    }
+
+    @Override
+    public Boolean checkJoinRequest(Long clubId, Long memberId) {
+
+        return clubMemberJoinRequestRepository.existsByClubIdAndMemberId(clubId, memberId);
     }
 
 }
