@@ -21,6 +21,7 @@ public class ClubDTO {
     private Boolean activeFlag;
     private String categoryName;
     private CategoryDTO categoryDTO;
+    private List<String> profileImage;
 
     @Builder
     public ClubDTO(Long id, String title, String content, Integer maxCapacity,

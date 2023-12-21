@@ -4,6 +4,8 @@ import com.fiveguys.koguma.data.dto.ClubDTO;
 import com.fiveguys.koguma.data.dto.ClubJoinRequestDTO;
 import com.fiveguys.koguma.data.dto.ClubMemberDTO;
 import com.fiveguys.koguma.data.dto.CreateClubDTO;
+import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
+import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
 
 import java.util.List;
 
@@ -17,9 +19,11 @@ public interface ClubService {
 
     public List<ClubDTO> listMyClub(Long memberId);
 
-    public List<ClubDTO> listClubByCategory(Long categoryId);
+    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId);
 
     public ClubDTO getClub(Long clubId);
+
+    public ListClubByCategoryDTO findClub(Long clubId);
 
     public void updateClub(ClubDTO clubDTO);
 
@@ -37,7 +41,7 @@ public interface ClubService {
 
     public Long addClubMember(ClubMemberDTO clubMemberDTO);
 
-    public ClubMemberDTO getClubMember(Long clubId, Long memberId);
+    public GetClubMemberDTO getClubMember(Long clubId, Long memberId);
 
     public ClubMemberDTO getClubMember(Long clubMemberId);
 
@@ -48,7 +52,7 @@ public interface ClubService {
 
     public void changeClubLeader(Long currentLeaderId, Long newLeaderId);
 
-    public ClubMemberDTO checkJoinClub(Long clubId, Long memberId);
+    public GetClubMemberDTO checkJoinClub(Long clubId, Long memberId);
 
     public Boolean checkJoinRequest(Long clubId, Long memberId);
 

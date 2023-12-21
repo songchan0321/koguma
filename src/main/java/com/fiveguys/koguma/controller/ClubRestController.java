@@ -2,6 +2,7 @@ package com.fiveguys.koguma.controller;
 
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
+import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.data.dto.club.MeetUpStateDTO;
 import com.fiveguys.koguma.data.entity.CategoryType;
 import com.fiveguys.koguma.data.entity.MeetUpType;
@@ -83,14 +84,14 @@ public class ClubRestController {
     }
 
     @GetMapping(path = "/list/category/{categoryId}")
-    public ResponseEntity<List<ClubDTO>> listClubByCategory(@PathVariable Long categoryId){
+    public ResponseEntity<?> listClubByCategory(@PathVariable Long categoryId){
         return ResponseEntity.ok(clubService.listClubByCategory(categoryId));
     }
 
     @GetMapping(path = "/{clubId}")
-    public ResponseEntity<ClubDTO> getClub(@PathVariable Long clubId,
+    public ResponseEntity<?> getClub(@PathVariable Long clubId,
                                            @CurrentMember MemberDTO memberDTO){
-        return ResponseEntity.ok(clubService.getClub(clubId));
+        return ResponseEntity.ok(clubService.findClub(clubId));
     }
 
     @GetMapping(path = "/update/{clubId}")
@@ -140,7 +141,7 @@ public class ClubRestController {
 
     //todo: memberDTO 다 없애야할듯
     @GetMapping("/member/{clubId}")
-    public ResponseEntity<ClubMemberDTO> getClubMember(@PathVariable Long clubId, @CurrentMember MemberDTO memberDTO){
+    public ResponseEntity<GetClubMemberDTO> getClubMember(@PathVariable Long clubId, @CurrentMember MemberDTO memberDTO){
         return ResponseEntity.ok(clubService.getClubMember(clubId, memberDTO.getId()));
     }
 
@@ -232,7 +233,7 @@ public class ClubRestController {
     @GetMapping(path = "/meet-up/cancel")
     public ResponseEntity<?> joinMeetUpCancel(@RequestBody MeetUpStateDTO meetUpStateDTO) {
 
-        ClubMemberDTO clubMember = clubService.getClubMember(meetUpStateDTO.getClubId(), meetUpStateDTO.getMeetUpId());
+        GetClubMemberDTO clubMember = clubService.getClubMember(meetUpStateDTO.getClubId(), meetUpStateDTO.getMeetUpId());
 
         clubMeetUpService.cancel(meetUpStateDTO.getMeetUpId(), clubMember.getId());
 
@@ -253,7 +254,7 @@ public class ClubRestController {
                                                    @RequestParam Long clubId,
                                                    @RequestParam Long meetUpId){
 
-        ClubMemberDTO clubMember = clubService.getClubMember(clubId, memberDTO.getId());
+        GetClubMemberDTO clubMember = clubService.getClubMember(clubId, memberDTO.getId());
 
 
         return ResponseEntity.ok(clubMeetUpService.checkJoinMeetUp(meetUpId,clubMember.getId()));
@@ -262,7 +263,7 @@ public class ClubRestController {
     @GetMapping("/member/check/{clubId}")
     public ResponseEntity<?> checkClubMember(@PathVariable Long clubId, @CurrentMember MemberDTO memberDTO){
 
-        ClubMemberDTO clubMemberDTO = clubService.checkJoinClub(clubId, memberDTO.getId());
+        GetClubMemberDTO clubMemberDTO = clubService.checkJoinClub(clubId, memberDTO.getId());
 
         return ResponseEntity.ok(clubMemberDTO);
     }
