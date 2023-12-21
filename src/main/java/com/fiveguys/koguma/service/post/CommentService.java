@@ -4,6 +4,9 @@ import com.fiveguys.koguma.data.dto.CommentDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Comment;
+import com.fiveguys.koguma.data.entity.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -19,6 +22,8 @@ public interface CommentService {
     List<Comment> listComment(PostDTO postDTO);
 
     List<Comment> listReply(PostDTO postDTO);
+
+    Page<Post> listCommentedPostByMember(MemberDTO memberDTO,  PageRequest pageRequest);
 
     List<Comment> listCommentByMember(MemberDTO memberDTO);
 

@@ -4,10 +4,14 @@ import com.fiveguys.koguma.data.dto.CommentDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Comment;
+import com.fiveguys.koguma.data.entity.Post;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.CommentRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -35,6 +39,8 @@ public class CommentServiceImpl implements CommentService {
         if(commentDTO.getParentDTO() != null && commentDTO.getParentDTO().getId() != null) {
             //부모 유효성 체크
             Comment parent = findVerifiedComment(commentDTO.getParentDTO().getId());
+
+
             commentDTO.setMemberDTO(memberDTO);
 
             Comment saved = commentRepository.save(commentDTO.toEntity());
@@ -111,20 +117,27 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> listReply(PostDTO postDTO) {
 
-        List<Comment> allComments = commentRepository.findAllByPostId(postDTO.getId());
+//        List<Comment> allComments = commentRepository.findAllByPostId(postDTO.getId());
+//
+//        List<Comment> reply = allComments.stream()
+//                .filter(comment -> comment.getParent() != null)
+//                .collect(Collectors.toList());
 
-        List<Comment> reply = allComments.stream()
-                .filter(comment -> comment.getParent() != null)
-                .collect(Collectors.toList());
 
-
-        return reply;
+        return commentRepository.findAllByPostIdAndParentIdNotNull(postDTO.getId());
     }
 
     @Override
     public List<Comment> listCommentByMember(MemberDTO memberDTO) {
 
         return commentRepository.findAllByMemberId(memberDTO.getId());
+    }
+
+    @Override
+    public Page<Post> listCommentedPostByMember(MemberDTO memberDTO, PageRequest pageRequest) {
+
+        Long memberId = memberDTO.getId();
+        return commentRepository.findCommentedPostByMemberId(memberId, pageRequest);
     }
 
     @Override

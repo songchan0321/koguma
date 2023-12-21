@@ -9,6 +9,7 @@ import com.fiveguys.koguma.service.post.CommentService;
 import com.fiveguys.koguma.service.post.PostService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,25 +29,52 @@ public class CommentRestController {
 
     private final CommentService commentService;
 
+//    @PostMapping("/add")
+//    public ResponseEntity<Map<String, Object>> addComment(
+//            @RequestBody CommentDTO commentDTO,
+//            @CurrentMember MemberDTO currentMember,
+//            @RequestBody Map<String, String> json
+//
+//    ){
+//
+//        try {
+//            if(currentMember == null || currentMember.getId() == null) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//            }
+//            commentDTO.setMemberDTO(currentMember);
+//            commentDTO.getPostDTO().setId(Long.parseLong(json.get("postId")));
+//
+//
+//            commentService.addComment(commentDTO, currentMember);
+//
+//            return new ResponseEntity<>(HttpStatus.CREATED);
+//        }catch (Exception e){
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//
+//    }
+
     @PostMapping("/add")
-    public ResponseEntity<Void> addComment(
-            @RequestBody CommentDTO commentDTO,
-            @CurrentMember MemberDTO currentMember
+    public ResponseEntity<Map<String, Object>> addComment(
+            @CurrentMember MemberDTO currentMember,
+            @RequestBody CommentDTO commentDTO
     ){
-        System.out.println("commentDto : "+commentDTO);
         try {
-            if(currentMember == null || currentMember.getId() == null) {
+            if (currentMember == null || currentMember.getId() == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+            System.out.println("commentDTO = " + commentDTO);
+            commentDTO.setMemberDTO(currentMember);
+            commentDTO.setPostDTO(commentDTO.getPostDTO());
 
-            commentService.addComment(commentDTO, new MemberDTO());
+            commentService.addComment(commentDTO, currentMember);
 
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
 
     @PutMapping("/update")
     public ResponseEntity<Void> updateComment(
@@ -153,8 +182,8 @@ public class CommentRestController {
         }
     }
 
-
-    @GetMapping("/list/member")
+    // TODO: 삭제 예정
+    @GetMapping("/list/member/ekdkfkejksjfejsdkjfejsa")
     public ResponseEntity<List<CommentDTO>> listCommentByMember(
             @CurrentMember MemberDTO currentMember
     ){
@@ -177,6 +206,24 @@ public class CommentRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/list/member")
+    public ResponseEntity<Page<PostDTO>> listCommentedPostByMember(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "100") int size,
+            @CurrentMember MemberDTO currentMember
+    ){
+        try {
+            if (currentMember == null || currentMember.getId() == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            PageRequest pageRequest = PageRequest.of(page, size);
+            Page<PostDTO> postDTOS = commentService.listCommentedPostByMember(currentMember, pageRequest).map(PostDTO::fromEntity);
+            return new ResponseEntity<>(postDTOS, HttpStatus.OK);
+        }catch (Exception e){
+            return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

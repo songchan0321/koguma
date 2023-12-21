@@ -28,10 +28,7 @@ public interface PostService {
 
     Page<Post> listPostByViews(Pageable pageRequest);
 
-    List<CategoryDTO>  listCategoryForSelect();
-
     Page<Post> listCategoryBySearch (CategoryDTO categoryDTO, PageRequest pageRequest);
-
 
 
     Page<Post> listSearchKeyword(String keyword, PageRequest pageRequest);
