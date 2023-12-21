@@ -35,9 +35,10 @@ public class ProductServiceImpl implements ProductService{
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
     }
-    public List<ProductDTO> listProductByLocation(LocationDTO locationDTO,String keyword) throws Exception {
-        List<Product> productList = queryRepository.findAllByDistanceProduct(locationDTO,keyword,null);
-        return productList.stream().map(ProductDTO::fromEntityContainImage).collect(Collectors.toList());
+    public List<ProductDTO> listProductByLocation(LocationDTO locationDTO,String keyword,Long categoryId) throws Exception {
+        List<Product> productList = queryRepository.findAllByDistanceProduct(locationDTO,keyword,categoryId);
+        return productList.stream().map(ProductDTO::fromEntityContainImage).filter(productDTO -> !ProductStateType.HIDE.equals(productDTO.getTradeStatus())).collect(Collectors.toList());
+
     }
 
 

@@ -161,18 +161,26 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void setScore(float culculateScore, MemberDTO memberDTO) {
-
         float oldScore = memberDTO.getScore();
+
+        // 부호에 따라 다르게 처리
         if (culculateScore > 0) {
-            if(memberDTO.getScore() < 100)
-                memberDTO.setScore(oldScore + culculateScore);
+            float newScore = oldScore + culculateScore;
 
-        }
-         else {
-            memberDTO.setScore(oldScore - culculateScore);
-        }
+            // 100 이하일 때만 업데이트
+            if (newScore <= 100) {
+                memberDTO.setScore(newScore);
+                memberRepository.save(memberDTO.toEntity());
+            }
+        } else if (culculateScore < 0) {
+            float newScore = oldScore - Math.abs(culculateScore);
 
-        memberRepository.save(memberDTO.toEntity());
+            // 0 이상일 때만 업데이트
+            if (newScore >= 0) {
+                memberDTO.setScore(newScore);
+                memberRepository.save(memberDTO.toEntity());
+            }
+        }
     }
 
     public MemberDTO getMemberByEmail(String email) {
