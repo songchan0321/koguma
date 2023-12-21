@@ -163,10 +163,14 @@ public class MemberServiceImpl implements MemberService {
     public void setScore(float culculateScore, MemberDTO memberDTO) {
 
         float oldScore = memberDTO.getScore();
-        if (culculateScore > 0)
-            memberDTO.setScore(oldScore + culculateScore);
-        else
+        if (culculateScore > 0) {
+            if(memberDTO.getScore() < 100)
+                memberDTO.setScore(oldScore + culculateScore);
+
+        }
+         else {
             memberDTO.setScore(oldScore - culculateScore);
+        }
 
         memberRepository.save(memberDTO.toEntity());
     }

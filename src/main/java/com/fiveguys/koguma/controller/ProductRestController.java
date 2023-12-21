@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.*;
@@ -123,9 +124,21 @@ public class ProductRestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO) throws JsonProcessingException {
+
+        int newPrice = productDTO.getPrice();
+        int oldPrice = productService.getProduct(productDTO.getId()).getPrice();
+
 
         productDTO = productService.updateProduct(productDTO);
+        if (newPrice < oldPrice){
+            List<MemberDTO> memberList = likeFilterAssociationService.findLikeProductByMember(productDTO.getId());
+            for (MemberDTO dto : memberList) {
+                alertService.addAlert(dto,"상품",productDTO.getTitle()+"상품의 가격이 인하되었습니다.","/product/get/"+productDTO.getId());
+            }
+        }
+
+
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
 
@@ -158,6 +171,7 @@ public class ProductRestController {
                 .build();
 
         likeFilterAssociationService.addLikeProduct(newLikeFilterAssociationDTO);
+        memberService.setScore(0.3F,productDTO.getSellerDTO());
         return ResponseEntity.status(HttpStatus.OK).body(productDTO.getTitle() + " 좋아요 등록 완료");
     }
 
@@ -165,8 +179,9 @@ public class ProductRestController {
     public ResponseEntity<String> deleteLikeProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO) {
         LikeFilterAssociationDTO likeFilterAssociationDTO = likeFilterAssociationService.getLikeProduct(productId,memberDTO.getId());
         System.out.println("likeFilterAssociationDTO = " + likeFilterAssociationDTO);
-        likeFilterAssociationService.deleteLikeProduct(likeFilterAssociationDTO.getId());
 
+        likeFilterAssociationService.deleteLikeProduct(likeFilterAssociationDTO.getId());
+        memberService.setScore(0.3F,likeFilterAssociationDTO.getProductDTO().getSellerDTO());
         return ResponseEntity.status(HttpStatus.OK).body("좋아요 삭제 완료");
     }
 
@@ -214,7 +229,8 @@ public class ProductRestController {
                 .build();
 
         memberProductSuggestService.addSuggetPrice(memberProductSuggestDTO);
-//        alertService.addAlert(productDTO.getSellerDTO(),productDTO.getTitle(),memberDTO.getNickname()+"님이 가격제안을 했습니다"),
+        alertService.addAlert(productDTO.getSellerDTO(),"가격제안",memberDTO.getNickname()+"님이 가격제안을 했습니다.","/product/suggest/list/"+productDTO.getId());
+
         return ResponseEntity.status(HttpStatus.OK).body("가격제안 성공");
     }
     @GetMapping("/suggest/list/{productId}")

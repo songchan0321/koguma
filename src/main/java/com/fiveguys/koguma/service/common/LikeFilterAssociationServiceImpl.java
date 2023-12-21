@@ -36,6 +36,15 @@ public class LikeFilterAssociationServiceImpl implements LikeFilterAssociationSe
         return listProduct.stream().map(LikeFilterAssociationDTO::fromEntity).collect(Collectors.toList());
     }
 
+    @Override
+    public List<MemberDTO> findLikeProductByMember(Long productId) {
+        List<LikeFilterAssociation> likeFilterAssociation = likeFilterAssociationRepository.findAllByProductId(productId);
+        List<LikeFilterAssociationDTO> likeList = likeFilterAssociation.stream().map(LikeFilterAssociationDTO::fromEntity).collect(Collectors.toList());
+        return likeList.stream()
+                .map(LikeFilterAssociationDTO::getMemberDTO)
+                .collect(Collectors.toList());
+    }
+
     public LikeFilterAssociationDTO getLikeProduct(Long productId, Long memberId) {
         LikeFilterAssociation likeFilterAssociation = likeFilterAssociationRepository
                 .findByMemberIdAndProductId(memberId, productId)

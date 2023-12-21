@@ -4,6 +4,7 @@ import com.fiveguys.koguma.data.dto.LikeFilterAssociationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.ProductDTO;
 import com.fiveguys.koguma.data.entity.LikeFilterAssociation;
+import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Product;
 import org.springframework.data.domain.Page;
 
@@ -13,6 +14,7 @@ public interface LikeFilterAssociationService {
 
 
     List<LikeFilterAssociationDTO> likeProductList(Long memberId);
+    List<MemberDTO> findLikeProductByMember(Long productId);
 
     LikeFilterAssociationDTO getLikeProduct(Long productId,Long memberId);
 
