@@ -3,6 +3,8 @@ package com.fiveguys.koguma.data.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CreateClubDTO {
 
@@ -11,6 +13,7 @@ public class CreateClubDTO {
     private String content;
     private String nickname;
     private String memberContent;
+    private List<String> urls;
     private Integer maxCapacity;
 
     @Builder

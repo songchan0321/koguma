@@ -35,6 +35,9 @@ public class ImageRestController {
     public ResponseEntity<List<String>> uploadFile(@RequestParam("file") List<MultipartFile> file) throws IOException {
         System.out.println("new 입장");
         List<String> fileList = imageService.tempFileUpload(file);
+        for (String s : fileList) {
+            System.out.println("s = " + s);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(fileList);
     }
     @PostMapping("/add")

@@ -10,4 +10,8 @@ import java.util.List;
 @Repository
 public interface ClubPostRepository extends JpaRepository<ClubPost, Long> {
     List<ClubPost> findByClubIn(List<Club> clubs);
+
+    List<ClubPost> findByClubId(Long clubId);
+
+    List<ClubPost> findByClubPostCategoryId(Long categoryId);
 }
