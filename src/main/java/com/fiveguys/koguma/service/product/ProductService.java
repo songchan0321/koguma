@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProductService {
     ProductDTO addProduct(ProductDTO productDTO);
     Page<Product> listProduct(Long memberId,int page, int size);
-    List<ProductDTO> listProductByLocation(LocationDTO locationDTO, String keyword) throws Exception;
+    List<ProductDTO> listProductByLocation(LocationDTO locationDTO, String keyword,Long categoryId) throws Exception;
     ProductDTO getProduct(Long productId);
     ProductDTO updateProduct(ProductDTO productDTO);
     void deleteProduct(Long productId);

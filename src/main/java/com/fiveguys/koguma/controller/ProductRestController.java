@@ -49,15 +49,16 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.OK).body(memberDTO);
     }
     @GetMapping("/list")
-    public ResponseEntity<List<?>> listProduct(@RequestParam String keyword, @CurrentMember MemberDTO memberDTO) throws Exception {
+    public ResponseEntity<List<?>> listProduct(@RequestParam String keyword,@RequestParam String category,  @CurrentMember MemberDTO memberDTO) throws Exception {
 
-
+        System.out.println("category : "+category);
+        Long categoryId = null;
+        if (category != null && !category.isEmpty()) {
+            categoryId = Long.valueOf(category);
+        }
         LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
 
-//        Pageable pageable = PageRequest.of(0, 9);
-//
-//        List<?> productList = locationService.locationFilter(CategoryType.PRODUCT, locationDTO, pageable, keyword);
-        List<ProductDTO> productDTOList = productService.listProductByLocation(locationDTO,keyword);
+        List<ProductDTO> productDTOList = productService.listProductByLocation(locationDTO,keyword,categoryId);
 
         return ResponseEntity.status(HttpStatus.OK).body(productDTOList);
     }
@@ -181,7 +182,7 @@ public class ProductRestController {
         System.out.println("likeFilterAssociationDTO = " + likeFilterAssociationDTO);
 
         likeFilterAssociationService.deleteLikeProduct(likeFilterAssociationDTO.getId());
-        memberService.setScore(0.3F,likeFilterAssociationDTO.getProductDTO().getSellerDTO());
+        memberService.setScore(-0.3F,likeFilterAssociationDTO.getProductDTO().getSellerDTO());
         return ResponseEntity.status(HttpStatus.OK).body("좋아요 삭제 완료");
     }
 

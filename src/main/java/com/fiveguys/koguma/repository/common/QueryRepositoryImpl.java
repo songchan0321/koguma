@@ -106,7 +106,9 @@ public class QueryRepositoryImpl implements QueryRepository{
                                         product.longitude, product.latitude)
                                 .loe(locationDTO.getSearchRange() * 1000),
                         keyword != null ? product.title.containsIgnoreCase(keyword) : null,
-                        categoryId != null ? product.categoryId.eq(categoryId) : null
+                        categoryId != null ? product.categoryId.eq(categoryId) : null,
+                        product.activeFlag.isTrue()
+
                 )
                 .orderBy(product.regDate.desc());
 
@@ -126,7 +128,8 @@ public class QueryRepositoryImpl implements QueryRepository{
                                         post.longitude, post.latitude)
                                 .loe(locationDTO.getSearchRange() * 1000),
                         keyword != null ? post.title.containsIgnoreCase(keyword) : null,
-                        categoryId != null ? post.category.id.eq(categoryId) : null
+                        categoryId != null ? post.category.id.eq(categoryId) : null,
+                        post.activeFlag.isTrue()
                 )
                 .orderBy(post.regDate.desc());
 
@@ -146,7 +149,8 @@ public class QueryRepositoryImpl implements QueryRepository{
                                         club.longitude, club.latitude)
                                 .loe(locationDTO.getSearchRange() * 1000),
                         keyword != null ? club.title.containsIgnoreCase(keyword) : null,
-                        categoryId != null ? club.category.id.eq(categoryId) : null
+                        categoryId != null ? club.category.id.eq(categoryId) : null,
+                        club.activeFlag.isTrue()
                 )
                 .orderBy(club.regDate.desc());
 
