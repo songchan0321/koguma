@@ -16,6 +16,7 @@ public class ClubMemberDTO {
     private Boolean memberRole;
     private Boolean activeFlag;
     private Integer count;
+    private String profileURL;
 
 
     @Builder

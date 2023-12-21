@@ -54,6 +54,10 @@ public class ClubPostService {
         return ClubPostDTO.builder()
                 .title(clubPost.getTitle())
                 .content(clubPost.getContent())
+                .clubId(clubPost.getClub().getId())
+                .clubName(clubPost.getClubName())
+                .categoryName(clubPost.getCategoryName())
+                .clubMemberNickname(clubPost.getClubMemberNickname())
                 .regDate(clubPost.getRegDate())
                 .build();
 
@@ -78,8 +82,23 @@ public class ClubPostService {
 
     }
 
-    public Page<Post> listPost(){
-        return null;
+    public List<ClubPostDTO> listClubPost(Long clubId){
+
+
+        List<ClubPost> clubPosts = clubPostRepository.findByClubId(clubId);
+
+        return clubPosts.stream()
+                .map(ClubPostDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<ClubPostDTO> listClubPostByCategory(Long categoryId){
+
+        List<ClubPost> clubPosts = clubPostRepository.findByClubPostCategoryId(categoryId);
+
+        return clubPosts.stream()
+                .map(ClubPostDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public void updatePost(){

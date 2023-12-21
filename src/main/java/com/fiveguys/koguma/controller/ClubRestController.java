@@ -41,7 +41,12 @@ public class ClubRestController {
     @PostMapping(path = "/add")
     public ResponseEntity<Long> addClub(@RequestBody CreateClubDTO createClubDTO,
                                      @CurrentMember MemberDTO memberDTO){
-        return ResponseEntity.ok(clubService.addClub(createClubDTO, memberDTO.getId()));
+
+        System.out.println("createClubDTO = " + createClubDTO);
+        Long saveClubId = clubService.addClub(createClubDTO, memberDTO.getId());
+        System.out.println("saveClubId = " + saveClubId);
+
+        return ResponseEntity.ok(saveClubId);
     }
 
     //// TODO: 위도 및 경도 기반 리스트 location 담당자에게 문의 필요, UI 시 작업 진행
