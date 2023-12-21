@@ -25,12 +25,13 @@ public class ListClubByCategoryDTO {
     private String categoryName;
     private CategoryDTO categoryDTO;
     private List<ImageDTO> profileImage;
+    private Integer currentCount;
 
     @Builder
     public ListClubByCategoryDTO(Long id, String title, String content, Integer maxCapacity,
                    Double latitude, Double longitude, String dong,
                    Boolean joinActiveFlag, Boolean activeFlag,
-                   String categoryName, CategoryDTO categoryDTO, List<ImageDTO> profileImage){
+                   String categoryName, CategoryDTO categoryDTO, List<ImageDTO> profileImage,Integer currentCount){
         this.id = id;
         this.title = title;
         this.content = content;
@@ -43,6 +44,7 @@ public class ListClubByCategoryDTO {
         this.categoryName = categoryName;
         this.categoryDTO = categoryDTO;
         this.profileImage = profileImage;
+        this.currentCount = currentCount;
     }
 
     public ListClubByCategoryDTO(Club club){
@@ -89,6 +91,7 @@ public class ListClubByCategoryDTO {
                 .categoryName(entity.getCategoryName())
                 .categoryDTO(CategoryDTO.fromDTO(entity.getCategory()))
                 .profileImage(entity.getImages().stream().map(ImageDTO::fromEntity).collect(Collectors.toList()))
+                .currentCount(entity.getClubMembers().size())
                 .build();
     }
 

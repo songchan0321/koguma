@@ -56,6 +56,9 @@ public class Club extends BaseTime{
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
+    private List<ClubMember> clubMembers;
+
 
     @Builder
     public Club(Long id,String title, String content, Integer maxCapacity,
