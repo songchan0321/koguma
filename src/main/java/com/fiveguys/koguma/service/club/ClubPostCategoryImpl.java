@@ -24,11 +24,19 @@ public class ClubPostCategoryImpl implements ClubPostCategoryService{
     private final ClubPostCategoryRepository clubPostCategoryRepository;
 
     @Override
-    public Long addClubPostCategory(Long clubId, Long clubMemberId, String categoryName) {
+    public Long defaultClubPostCategory(Long clubId, String categoryName) {
+        Club findClub = clubRepository.findById(clubId).orElseThrow();
 
-        System.out.println("============================================");
-        System.out.println("categoryName => " + categoryName);
-        System.out.println("============================================");
+        ClubPostCategory clubPostCategory = ClubPostCategory.builder()
+                .club(findClub)
+                .name(categoryName)
+                .build();
+
+        return clubPostCategoryRepository.save(clubPostCategory).getId();
+    }
+
+    @Override
+    public Long addClubPostCategory(Long clubId, Long clubMemberId, String categoryName) {
 
         Club findClub = clubRepository.findById(clubId).orElseThrow();
 
