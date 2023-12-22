@@ -25,7 +25,6 @@ public class SmsRepository {
 
     // Redis에 저장
     public void addAuthNum(SmsDTO smsDTO) {
-        // 사용자의 휴대폰 번호에 대한 키로 "authNum"과 함께 저장
         stringRedisTemplate.opsForValue()
                 .set(PHONE_PREFIX + smsDTO.getTo(), smsDTO.getAuthNumber(), Duration.ofSeconds(LIMIT_TIME));
     }
