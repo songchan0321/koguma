@@ -77,13 +77,14 @@ public class SmsServiceImpl implements SmsService {
     //사용자가 입력한 인증번호가 Redis에 저장된 인증번호와 동일한지 확인
     @Override
     public boolean verifySms(SmsDTO smsDTO) throws Exception {
-        if (!(smsCertificationRepository.isAuthNum(smsDTO.getTo()) &&
-                smsCertificationRepository.getAuthNum(smsDTO.getTo())
-                        .equals(smsDTO.getAuthNumber()))) {
+        String to = smsDTO.getTo();
+        String authNum = smsDTO.getAuthNumber();
+        System.out.println("번호에 대한 인증번호 =" + to + " : " + authNum);
+        if (!(smsCertificationRepository.isAuthNum(to) &&
+                smsCertificationRepository.getAuthNum(to).equals(authNum))) {
             throw new Exception("인증번호가 일치하지 않습니다.");
         }
-
-        smsCertificationRepository.deleteAuthNum(smsDTO.getTo());
+        smsCertificationRepository.deleteAuthNum(to);
 
         return true;
     }
