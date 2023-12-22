@@ -40,16 +40,22 @@ public class AuthRestController {
     // 회원가입
     @PostMapping("/auth/login")
     public ResponseEntity<String> add(HttpServletRequest request, HttpServletResponse response,
-                                          @RequestBody Map<String,String> loginform) {
+                                      @RequestBody Map<String, String> loginform) {
         try {
             HttpHeaders headers = new HttpHeaders();
 
             MemberDTO memberDTO = memberService.login(loginform.get("id"), loginform.get("pw"));
 
-            String accessToken =authService.generateAccessToken(memberDTO.getId());
+            // Check if the member is active
+            if (!memberDTO.getActiveFlag()) {
+                // Member is inactive (withdrawn)
+                return ResponseEntity.badRequest().body("탈퇴한 회원입니다.");
+            }
+
+            String accessToken = authService.generateAccessToken(memberDTO.getId());
             String refreshToken = authService.generateRefreshToken(memberDTO.getId());
             headers.set("Authorization", "Bearer " + accessToken);
-            authService.setSecurityContextHolder(request,memberDTO);
+            authService.setSecurityContextHolder(request, memberDTO);
 
             response.addCookie(authService.createCookie("refreshToken", refreshToken));
             return ResponseEntity.ok().headers(headers).body(accessToken);
@@ -116,6 +122,7 @@ public class AuthRestController {
         String email = memberDTO.getEmail();
         Boolean roleFlag = memberDTO.getRoleFlag();
         Boolean socialFlag = memberDTO.getSocialFlag();
+        String profileURL = memberDTO.getProfileURL();
 
         // 닉네임 중복 체크
         if (!memberService.nicknameValidationCheck(nickname)) {
@@ -123,7 +130,7 @@ public class AuthRestController {
         }
 
         // 중복이 아니면 회원 추가
-        memberDTO = MemberDTO.fromEntity(memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag));
+        memberDTO = MemberDTO.fromEntity(memberService.addMember(memberDTO, nickname, pw, phone, score, email, roleFlag, socialFlag, profileURL));
 
         return ResponseEntity.ok().build();
     }

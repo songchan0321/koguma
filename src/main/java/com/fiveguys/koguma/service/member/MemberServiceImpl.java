@@ -26,7 +26,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     @Override
-    public Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag) {
+    public Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag, String profileURL) {
         memberDTO.setNickname(nickname);
         memberDTO.setPw(pw);
         memberDTO.setPhone(phone);
@@ -35,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
         memberDTO.setRoleFlag(false); // false = 일반 회원, true = 관리자
         memberDTO.setSocialFlag(false);
         memberDTO.setActiveFlag(true);
+        memberDTO.setProfileURL("https://koguma.kr.object.ncloudstorage.com/defaultMan.jpg");
 
         // 닉네임 중복 체크
         Member existingMember = memberRepository.findByNicknameAndActiveFlag(memberDTO.getNickname(), memberDTO.getActiveFlag())
