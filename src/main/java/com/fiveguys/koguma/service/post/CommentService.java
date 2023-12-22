@@ -21,7 +21,7 @@ public interface CommentService {
 
     List<Comment> listComment(PostDTO postDTO);
 
-    List<Comment> listReply(PostDTO postDTO);
+    List<Comment> listReply(Long commentId);
 
     Page<Post> listCommentedPostByMember(MemberDTO memberDTO,  PageRequest pageRequest);
 

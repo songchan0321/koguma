@@ -159,28 +159,23 @@ public class CommentRestController {
 
     }
 
-    @GetMapping("/list/reply/{postId}")
-    public ResponseEntity<List<CommentDTO>> listReply(
-            @PathVariable (name = "postId") Long postId
-    ){
-        try{
-            PostDTO postDTO = new PostDTO();
-            postDTO.setId(postId);
+    @GetMapping("/list/reply/{commmetId}")
+    public ResponseEntity<List<CommentDTO>> listReply(@PathVariable(name = "commentId") Long commentId) {
+        try {
 
-            List<Comment> commentDTOS = commentService.listReply(postDTO);
-
-            List<CommentDTO> collect = commentDTOS.stream()
-                    .map((c) -> CommentDTO.fromEntity(c))
+            List<Comment> comments = (List<Comment>) commentService.getComment(commentId);
+            List<CommentDTO> collect = comments.stream()
+                    .map(CommentDTO::fromEntity)
                     .collect(Collectors.toList());
 
-
-            return new ResponseEntity<>(collect,HttpStatus.OK);
-        }catch(EntityNotFoundException e){
+            return new ResponseEntity<>(collect, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     // TODO: 삭제 예정
     @GetMapping("/list/member/ekdkfkejksjfejsdkjfejsa")

@@ -77,6 +77,7 @@ public class PostDTO {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .postType(post.getPostType())
+                .dong(post.getDong())
                 .latitude(post.getLatitude())
                 .longitude(post.getLongitude())
                 .views(post.getViews()) // 조회수 정보 추가

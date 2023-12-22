@@ -122,17 +122,15 @@ public class PostRestController {
     }
 
 
-    @PutMapping("/update/{postId}")
+    @PutMapping("/{postId}/update")
     public ResponseEntity<Void> updatePost(
-            @RequestBody PostDTO postDTO,
             @PathVariable("postId") Long postId,
             @CurrentMember MemberDTO currentMember
             ){
         try{
 
-            if(!postDTO.getMemberDTO().getId().equals(currentMember.getId())){
-                throw new Exception("권한이 없습니다.");
-            }
+            PostDTO postDTO = new PostDTO();
+            postDTO.setId(postId);
             postService.updatePost(postDTO, currentMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (EntityNotFoundException e){
