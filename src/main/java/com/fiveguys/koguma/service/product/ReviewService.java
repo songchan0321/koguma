@@ -11,6 +11,7 @@ public interface ReviewService {
 
     ReviewDTO addReview(ReviewDTO reviewDTO) throws Exception;
     ReviewDTO getReview(Long reviewId);
+    void deleteReview(Long productId);
     String checkMemberRole(ReviewDTO reviewDTO, MemberDTO memberDTO);
 
     boolean isPossibleAdd(String memberRole, ProductDTO productDTO);
@@ -18,6 +19,7 @@ public interface ReviewService {
     Long getMyReviewId(MemberDTO sourceDTO, ProductDTO productDTO, String sourceType);
 
     float calculateScore(ReviewDTO reviewDTO);
+    Boolean isProductHaveReview(Long productId);
 
 
 }

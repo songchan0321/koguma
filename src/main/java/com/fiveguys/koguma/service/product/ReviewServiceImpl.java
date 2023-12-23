@@ -8,6 +8,9 @@ import com.fiveguys.koguma.repository.product.ReviewRepository;
 import com.fiveguys.koguma.service.common.AlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,12 @@ public class ReviewServiceImpl implements ReviewService{
 
     public ReviewDTO getReview(Long reviewId) {
         return ReviewDTO.fromEntity(reviewRepository.findById(reviewId).get());
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long productId) {
+        reviewRepository.deleteByProductId(productId);
     }
 
     @Override
@@ -83,6 +92,11 @@ public class ReviewServiceImpl implements ReviewService{
         } else {
             return -baseScore;
         }
+    }
+
+    @Override
+    public Boolean isProductHaveReview(Long productId) {
+        return reviewRepository.existsByProductId(productId);
     }
 
 

@@ -8,6 +8,7 @@ import com.fiveguys.koguma.service.common.*;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.service.product.MemberProductSuggestService;
 import com.fiveguys.koguma.service.product.ProductService;
+import com.fiveguys.koguma.service.product.ReviewService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,7 @@ public class ProductRestController {
     private final MemberProductSuggestService memberProductSuggestService;
     private final AlertService alertService;
     private final ImageService imageService;
+    private final ReviewService reviewService;
 
     @GetMapping("/member")
     public ResponseEntity<MemberDTO> Product() throws Exception {
@@ -196,15 +198,32 @@ public class ProductRestController {
         if (type.equals(String.valueOf(ProductStateType.SALE))){
             productDTO.setBuyerDTO(null);
             productDTO.setBuyDate(null);
+            reviewService.deleteReview(Long.valueOf(productId));
         }
 
-        productService.updateState(productDTO, ProductStateType.valueOf(type.toUpperCase()));
+        if (type.equals("RESTORE")){
+            Boolean hasReview = reviewService.isProductHaveReview(Long.valueOf(productId));
+            if(hasReview) { //숨김중 상태인데 리뷰가 있음 --> 판매완료중이었던 상품
+                type = "SALED";
+            }
+            else{ // 판매중이었던 상품
+                type = "SALE";
+            }
+        }
+        productService.updateState(productDTO,ProductStateType.valueOf(type.toUpperCase()));
         return ResponseEntity.status(HttpStatus.OK).body("상태 업데이트 성공");
     }
     @GetMapping("/sale/list")
     public ResponseEntity<List<ProductDTO>> listStateProduct(@RequestParam String type,@CurrentMember MemberDTO memberDTO) throws Exception {
 
         List<ProductDTO> productList = productService.listStateProduct(memberDTO.getId(),ProductStateType.valueOf(type.toUpperCase()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+    }
+    @GetMapping("/sale/list/{memberId}")
+    public ResponseEntity<List<ProductDTO>> listStateProductByOtherMember(@PathVariable Long memberId,@RequestParam String type) throws Exception {
+
+        List<ProductDTO> productList = productService.listStateProduct(memberId,ProductStateType.valueOf(type.toUpperCase()));
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }

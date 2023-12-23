@@ -62,6 +62,11 @@ public class ProductServiceImpl implements ProductService{
 
     public void updateState(ProductDTO productDTO, ProductStateType state) {  //시큐리티 본인 확인 대상
         productDTO.setTradeStatus(state);
+        // 숨김상태의 상품은 판매중으로 , 판매완료로 바뀌어야함
+        // 만약 리뷰가 존재한다면 판매완료 됬던 상품이기 때문에 판매완료로 변경
+        // 만약 리뷰가 없다면 판매중이었던 상품이기 떄문에 판매중으로 변경
+        // 숨김중 상태는 restore state로 받음 ->> 리뷰확인후 복구
+
         productRepository.save(productDTO.toEntity());
 
     }
