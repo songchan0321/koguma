@@ -17,5 +17,6 @@ public interface MemberProductSuggestService {
     int getSuggestCount(Long productId);
     MemberDTO getSuggestMember(Long suggestId);
     ProductDTO getSuggestProduct(Long suggestId);
+    Boolean checkSuggestProductValid(Long productId,Long memberId);
 
 }

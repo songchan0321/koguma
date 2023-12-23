@@ -58,6 +58,11 @@ public class MemberProductSuggestServiceImpl implements MemberProductSuggestServ
         return null;
     }
 
+    @Override
+    public Boolean checkSuggestProductValid(Long productId, Long memberId) {
+        return memberProductSuggestRepository.existsByIdProductIdAndIdMemberId(productId,memberId);
+    }
+
 //    @Override
 //    public int getSuggestPrice(Long suggestId) {
 //        return memberProductSuggestRepository.findByMemberProductSuggestId(suggestId).getPrice();

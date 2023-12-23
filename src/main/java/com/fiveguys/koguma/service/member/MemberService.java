@@ -1,6 +1,8 @@
 package com.fiveguys.koguma.service.member;
 
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.MemberSearchByLocationDTO;
 import com.fiveguys.koguma.data.entity.Member;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public interface MemberService {
     boolean nicknameValidationCheck(String nickname);
 
     void setScore(float culculateScore, MemberDTO memberDTO);
+    List<MemberSearchByLocationDTO> searchByLocationMember(LocationDTO locationDTO,String keyword) throws Exception;
 
 }
 

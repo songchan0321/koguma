@@ -270,7 +270,12 @@ public void likeTest() throws Exception{
 //    System.out.println(likeFilterAssociationService.likeProductList(5L));
 //    System.out.println(memberProductSuggestService.getSuggestCount(34L));
 
-    memberService.setScore(-0.3F,memberService.getMember(1L));
+//    memberService.setScore(-0.3F,memberService.getMember(1L));
+    LocationDTO locationDTO = locationService.getMemberRepLocation(5L);
+    List<Member> memberList = queryRepository.findAllByDistanceMember(locationDTO,null);
+    memberList.forEach((x)->System.out.println(MemberDTO.fromEntity(x)));
+    System.out.println();
 }
+
 
 }

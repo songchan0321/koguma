@@ -105,7 +105,9 @@ public class QueryRepositoryImpl implements QueryRepository{
                                         locationDTO.getLongitude(), locationDTO.getLatitude(),
                                         product.longitude, product.latitude)
                                 .loe(locationDTO.getSearchRange() * 1000),
-                        keyword != null ? product.title.containsIgnoreCase(keyword) : null,
+                        keyword != null ? product.title.containsIgnoreCase(keyword)
+                                .or(product.seller.nickname.containsIgnoreCase(keyword))
+                                : null,
                         categoryId != null ? product.categoryId.eq(categoryId) : null,
                         product.activeFlag.isTrue()
 
@@ -153,6 +155,30 @@ public class QueryRepositoryImpl implements QueryRepository{
                         club.activeFlag.isTrue()
                 )
                 .orderBy(club.regDate.desc());
+
+        return jpaQuery.fetch();
+    }
+    @Override
+    public List<Member> findAllByDistanceMember(LocationDTO locationDTO, String keyword) throws Exception {
+
+
+        QLocation location = QLocation.location;   // location으로 5키로 반경 조회하고 memberId만 뽑아내면 해당 memberId로 findById로 조회
+        QMember member = QMember.member;
+        JPAQuery<Member> jpaQuery = jpaQueryFactory
+                .selectFrom(member)
+                .leftJoin(location).on(location.member.eq(member))
+                        .where(
+                                Expressions.numberTemplate(Double.class,
+                                                "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
+                                                locationDTO.getLongitude(), locationDTO.getLatitude(),
+                                                location.longitude, location.latitude)
+                                        .loe(5000),
+                                keyword != null ? member.nickname.containsIgnoreCase(keyword) : null,
+                                member.activeFlag.isTrue(),
+                                location.repAuthLocationFlag.isTrue()
+
+                        );
+
 
         return jpaQuery.fetch();
     }

@@ -78,14 +78,16 @@ public class ReviewRestController {
         if (reviewService.isPossibleAdd((String) myRole.get("sourceType"),reviewDTO.getProductDTO())){ // 리뷰가 존재하면 리뷰 못쓰게 해야함
             return ResponseEntity.status(HttpStatus.OK).build();
         }
-        MemberDTO targetDTO = (MemberDTO) myRole.get("targetDTO"); // 리뷰를 보내기위해 타겟 dto 가져옴
-
+        Map<String,Object> target = getTargetDTO(reviewDTO.getProductDTO(),memberDTO);
+        MemberDTO targetDTO = (MemberDTO) target.get("targetDTO"); // 리뷰를 보내기위해 타겟 dto 가져옴
+        System.out.println("--!!!!!!!!!!!!!!!--------------");
+        System.out.println("targetDTO = " + targetDTO);
         reviewDTO = reviewService.addReview(reviewDTO);
 
-        alertService.addAlert((MemberDTO) myRole.get("targetDTO"),"후기",targetDTO.getNickname()+"님이 리뷰를 작성했어요.","/product/get/review/"+reviewDTO.getId());
+        alertService.addAlert(targetDTO,"후기",targetDTO.getNickname()+"님이 리뷰를 작성했어요.","/product/get/review/"+reviewDTO.getId());
         float score = reviewService.calculateScore(reviewDTO);
-        MemberDTO target = (MemberDTO) getTargetDTO(reviewDTO.getProductDTO(),memberDTO).get("targetDTO");
-        memberService.setScore(score,target);
+//        MemberDTO target = (MemberDTO) getTargetDTO(reviewDTO.getProductDTO(),memberDTO).get("targetDTO");
+        memberService.setScore(score,targetDTO);
         return ResponseEntity.status(HttpStatus.OK).body(reviewDTO);
     }
 

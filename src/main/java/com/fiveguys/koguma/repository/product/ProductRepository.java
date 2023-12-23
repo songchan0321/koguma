@@ -25,4 +25,8 @@ public interface ProductRepository extends JpaRepository<Product,Long>{
 
 
     List<Product> findAllByBuyerIdAndTradeStatusOrderByBuyDateDesc(Long memberId, ProductStateType state);
+
+    List<Product> findAllBySellerIdAndTradeStatusAndActiveFlagOrderByRegDateDesc(Long memberId, ProductStateType state, boolean b);
+
+    List<Product> findAllByBuyerIdAndTradeStatusAndActiveFlagOrderByBuyDateDesc(Long memberId, ProductStateType productStateType, boolean b);
 }

@@ -2,10 +2,13 @@ package com.fiveguys.koguma.controller;
 
 
 import com.fiveguys.koguma.data.dto.ImageDTO;
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.MemberSearchByLocationDTO;
 import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.repository.member.MemberRepository;
+import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ import java.util.Map;
 @RequestMapping("/member")
 public class MemberRestController {
     private final MemberService memberService;
+    private final LocationService locationService;
 
     // 회원가입
     /*@PostMapping("/add")
@@ -102,6 +107,21 @@ public class MemberRestController {
             MemberDTO otherMember = memberService.getOtherMember(id);
             return ResponseEntity.ok(otherMember);
         } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/get/location")
+    public ResponseEntity<List<MemberSearchByLocationDTO>> getMemberSearchByLocation(@RequestParam String keyword,@CurrentMember MemberDTO memberDTO) {
+        try {
+            LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
+            List<MemberSearchByLocationDTO> memberList = memberService.searchByLocationMember(locationDTO,keyword);
+            for (MemberSearchByLocationDTO memberSearchByLocationDTO : memberList) {
+                String dong = locationService.getMemberRepLocation(memberSearchByLocationDTO.getId()).getDong();
+                memberSearchByLocationDTO.setDong(dong);
+
+            }
+            return ResponseEntity.ok(memberList);
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }

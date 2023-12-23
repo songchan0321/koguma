@@ -18,6 +18,7 @@ public interface ProductService {
     void deleteProduct(Long productId);
 
     void updateState(ProductDTO productDTO, ProductStateType state);
+    void updateActiveFlag(Long productId);
     void updateView(Long productId);
 
     List<ProductDTO> listStateProduct(Long memberId, ProductStateType state) throws Exception;

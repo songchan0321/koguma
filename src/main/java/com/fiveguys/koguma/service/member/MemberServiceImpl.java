@@ -1,7 +1,10 @@
 package com.fiveguys.koguma.service.member;
 
+import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.MemberSearchByLocationDTO;
 import com.fiveguys.koguma.data.entity.Member;
+import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.service.common.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
     private final AuthService authService;
+    private final QueryRepository queryRepository;
 
 
     @Override
@@ -184,8 +188,18 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    public List<MemberSearchByLocationDTO> searchByLocationMember(LocationDTO locationDTO,String keyword) throws Exception {
+        List<Member> memberList =queryRepository.findAllByDistanceMember(locationDTO,keyword);
+        List<MemberSearchByLocationDTO> memberDTOList = memberList.stream().map(MemberSearchByLocationDTO::fromEntity).collect(Collectors.toList());
+
+        return memberDTOList;
+    }
+
     public MemberDTO getMemberByEmail(String email) {
-        return MemberDTO.fromEntity(memberRepository.findByEmail(email));
+        return memberRepository.findByEmail(email)
+                .map(MemberDTO::fromEntity)
+                .orElse(null);
     }
 
 
