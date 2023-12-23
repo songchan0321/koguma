@@ -10,7 +10,7 @@ import java.util.List;
 public interface MemberService {
 
 
-    Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag);
+    Member addMember(MemberDTO memberDTO, String nickname, String pw, String phone, float score, String email, Boolean roleFlag, Boolean socialFlag, String profileURL);
     void deleteMember(Long id);
     MemberDTO updateMember(MemberDTO memberDTO, String nickname, String profileURL);
     void updateMember(MemberDTO memberDTO);

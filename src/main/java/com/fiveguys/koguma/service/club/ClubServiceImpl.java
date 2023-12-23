@@ -129,6 +129,8 @@ public class ClubServiceImpl implements ClubService{
                 .map(ListClubByCategoryDTO::fromEntity)
                 .collect(Collectors.toList());
 
+
+
         System.out.println("collect = " + collect.get(0));
 
         return collect;

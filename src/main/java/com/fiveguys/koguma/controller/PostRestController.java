@@ -43,7 +43,7 @@ public class PostRestController {
     @GetMapping("/list")
     public ResponseEntity<Page<PostDTO>> listPost(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size)
+            @RequestParam(name = "size", defaultValue = "100") int size)
     {
         try{
             PageRequest pageRequest = PageRequest.of(page, size);
@@ -59,7 +59,7 @@ public class PostRestController {
     @GetMapping("/list/member")
     public ResponseEntity<Page<PostDTO>> listPostByMember(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "size", defaultValue = "100") int size,
             @CurrentMember MemberDTO currentMember
     ){
 
@@ -93,7 +93,7 @@ public class PostRestController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add")
     public ResponseEntity<Void> addPost(
             @RequestBody PostDTO postDTO,
             @CurrentMember MemberDTO currentMember
@@ -104,17 +104,14 @@ public class PostRestController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-
-
             LocationDTO locationDTO =locationService.getMemberRepLocation(currentMember.getId());
 
             postDTO.setDong(locationDTO.getDong());
             postDTO.setLatitude(locationDTO.getLatitude());
             postDTO.setLongitude(locationDTO.getLongitude());
 
-//            CategoryDTO categoryDTO = new CategoryDTO();
-//            categoryDTO.setId(postDTO.getCategoryDTO().getId());
-//            postDTO.setCategoryDTO(categoryDTO);
+            //null => react 에서 set해줘야함
+            System.out.println("postDTOcategory = " + postDTO.getCategoryDTO());
 
             postService.addPost(postDTO, currentMember);
 
@@ -125,16 +122,15 @@ public class PostRestController {
     }
 
 
-    @PutMapping("/update")
+    @PutMapping("/{postId}/update")
     public ResponseEntity<Void> updatePost(
-            @RequestBody PostDTO postDTO,
+            @PathVariable("postId") Long postId,
             @CurrentMember MemberDTO currentMember
             ){
         try{
 
-            if(!postDTO.getMemberDTO().getId().equals(currentMember.getId())){
-                throw new Exception("권한이 없습니다.");
-            }
+            PostDTO postDTO = new PostDTO();
+            postDTO.setId(postId);
             postService.updatePost(postDTO, currentMember);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (EntityNotFoundException e){
@@ -144,9 +140,10 @@ public class PostRestController {
         }
     }
 
-    @PutMapping("/delete")
+    @PutMapping("/{postId}/delete")
     public ResponseEntity<Void> deletePost(
             @RequestBody PostDTO postDTO,
+            @PathVariable("postId") Long postId,
             @CurrentMember MemberDTO currentMember
     ) {
         try {
@@ -176,7 +173,7 @@ public class PostRestController {
         }
     }
 
-    @GetMapping("/list/views")
+    @GetMapping("/list/category/view")
     public ResponseEntity<Page<PostDTO>> listPostByViews(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
@@ -191,7 +188,6 @@ public class PostRestController {
     }
 
 
-
     //게시글 카테고리 리스트
     @GetMapping("/list/categoryType/{categoryType}")
     public ResponseEntity<List<CategoryDTO>> listCategoryForSelect() {
@@ -202,10 +198,10 @@ public class PostRestController {
     }
 
     //카테고리 별 게시글 리스트
-    @GetMapping("/list/categoryId/{categoryId}")
+    @GetMapping("/list/category/{categoryId}")
     public ResponseEntity<Page<PostDTO>> listCategoryBySearch(@PathVariable("categoryId") Long categoryId) {
 
-        PageRequest pageRequest = PageRequest.of(0, 10);
+        PageRequest pageRequest = PageRequest.of(0, 100);
 
         CategoryDTO categoryDTO = categoryService.getCategory(categoryId);
 

@@ -4,11 +4,16 @@ import com.fiveguys.koguma.data.dto.CommentDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
 import com.fiveguys.koguma.data.entity.Comment;
+import com.fiveguys.koguma.data.entity.Post;
 import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.CommentRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
@@ -35,6 +40,8 @@ public class CommentServiceImpl implements CommentService {
         if(commentDTO.getParentDTO() != null && commentDTO.getParentDTO().getId() != null) {
             //부모 유효성 체크
             Comment parent = findVerifiedComment(commentDTO.getParentDTO().getId());
+
+
             commentDTO.setMemberDTO(memberDTO);
 
             Comment saved = commentRepository.save(commentDTO.toEntity());
@@ -94,6 +101,27 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(existingComment);
     }
 
+    @Override
+    public List<Comment> listReply(
+            @PathVariable(name = "commentId") Long commentId) {
+        // 주어진 commentId에 해당하는 Comment를 가져옴
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setId(commentId);
+
+        // 가져온 CommentDTO로 댓글을 조회
+        List<Comment> comments = commentRepository.findAllByParentId(commentDTO.getId());
+
+        // 댓글의 id와 parent의 id가 같은 값을 가진 댓글들만 필터링
+        List<Comment> filteredComments = comments.stream()
+                .filter(comment -> comment.getParent() != null && comment.getId().equals(comment.getParent().getId()))
+                .collect(Collectors.toList());
+
+        return filteredComments;
+    }
+
+
+
+
 
     @Override
     public List<Comment> listComment(PostDTO postDTO) {
@@ -108,23 +136,19 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
-    @Override
-    public List<Comment> listReply(PostDTO postDTO) {
 
-        List<Comment> allComments = commentRepository.findAllByPostId(postDTO.getId());
-
-        List<Comment> reply = allComments.stream()
-                .filter(comment -> comment.getParent() != null)
-                .collect(Collectors.toList());
-
-
-        return reply;
-    }
 
     @Override
     public List<Comment> listCommentByMember(MemberDTO memberDTO) {
 
         return commentRepository.findAllByMemberId(memberDTO.getId());
+    }
+
+    @Override
+    public Page<Post> listCommentedPostByMember(MemberDTO memberDTO, PageRequest pageRequest) {
+
+        Long memberId = memberDTO.getId();
+        return commentRepository.findCommentedPostByMemberId(memberId, pageRequest);
     }
 
     @Override

@@ -23,5 +23,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 //    @Query("SELECT COUNT(m) FROM ClubMember c JOIN c.member m WHERE c.club = :clubId")
 //    Integer countClubMembersByClubId(@Param("clubId") Long clubId);
 
+
     Integer countByClubId(Long clubId);
 }

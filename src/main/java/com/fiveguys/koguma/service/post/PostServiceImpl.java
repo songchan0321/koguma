@@ -2,6 +2,7 @@ package com.fiveguys.koguma.service.post;
 
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.CategoryType;
+import com.fiveguys.koguma.data.entity.Comment;
 import com.fiveguys.koguma.data.entity.Post;
 import com.fiveguys.koguma.data.entity.Product;
 import com.fiveguys.koguma.repository.common.CategoryRepository;
@@ -36,14 +37,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> listPost(PageRequest pageRequest) {
 
-        return  postRepository.findAll(pageRequest);
+
+        return postRepository.findAllByOrderByIdDesc(pageRequest);
     }
 
 
     @Override
     public Page<Post> listPostByMember(MemberDTO memberDTO, PageRequest pageRequest) {
 
-        return  postRepository.findAllByMember(memberDTO.toEntity(), pageRequest);
+        return  postRepository.findAllByMemberOrderByIdDesc(memberDTO.toEntity(), pageRequest);
 
     }
     @Override
@@ -52,12 +54,10 @@ public class PostServiceImpl implements PostService {
         return postList.stream().filter(Post::getActiveFlag).map(PostDTO::fromEntity).collect(Collectors.toList());
     }
 
-
     @Override
     public void addPost(PostDTO postDTO, MemberDTO memberDTO) {
 
         postDTO.setMemberDTO(memberDTO);
-
 
         postRepository.save(postDTO.toEntity());
 
@@ -101,32 +101,26 @@ public class PostServiceImpl implements PostService {
         postRepository.save(existingPost);
     }
 
-    @Override
     public void increaseViews(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new NoResultException("해당 게시글의 정보가 존재하지 않습니다."));
+        post.increaseViews(post.getViews()); // 조회수 증가 작업은 여기서는 하지 않음
+        postRepository.save(post); // 저장을 통해 조회수 업데이트
 
-        Post post = postRepository.findById(id).orElseThrow(
-                ()->new NoResultException("해당 게시글의 정보가 존재하지 않습니다.")
-        );
-        post.increaseViews(post.getViews());
     }
 
     @Override
     public Page<Post> listPostByViews(Pageable pageRequest) {
 
         return  postRepository.findTop10ByOrderByViewsDesc(pageRequest);
+
     }
 
-    //검색을 위한 카테고리 리스트 정렬
-    @Override
-    public List<CategoryDTO>  listCategoryForSelect() {
-
-        return categoryService.listCategory(CategoryType.POST);
-    }
     //카테고리 별 검색 결과
     @Override
     public Page<Post> listCategoryBySearch(CategoryDTO categoryDTO, PageRequest pageRequest) {
 
-        return  postRepository.findAllByCategory(categoryDTO.toEntity(), pageRequest);
+        return  postRepository.findAllByCategoryOrderByIdDesc(categoryDTO.toEntity(), pageRequest);
 
     }
 

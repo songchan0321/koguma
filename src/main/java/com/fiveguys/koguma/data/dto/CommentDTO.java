@@ -51,7 +51,7 @@ public class CommentDTO {
                 .build();
 
         //부모 댓글 참조 설정
-        if (comment.getParent() != null) {
+        if (comment.getParent() != null && comment.getId().equals(comment.getParent().getId())) {
             commentDTO.setParentDTO(CommentDTO.fromEntity(comment.getParent()));
         }
         return commentDTO;
