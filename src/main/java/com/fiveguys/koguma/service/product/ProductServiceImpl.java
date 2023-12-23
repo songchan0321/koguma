@@ -66,6 +66,13 @@ public class ProductServiceImpl implements ProductService{
 
     }
 
+    @Override
+    public void updateActiveFlag(Long productId) {
+        ProductDTO productDTO = getProduct(productId);
+        productDTO.setActiveFlag(false);
+        productRepository.save(productDTO.toEntity());
+    }
+
     @Transactional
     public void updateView(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()->new NoResultException("해당 상품의 정보가 존재하지 않습니다."));
@@ -74,13 +81,13 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public List<ProductDTO> listStateProduct(Long memberId, ProductStateType state) throws Exception {
-        List<Product> productList = productRepository.findAllBySellerIdAndTradeStatusOrderByRegDateDesc(memberId,state);
+        List<Product> productList = productRepository.findAllBySellerIdAndTradeStatusAndActiveFlagOrderByRegDateDesc(memberId,state,true);
         return productList.stream()
                 .map(ProductDTO::fromEntityContainImage)
                 .collect(Collectors.toList());
     }
     public List<ProductDTO> listBuyProduct(Long memberId) throws Exception {
-        List<Product> productList =  productRepository.findAllByBuyerIdAndTradeStatusOrderByBuyDateDesc(memberId,ProductStateType.SALED);
+        List<Product> productList =  productRepository.findAllByBuyerIdAndTradeStatusAndActiveFlagOrderByBuyDateDesc(memberId,ProductStateType.SALED,true);
         return productList.stream()
                 .map(ProductDTO::fromEntityContainImage)
                 .collect(Collectors.toList());

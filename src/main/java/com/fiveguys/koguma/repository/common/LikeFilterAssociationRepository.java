@@ -28,7 +28,7 @@ public interface LikeFilterAssociationRepository extends JpaRepository<LikeFilte
 
     Optional<LikeFilterAssociation> findByMemberIdAndProductId(Long memberId, Long productId);
 
-    @Query("SELECT DISTINCT lfa FROM LikeFilterAssociation lfa LEFT JOIN FETCH lfa.product p LEFT JOIN FETCH p.image WHERE lfa.member.id = :memberId")
+    @Query("SELECT DISTINCT lfa FROM LikeFilterAssociation lfa LEFT JOIN FETCH lfa.product p LEFT JOIN FETCH p.image WHERE lfa.member.id = :memberId AND p.activeFlag = true")
     List<LikeFilterAssociation> findAllWithProductAndImagesByMemberId(@Param("memberId") Long memberId);
 
     List<LikeFilterAssociation> findAllByProductId(Long productId);

@@ -62,9 +62,8 @@ public class AuthRestController {
     public ResponseEntity<String> handleUnauthorized() {
         return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/common/kakao/callback/check")
-    public ResponseEntity getLogin(@RequestParam("code") String code,
-                                    @CurrentMember MemberDTO loginInfo,
+    @GetMapping("/common/kakao/callback")
+    public ResponseEntity<String> getLogin(@RequestParam("code") String code,
                                     HttpServletRequest request, HttpServletResponse response ) throws Exception { //(1)
 
 
@@ -76,12 +75,13 @@ public class AuthRestController {
 
         System.out.println("code : "+code);
         // 넘어온 인가 코드를 통해 access_token 발급
+
         KakaoAuthDTO kakaoAuthDTO = authService.getAccessToken(code);
         System.out.println(kakaoAuthDTO);
         KakaoProfileDTO kakaoProfileDTO = authService.findProfile(kakaoAuthDTO.getAccess_token());
         MemberDTO memberDTO = memberService.getMemberByEmail(kakaoProfileDTO.getKakao_account().getEmail());
-        boolean valid = authService.validateSocialMember(memberDTO);
-        if (valid){   // 소셜로그인으로 로그인
+
+        if (memberDTO != null){   // 소셜로그인으로 로그인
 
             Member member = memberDTO.toEntity();
             member.setEmail(kakaoProfileDTO.getKakao_account().getEmail());
@@ -93,18 +93,12 @@ public class AuthRestController {
             authService.setSecurityContextHolder(request,memberDTO);
 
             response.addCookie(authService.createCookie("refreshToken", refreshToken));
-            responseEntity = ResponseEntity.ok().headers(headers).body(accessToken);
+            return ResponseEntity.ok().headers(headers).body(accessToken);
         }
-        //스프링 컨텍스트에 저장된 인증정보가 있다면 설정 페이지에서 카카오 연동을 할 수 있음.
-        else if (loginInfo!=null){
-            loginInfo.setSocialFlag(true);
-            memberService.updateMember(loginInfo);
-        }
-        else{  // 연동된 소셜로그인이 없어 회원가입부터
-            responseEntity = (ResponseEntity) ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(kakaoProfileDTO.getKakao_account().getEmail());
-        }
+        else
+            return ResponseEntity.ok().body(kakaoProfileDTO.getKakao_account().getEmail());
 
-        return responseEntity;
+
     }
 
     @PostMapping("/auth/member/add")

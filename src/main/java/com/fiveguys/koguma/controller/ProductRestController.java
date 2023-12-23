@@ -118,9 +118,8 @@ public class ProductRestController {
 
     @DeleteMapping("/delete/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId,@CurrentMember MemberDTO memberDTO) throws Exception {
-        ProductDTO productDTO = productService.getProduct(productId);
 
-        productService.deleteProduct(productId);
+        productService.updateActiveFlag(productId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -239,6 +238,10 @@ public class ProductRestController {
 
 
         return ResponseEntity.status(HttpStatus.OK).body(memberProductSuggestService.listSuggestPrice(productId));
+    }
+    @GetMapping("/suggest/valid/{productId}")
+    public ResponseEntity<Boolean> suggestValid(@PathVariable Long productId, @CurrentMember MemberDTO memberDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberProductSuggestService.checkSuggestProductValid(productId,memberDTO.getId()));
     }
     @GetMapping("/suggest/count/{productId}")
     public ResponseEntity<Integer> listSuggestCount(@PathVariable Long productId, @CurrentMember MemberDTO memberDTO) {
