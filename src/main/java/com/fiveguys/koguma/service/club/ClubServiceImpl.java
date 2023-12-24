@@ -7,6 +7,7 @@ import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.club.ClubMemberJoinRequestRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
 import com.fiveguys.koguma.repository.club.ClubRepository;
+import com.fiveguys.koguma.repository.common.QueryRepository;
 import com.fiveguys.koguma.service.common.CategoryService;
 import com.fiveguys.koguma.service.common.ImageService;
 import com.fiveguys.koguma.service.common.LocationService;
@@ -32,6 +33,7 @@ public class ClubServiceImpl implements ClubService{
     private final CategoryService categoryService;
     private final ImageService imageService;
     private final ClubPostCategoryService clubPostCategoryService;
+    private final QueryRepository queryRepository;
 
 
 
@@ -48,7 +50,7 @@ public class ClubServiceImpl implements ClubService{
 
 
         Club savedClub = Club.createClub(ccd.getTitle(), ccd.getContent(), ccd.getMaxCapacity(),
-                lorepo.getLatitude(), lorepo.getLatitude(), lorepo.getDong(),
+                lorepo.getLatitude(), lorepo.getLongitude(),  lorepo.getDong(),
                 category.getName(), category.toEntity());
 
         Club save = clubRepository.save(savedClub);
@@ -104,7 +106,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public List<ClubDTO> listMyClub(Long memberId) {
+    public List<ListClubByCategoryDTO> listMyClub(Long memberId) {
 
         // 내 모임 리스트 조회
         List<ClubMember> clubMembers = clubMemberRepository.findAllByMemberId(memberId);
@@ -114,28 +116,40 @@ public class ClubServiceImpl implements ClubService{
                 .map(ClubMember::getClub)
                 .collect(Collectors.toList());
 
-        // club -> clubDto로 전환
-        List<ClubDTO> clubDTOS = clubs.stream()
-                .map((c)-> new ClubDTO(c))
-                .collect(Collectors.toList());
+        for (Club club : clubs) {
+            System.out.println("club = " + club.getLatitude());
+            System.out.println("club = " + club.getClubMembers());
+        }
 
-        return clubDTOS;
-    }
 
-    @Override
-    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId) {
-
-        List<ListClubByCategoryDTO> collect = clubRepository.findClubsByCategoryId(categoryId).stream()
+        return clubs.stream()
                 .map(ListClubByCategoryDTO::fromEntity)
                 .collect(Collectors.toList());
-
-
-
-        System.out.println("collect = " + collect.get(0));
-
-        return collect;
     }
 
+//    @Override
+//    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId) {
+//
+//        List<ListClubByCategoryDTO> collect = clubRepository.findClubsByCategoryId(categoryId).stream()
+//                .map(ListClubByCategoryDTO::fromEntity)
+//                .collect(Collectors.toList());
+//
+//
+//
+//        System.out.println("collect = " + collect.get(0));
+//
+//        return collect;
+//    }
+
+    @Override
+    public List<ListClubByCategoryDTO> listClubByCategory(LocationDTO locationDTO, String keyword, Long categoryId) throws Exception {
+
+        List<ListClubByCategoryDTO> collect = queryRepository.findAllByDistanceClub(locationDTO, keyword, categoryId).stream()
+                .map(ListClubByCategoryDTO::fromEntity).collect(Collectors.toList());
+
+        return queryRepository.findAllByDistanceClub(locationDTO, keyword, categoryId).stream()
+                .map(ListClubByCategoryDTO::fromEntity).collect(Collectors.toList());
+    }
     @Override
     public ClubDTO getClub(Long clubId) {
         // 모임 조회

@@ -1,9 +1,6 @@
 package com.fiveguys.koguma.service.club;
 
-import com.fiveguys.koguma.data.dto.ClubDTO;
-import com.fiveguys.koguma.data.dto.ClubJoinRequestDTO;
-import com.fiveguys.koguma.data.dto.ClubMemberDTO;
-import com.fiveguys.koguma.data.dto.CreateClubDTO;
+import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
 
@@ -17,9 +14,10 @@ public interface ClubService {
 
     public List<ClubDTO> listClub();
 
-    public List<ClubDTO> listMyClub(Long memberId);
+    public List<ListClubByCategoryDTO> listMyClub(Long memberId);
 
-    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId);
+//    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId);
+    public List<ListClubByCategoryDTO> listClubByCategory(LocationDTO locationDTO,  String keyword, Long categoryId) throws Exception;
 
     public ClubDTO getClub(Long clubId);
 

@@ -30,4 +30,6 @@ public interface ClubMeetUpService {
 
     public boolean checkJoinMeetUp(Long meetUpId,Long clubMemberId);
 
+    public Integer countJoinMember(Long meetUpId);
+
 }

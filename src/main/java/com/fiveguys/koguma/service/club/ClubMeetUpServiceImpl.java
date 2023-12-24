@@ -161,4 +161,9 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
         return clubMemberMeetUpJoinRepository.existsByIdAndClubMemberId(meetUpId,clubMemberId);
     }
+
+    @Override
+    public Integer countJoinMember(Long meetUpId) {
+        return clubMemberMeetUpJoinRepository.countByClubMeetUpId(meetUpId);
+    }
 }
