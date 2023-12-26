@@ -3,6 +3,7 @@ package com.fiveguys.koguma.service.club;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
+import com.fiveguys.koguma.data.dto.club.NearClubDTO;
 import com.fiveguys.koguma.data.entity.*;
 import com.fiveguys.koguma.repository.club.ClubMemberJoinRequestRepository;
 import com.fiveguys.koguma.repository.club.ClubMemberRepository;
@@ -97,11 +98,11 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public List<ClubDTO> listClub() {
+    public List<ListClubByCategoryDTO> listClub() {
 
         List<Club> all = clubRepository.findAll();
         return all.stream()
-                .map((c)-> ClubDTO.fromEntity(c))
+                .map(ListClubByCategoryDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 

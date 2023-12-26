@@ -44,8 +44,11 @@ public class ClubPost extends BaseTime{
     @Column(name = "club_post_category_name")
     private String categoryName;
 
+    private String images;
+
     @Builder
-    public ClubPost(Long id, String title, String content, Club club, String clubName, Member member, ClubPostCategory clubPostCategory, String categoryName){
+    public ClubPost(Long id, String title, String content, Club club, String clubName,
+                    Member member, ClubPostCategory clubPostCategory, String categoryName, String images){
         this.id = id;
         this.title = title;
         this.content=content;

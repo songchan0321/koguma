@@ -3,6 +3,7 @@ package com.fiveguys.koguma.service.club;
 import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
+import com.fiveguys.koguma.data.dto.club.NearClubDTO;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ClubService {
 
     public List<ClubDTO> listClub(Double latitude, Double longitude);
 
-    public List<ClubDTO> listClub();
+    public List<ListClubByCategoryDTO> listClub();
 
     public List<ListClubByCategoryDTO> listMyClub(Long memberId);
 

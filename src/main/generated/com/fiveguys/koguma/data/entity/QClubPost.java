@@ -38,6 +38,8 @@ public class QClubPost extends EntityPathBase<ClubPost> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath images = createString("images");
+
     public final QMember member;
 
     //inherited

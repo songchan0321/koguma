@@ -1,10 +1,7 @@
 package com.fiveguys.koguma.controller;
 
 import com.fiveguys.koguma.data.dto.*;
-import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
-import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
-import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
-import com.fiveguys.koguma.data.dto.club.MeetUpStateDTO;
+import com.fiveguys.koguma.data.dto.club.*;
 import com.fiveguys.koguma.data.entity.CategoryType;
 import com.fiveguys.koguma.data.entity.MeetUpType;
 import com.fiveguys.koguma.data.entity.Member;
@@ -72,16 +69,16 @@ public class ClubRestController {
 //        return ResponseEntity.ok(clubService.listClub());
 //    }
 
-    @GetMapping(path = "/all")
-    public ResponseEntity<?> listClubs(@CurrentMember MemberDTO memberDTO){
-
-        List<ClubDTO> clubDTOS = clubService.listClub();
-        for (ClubDTO clubDTO : clubDTOS) {
-            System.out.println("clubDTO = " + clubDTO);
-        }
-
-        return ResponseEntity.ok(clubDTOS);
-    }
+//    @GetMapping(path = "/all")
+//    public ResponseEntity<?> listClubs(@CurrentMember MemberDTO memberDTO){
+//
+//        List<ClubDTO> clubDTOS = clubService.listClub();
+//        for (ClubDTO clubDTO : clubDTOS) {
+//            System.out.println("clubDTO = " + clubDTO);
+//        }
+//
+//        return ResponseEntity.ok(clubDTOS);
+//    }
 
     @GetMapping(path = "/joins")
 
@@ -283,8 +280,12 @@ public class ClubRestController {
 
         GetClubMemberDTO clubMember = clubService.getClubMember(clubId, memberDTO.getId());
 
+        System.out.println("clubMember.getId = " + clubMember.getId());
+        System.out.println("meetUpId = " + meetUpId);
 
-        return ResponseEntity.ok(clubMeetUpService.checkJoinMeetUp(meetUpId,clubMember.getId()));
+        boolean b = clubMeetUpService.checkJoinMeetUp(meetUpId, clubMember.getId());
+        System.out.println("checkJoinMeetUp == >>  = " + b);
+        return ResponseEntity.ok(b);
     }
 
     @GetMapping("/member/check/{clubId}")
@@ -316,5 +317,14 @@ public class ClubRestController {
     public ResponseEntity<?> joinMeetUpMemberCount(@PathVariable Long meetUpId){
 
         return ResponseEntity.ok(clubMeetUpService.countJoinMember(meetUpId));
+    }
+
+    @GetMapping("/near/map")
+    public ResponseEntity<?> nearClubMap(@CurrentMember MemberDTO memberDTO){
+
+        List<ListClubByCategoryDTO> clubDTOS = clubService.listClub();
+
+
+        return ResponseEntity.ok(clubDTOS);
     }
 }
