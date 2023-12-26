@@ -119,6 +119,7 @@ public class MemberServiceImpl implements MemberService {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setNickname(otherMember.getNickname());
         memberDTO.setProfileURL(otherMember.getProfileURL());
+        memberDTO.setScore(otherMember.getScore());
 
         return memberDTO;
     }
