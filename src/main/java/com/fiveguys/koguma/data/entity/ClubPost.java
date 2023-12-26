@@ -49,7 +49,8 @@ public class ClubPost extends BaseTime{
 
     @Builder
     public ClubPost(Long id, String title, String content, Club club, String clubName,
-                    Member member, ClubPostCategory clubPostCategory, String categoryName, String images){
+                    Member member, ClubPostCategory clubPostCategory, String categoryName,
+                    String images, String clubMemberNickname){
         this.id = id;
         this.title = title;
         this.content=content;
@@ -58,9 +59,12 @@ public class ClubPost extends BaseTime{
         this.member = member;
         this.clubPostCategory = clubPostCategory;
         this.categoryName = categoryName;
+        this.clubMemberNickname = clubMemberNickname;
+        this.images = images;
     }
 
-    public static ClubPost createClubPost(String title, String content, Club club, String clubName, Member member, ClubPostCategory clubPostCategory, String categoryName){
+    public static ClubPost createClubPost(String title, String content, Club club, String clubName, Member member, ClubPostCategory clubPostCategory,
+                                          String categoryName, String clubMemberNickname, String images){
         return ClubPost.builder()
                 .title(title)
                 .content(content)
@@ -69,6 +73,8 @@ public class ClubPost extends BaseTime{
                 .member(member)
                 .clubPostCategory(clubPostCategory)
                 .categoryName(categoryName)
+                .clubMemberNickname(clubMemberNickname)
+                .images(images)
                 .build();
     }
 
