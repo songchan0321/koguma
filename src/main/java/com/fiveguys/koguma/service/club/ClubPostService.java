@@ -1,16 +1,16 @@
 package com.fiveguys.koguma.service.club;
 
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.club.ClubPostCommentDTO;
 import com.fiveguys.koguma.data.dto.club.ClubPostDTO;
 import com.fiveguys.koguma.data.entity.*;
-import com.fiveguys.koguma.repository.club.ClubMemberRepository;
-import com.fiveguys.koguma.repository.club.ClubPostCategoryRepository;
-import com.fiveguys.koguma.repository.club.ClubPostRepository;
-import com.fiveguys.koguma.repository.club.ClubRepository;
+import com.fiveguys.koguma.repository.club.*;
+import com.fiveguys.koguma.repository.member.MemberRepository;
 import com.fiveguys.koguma.repository.post.PostRepository;
 import com.fiveguys.koguma.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +29,8 @@ public class ClubPostService {
     private final ClubRepository clubRepository;
     private final ClubPostCategoryRepository clubPostCategoryRepository;
     private final ClubMemberRepository clubMemberRepository;
+    private final ClubCommentRepository clubCommentRepository;
+    private final MemberRepository memberRepository;
 
 
 
@@ -57,8 +59,9 @@ public class ClubPostService {
         ClubPost clubPost = clubPostRepository.findById(clubPostId).get();
 
         clubPost.increaseViews();
-
-        return ClubPostDTO.fromEntity(clubPost);
+        ClubPostDTO clubPostDTO = ClubPostDTO.fromEntity(clubPost);
+        clubPostDTO.setCountComment(clubCommentRepository.countByClubPostId(clubPostId));
+        return clubPostDTO;
 
     }
 
@@ -102,5 +105,34 @@ public class ClubPostService {
 
     public void updatePost(){
     }
-    
+
+    public Long addComment(ClubPostCommentDTO clubPostCommentDTO, MemberDTO memberDTO){
+
+        Club club = clubRepository.findById(clubPostCommentDTO.getClubId()).get();
+        ClubPost clubPost = clubPostRepository.findById(clubPostCommentDTO.getClubPostId()).get();
+        Member member = memberRepository.findById(memberDTO.getId()).get();
+
+        ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(club.getId(), member.getId()).get();
+
+        ClubComment clubComment = ClubComment.builder()
+                .club(club)
+                .clubPost(clubPost)
+                .clubMember(clubMember)
+                .content(clubPostCommentDTO.getContent())
+                .build();
+
+        return clubCommentRepository.save(clubComment).getId();
+    }
+
+    public List<ClubPostCommentDTO> listComment(Long clubPostId){
+        List<ClubComment> clubComment = clubCommentRepository.findByClubPostId(clubPostId);
+
+       List<ClubPostCommentDTO> clubPostCommentDTOs = clubComment.stream()
+                .map(ClubPostCommentDTO::fromEntity)
+                .collect(Collectors.toList());
+
+
+
+        return  clubPostCommentDTOs;
+    }
 }

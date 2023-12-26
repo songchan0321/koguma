@@ -26,13 +26,13 @@ public class QClubComment extends EntityPathBase<ClubComment> {
 
     public final QClub club;
 
+    public final QClubMember clubMember;
+
     public final QClubPost clubPost;
 
     public final StringPath content = createString("content");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final QMember member;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
@@ -56,8 +56,8 @@ public class QClubComment extends EntityPathBase<ClubComment> {
     public QClubComment(Class<? extends ClubComment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.club = inits.isInitialized("club") ? new QClub(forProperty("club"), inits.get("club")) : null;
+        this.clubMember = inits.isInitialized("clubMember") ? new QClubMember(forProperty("clubMember"), inits.get("clubMember")) : null;
         this.clubPost = inits.isInitialized("clubPost") ? new QClubPost(forProperty("clubPost"), inits.get("clubPost")) : null;
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 
 }
