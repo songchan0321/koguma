@@ -277,7 +277,7 @@ public class ProductRestController {
             return ResponseEntity.status(HttpStatus.OK).body("상품 끌어올리기 완료");
 
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("끌어올리기 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     @GetMapping("/buyer/list/{productNo}")
