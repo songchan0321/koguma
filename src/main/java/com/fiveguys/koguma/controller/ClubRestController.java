@@ -254,7 +254,7 @@ public class ClubRestController {
         return ResponseEntity.ok(cmmj);
     }
 
-    @GetMapping(path = "/meet-up/cancel")
+    @PostMapping(path = "/meet-up/cancel")
     public ResponseEntity<?> joinMeetUpCancel(@RequestBody MeetUpStateDTO meetUpStateDTO,
                                               @CurrentMember MemberDTO memberDTO) {
 

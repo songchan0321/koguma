@@ -31,6 +31,7 @@ public class ClubPostDTO {
     private LocalDateTime regDate;
     private String memberProfile;
     private int views;
+    private int countComment;
 
 
 

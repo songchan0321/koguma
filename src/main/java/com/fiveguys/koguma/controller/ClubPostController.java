@@ -3,6 +3,7 @@ package com.fiveguys.koguma.controller;
 import com.fiveguys.koguma.data.dto.ClubMemberDTO;
 import com.fiveguys.koguma.data.dto.ClubPostCategoryDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.club.ClubPostCommentDTO;
 import com.fiveguys.koguma.data.dto.club.ClubPostDTO;
 import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.service.club.ClubPostCategoryImpl;
@@ -112,6 +113,22 @@ public class ClubPostController {
     public ResponseEntity<?> getClubPostCategory(@PathVariable Long categoryId){
         ClubPostCategoryDTO findClubPostCate = clubPostCategory.getClubPostCategory(categoryId);
         return ResponseEntity.ok(findClubPostCate);
+    }
+
+    @PostMapping("/comment/add")
+    public ResponseEntity<?> addComment(@RequestBody ClubPostCommentDTO clubPostCommentDTO,
+                                        @CurrentMember MemberDTO memberDTO){
+        return ResponseEntity.ok(clubPostService.addComment(clubPostCommentDTO, memberDTO));
+    }
+
+    @GetMapping("/comment/list/{clubPostId}")
+    public ResponseEntity<?> listComment(@PathVariable Long clubPostId){
+        return ResponseEntity.ok(clubPostService.listComment(clubPostId));
+    }
+
+    @GetMapping("/comment/list/my")
+    public ResponseEntity<?> listMyComment(@CurrentMember MemberDTO memberDTO){
+        return null;
     }
 
 }

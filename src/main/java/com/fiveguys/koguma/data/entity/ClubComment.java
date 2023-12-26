@@ -1,8 +1,6 @@
 package com.fiveguys.koguma.data.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -21,13 +19,23 @@ public class ClubComment extends BaseTime{
     private ClubPost clubPost;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "club_member_id")
+    private ClubMember clubMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     private Club club;
 
     private String content;
+
+    @Builder
+    public ClubComment(Long id, ClubPost clubPost, Club club, ClubMember clubMember,String content){
+
+        this.id = id;
+        this.clubPost = clubPost;
+        this.club =club;
+        this.content = content;
+        this.clubMember = clubMember;
+    }
 
 }
