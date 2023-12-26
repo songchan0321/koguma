@@ -285,6 +285,8 @@ public class ClubServiceImpl implements ClubService{
 
         GetClubMemberDTO clubMemberDTO = GetClubMemberDTO.fromEntity(clubMember);
 
+        System.out.println("clubMemberDTO = " + clubMemberDTO);
+
         clubMemberDTO.setProfileURL(memberDTO.getProfileURL());
         return clubMemberDTO;
 
