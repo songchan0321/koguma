@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,13 +34,17 @@ public class ClubPostService {
 
     public Long addClubPost(ClubPostDTO cpd, MemberDTO memberDTO){
 
+        //멤버조회
         Member member = memberDTO.toEntity();
-
+        //모임조회
         Club findClub = clubRepository.findById(cpd.getClubId()).get();
-
+        //모임 카테고리 조회
         ClubPostCategory cpc = clubPostCategoryRepository.findById(cpd.getClubCategoryId()).get();
-
-        ClubPost clubPost = ClubPost.createClubPost(cpd.getTitle(), cpd.getContent(), findClub, findClub.getTitle(), member, cpc, cpc.getName());
+        //모임원 조회
+         ClubMember clubMember = clubMemberRepository.findByClubIdAndMemberId(findClub.getId(), member.getId()).get();
+        //모임 포스트 엔티티 생성 후 데이터 값 넣기
+        ClubPost clubPost = ClubPost.createClubPost(cpd.getTitle(), cpd.getContent(), findClub, findClub.getTitle(), member,
+                cpc, cpc.getName(), clubMember.getNickname(), cpd.getImages());
 
         clubPostRepository.save(clubPost);
 

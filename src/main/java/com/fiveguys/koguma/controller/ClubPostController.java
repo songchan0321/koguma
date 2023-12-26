@@ -29,7 +29,10 @@ public class ClubPostController {
     @PostMapping("/add")
     public ResponseEntity<Long> addPost(@RequestBody ClubPostDTO clubPostDTO,
                                         @CurrentMember MemberDTO memberDTO){
-
+        System.out.println("clubPostDTO = " + clubPostDTO);
+        System.out.println("clubPostDTO = " + clubPostDTO);
+        System.out.println("clubPostDTO = " + clubPostDTO);
+        System.out.println("clubPostDTO = " + clubPostDTO);
 
 
         return ResponseEntity.ok(clubPostService.addClubPost(clubPostDTO, memberDTO));
