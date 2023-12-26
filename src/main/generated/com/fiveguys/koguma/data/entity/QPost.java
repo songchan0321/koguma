@@ -36,6 +36,8 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final ListPath<Image, QImage> image = this.<Image, QImage>createList("image", Image.class, QImage.class, PathInits.DIRECT2);
+
     public final NumberPath<Double> latitude = createNumber("latitude", Double.class);
 
     public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
@@ -44,8 +46,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final BooleanPath postType = createBoolean("postType");
 
-    //inherited
-    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
+    public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
     public final StringPath title = createString("title");
 

@@ -167,7 +167,7 @@ public class PostApplicationTests {
 
         PostDTO existingPost = postService.getPost(postId);
 
-        postService.deletePost(existingPost, new MemberDTO());
+        postService.deletePost(postId, new MemberDTO());
 
         PostDTO deletedPost = postService.getPost(postId);
 

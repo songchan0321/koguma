@@ -4,8 +4,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -50,6 +54,13 @@ public class Post extends BaseTime{
     @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag = true;
 
+    @CreatedDate
+    @Column(name = "reg_date")
+    private LocalDateTime regDate;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Image> image = new ArrayList<>();
+
 
     public void increaseViews(int views){
         this.views++;
@@ -57,8 +68,8 @@ public class Post extends BaseTime{
 
     @Builder
     public Post(Long id, Member member, Category category, String categoryName,
-                String title, String content, Boolean postType, Double latitude, Double longitude, String dong,
-                int views, Boolean activeFlag){
+                String title, String content, Boolean postType,  LocalDateTime regDate, Double latitude, Double longitude, String dong,
+                int views, Boolean activeFlag, List<Image> image){
         this.id = id;
         this.member = member;
         this.category = category;
@@ -70,7 +81,9 @@ public class Post extends BaseTime{
         this.longitude = longitude;
         this.dong = dong;
         this.views = views;
+        this.regDate = regDate;
         this.activeFlag = activeFlag;
+        this.image = image;
     }
 
     public void setCategory(Category category) {

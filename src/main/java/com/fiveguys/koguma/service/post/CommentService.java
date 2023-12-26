@@ -29,5 +29,7 @@ public interface CommentService {
 
     CommentDTO getComment(Long id);
 
+    long getCommentCountByPostId(Long postId);
+
 
 }

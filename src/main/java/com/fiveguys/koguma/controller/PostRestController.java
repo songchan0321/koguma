@@ -1,14 +1,14 @@
 package com.fiveguys.koguma.controller;
 
 
-import com.fiveguys.koguma.data.dto.CategoryDTO;
-import com.fiveguys.koguma.data.dto.LocationDTO;
-import com.fiveguys.koguma.data.dto.MemberDTO;
-import com.fiveguys.koguma.data.dto.PostDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fiveguys.koguma.data.dto.*;
 import com.fiveguys.koguma.data.entity.CategoryType;
+import com.fiveguys.koguma.data.entity.ImageType;
 import com.fiveguys.koguma.data.entity.Member;
 import com.fiveguys.koguma.data.entity.Post;
 import com.fiveguys.koguma.service.common.CategoryService;
+import com.fiveguys.koguma.service.common.ImageService;
 import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.post.PostService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
@@ -37,6 +37,8 @@ public class PostRestController {
     private final CategoryService categoryService;
 
     private final LocationService locationService;
+
+    private final ImageService imageService;
 
 
     //게시글 리스트 조회
@@ -85,6 +87,8 @@ public class PostRestController {
 
         try{
             PostDTO post = postService.getPost(postId);
+            System.out.println("$$$$$$$$$$$$");
+            System.out.println(post);
             return new ResponseEntity<>(post, HttpStatus.OK);
         }catch (NoResultException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -99,10 +103,14 @@ public class PostRestController {
             @CurrentMember MemberDTO currentMember
     ){
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("@@@@@@@@@@@@@@@@@@@@" + postDTO);
         try{
             if(currentMember == null || currentMember.getId() == null){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+            List<String> urls = postDTO.getImages();
+
 
             LocationDTO locationDTO =locationService.getMemberRepLocation(currentMember.getId());
 
@@ -113,7 +121,12 @@ public class PostRestController {
             //null => react 에서 set해줘야함
             System.out.println("postDTOcategory = " + postDTO.getCategoryDTO());
 
-            postService.addPost(postDTO, currentMember);
+            PostDTO postDTO1 = postService.addPost(postDTO, currentMember);
+
+            List<ImageDTO> imageDTOList = imageService.createImageDTOList(postDTO1 ,urls, ImageType.POST);
+            System.out.println("&&&&&&&&&&&&&");
+            imageDTOList.forEach(System.out::println);
+            imageService.addImage(imageDTOList);
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (Exception e){
@@ -140,19 +153,15 @@ public class PostRestController {
         }
     }
 
-    @PutMapping("/{postId}/delete")
+    @GetMapping("/{postId}/delete")
     public ResponseEntity<Void> deletePost(
-            @RequestBody PostDTO postDTO,
             @PathVariable("postId") Long postId,
             @CurrentMember MemberDTO currentMember
     ) {
         try {
 
-            if(!postDTO.getMemberDTO().getId().equals(currentMember.getId())){
-                throw new Exception("권한이 없습니다.");
-            }
 
-            postService.deletePost(postDTO, currentMember);
+            postService.deletePost(postId, currentMember);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
