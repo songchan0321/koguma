@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,6 +23,7 @@ public class ClubPostDTO {
     private String content;
     private String clubName;
     private String clubMemberNickname;
+    private List<String> images;
     private Boolean activeFlag;
     private LocalDateTime regDate;
 

@@ -36,7 +36,6 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
 
         Long meetUpCounts = clubMeetUpRepository.countActiveMeetUpsByClubId(clubId);
 
-        // todo : 3  나중에 변경되는 값, 이라면 properties 별도 관리 필요
         if (meetUpCounts >= 3){
             throw new IllegalStateException("종료되지 않은 일정이 3개 이상");
         }
@@ -62,13 +61,7 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
     @Override
     public List<ClubMeetUpDTO> listClubMeetUp(Long clubId, String meetUpType) {
 
-        System.out.println("============================");
-        System.out.println("Paramater meetUpType = > " + meetUpType);
-        System.out.println("============================");
-        System.out.println("MeetUpType => " + MeetUpType.SCHEDULE.getName());
-        System.out.println("============================");
-        System.out.println(" 비교 - > " + meetUpType.equals(MeetUpType.SCHEDULE.getName()));
-        System.out.println("============================");
+
 
         if(meetUpType.equals(MeetUpType.SCHEDULE.getName())){
             List<ClubMeetUp> schedules = clubMeetUpRepository.findByClubIdAndMeetUpType(clubId, MeetUpType.SCHEDULE);
@@ -159,6 +152,11 @@ public class ClubMeetUpServiceImpl implements ClubMeetUpService{
     @Override
     public boolean checkJoinMeetUp(Long meetUpId, Long clubMemberId ) {
 
-        return clubMemberMeetUpJoinRepository.existsByIdAndClubMemberId(meetUpId,clubMemberId);
+        return clubMemberMeetUpJoinRepository.existsByClubMeetUpIdAndClubMemberId(meetUpId,clubMemberId);
+    }
+
+    @Override
+    public Integer countJoinMember(Long meetUpId) {
+        return clubMemberMeetUpJoinRepository.countByClubMeetUpId(meetUpId);
     }
 }

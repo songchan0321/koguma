@@ -59,12 +59,14 @@ public class ClubPostController {
         return ResponseEntity.ok(clubPostDTOS);
     }
 
-    @GetMapping("/list/category/{categoryId}")
-    public ResponseEntity<?> listClubPostByCategory(@PathVariable Long categoryId){
-        List<ClubPostDTO> clubPostDTOS = clubPostService.listClubPostByCategory(categoryId);
+//    @GetMapping("/list/category/{categoryId}")
+//    public ResponseEntity<?> listClubPostByCategory(@PathVariable Long categoryId){
+//        List<ClubPostDTO> clubPostDTOS = clubPostService.listClubPostByCategory(categoryId);
+//
+//        return ResponseEntity.ok(clubPostDTOS);
+//    }
 
-        return ResponseEntity.ok(clubPostDTOS);
-    }
+
 
     @PostMapping("/category/add")
     public ResponseEntity<?> addClubPostCategory(@RequestBody ClubPostCategoryDTO ccd,
