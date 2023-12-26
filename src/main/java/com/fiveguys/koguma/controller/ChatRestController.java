@@ -28,7 +28,15 @@ public class ChatRestController {
     public ResponseEntity<List<ChatroomDTO>> listChatRoom (
             @CurrentMember MemberDTO memberDTO
     ) {
-        return ResponseEntity.ok().body(chatService.listChatroom(memberDTO));
+
+        return ResponseEntity.ok().body(
+                chatService.listChatroom(memberDTO)
+                        .stream()
+                        .map(chatroomDTO -> {
+                            chatroomDTO.setProductDTO(productService.getProduct(chatroomDTO.getProductDTO().getId()));
+                            return chatroomDTO;
+                        }).collect(Collectors.toList())
+        );
     }
 
     @RequestMapping(value = "/list/{productId}", method = RequestMethod.GET)
@@ -44,6 +52,10 @@ public class ChatRestController {
                 .listChatroom(memberDTO)
                 .stream()
                 .filter(chatroomDTO -> chatroomDTO.getProductDTO().getId().equals(productId))
+                .map(chatroomDTO -> {
+                    chatroomDTO.setProductDTO(productService.getProduct(chatroomDTO.getProductDTO().getId()));
+                    return chatroomDTO;
+                })
                 .collect(Collectors.toList());
         return ResponseEntity.ok().body(chatroomDTOList);
     }
