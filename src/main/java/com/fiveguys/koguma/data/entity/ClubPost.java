@@ -45,6 +45,7 @@ public class ClubPost extends BaseTime{
     private String categoryName;
 
     private String images;
+    private int views;
 
     @Builder
     public ClubPost(Long id, String title, String content, Club club, String clubName,
@@ -69,5 +70,9 @@ public class ClubPost extends BaseTime{
                 .clubPostCategory(clubPostCategory)
                 .categoryName(categoryName)
                 .build();
+    }
+
+    public void increaseViews(){
+        this.views++;
     }
 }

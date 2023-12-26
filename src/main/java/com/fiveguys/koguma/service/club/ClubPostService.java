@@ -51,15 +51,9 @@ public class ClubPostService {
 
         ClubPost clubPost = clubPostRepository.findById(clubPostId).get();
 
-        return ClubPostDTO.builder()
-                .title(clubPost.getTitle())
-                .content(clubPost.getContent())
-                .clubId(clubPost.getClub().getId())
-                .clubName(clubPost.getClubName())
-                .categoryName(clubPost.getCategoryName())
-                .clubMemberNickname(clubPost.getClubMemberNickname())
-                .regDate(clubPost.getRegDate())
-                .build();
+        clubPost.increaseViews();
+
+        return ClubPostDTO.fromEntity(clubPost);
 
     }
 

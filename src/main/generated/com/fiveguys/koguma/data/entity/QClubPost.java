@@ -47,6 +47,8 @@ public class QClubPost extends EntityPathBase<ClubPost> {
 
     public final StringPath title = createString("title");
 
+    public final NumberPath<Integer> views = createNumber("views", Integer.class);
+
     public QClubPost(String variable) {
         this(ClubPost.class, forVariable(variable), INITS);
     }
