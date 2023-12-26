@@ -108,20 +108,36 @@ public class ProductServiceImpl implements ProductService{
 
         LocalDateTime parsedCreateDate = LocalDateTime.now();
 
-        Period period = Period.between(product.getRegDate().toLocalDate(), parsedCreateDate.toLocalDate());
-        Duration duration = Duration.between(product.getRegDate().toLocalTime(), parsedCreateDate.toLocalTime());
+//        Period period = Period.between(product.getRegDate().toLocalDate(), parsedCreateDate.toLocalDate());
+//        Duration duration = Duration.between(product.getRegDate().toLocalTime(), parsedCreateDate.toLocalTime());
+//
+//        long leftHour = 24 - period.getDays() * 24L - duration.toHours();
+//        long leftMinute = 60 - (duration.toMinutes() % 60);
+//        long leftSecond = 60 - (duration.getSeconds() % 60);
+//
+//        System.out.println(leftHour + "시" + leftMinute + "분" + leftSecond);
+//
+//        if (leftHour < 0) {
+//            product.resetRegDate();
+//        } else {
+//            throw new Exception(String.format("%02d시간 %02d분 %02d초 남았습니다.", leftHour, leftMinute, leftSecond));
+//        }
+        Duration duration = Duration.between(product.getRegDate(), parsedCreateDate);
+        Duration twentyFourHours = Duration.ofHours(24);
 
-        long leftHour = 24 - period.getDays() * 24L - duration.toHours();
-        long leftMinute = 60 - (duration.toMinutes() % 60);
-        long leftSecond = 60 - (duration.getSeconds() % 60);
+        System.out.println(duration);
 
-        System.out.println(leftHour + "시" + leftMinute + "분" + leftSecond);
-
-        if (leftHour < 0) {
+        if (duration.compareTo(twentyFourHours) >= 0) {
+            // 24시간 이상 경과했을 경우 등록 날짜를 초기화합니다.
             product.resetRegDate();
         } else {
-            throw new Exception("끌어올리기 가능 시간까지" + leftHour + "시간" + leftMinute + "분" + leftSecond + "초 남았습니다.");
+            // 남은 시간을 계산합니다.
+            long leftHour = twentyFourHours.toHours() - duration.toHours()-1;
+            long leftMinute = 60 - (duration.toMinutes() % 60)-1;
+            long leftSecond = 60 - (duration.getSeconds() % 60)-1;
+            throw new Exception(String.format("%02d시간 %02d분 %02d초 남았습니다.", leftHour, leftMinute, leftSecond));
         }
+
     }
 
     public void isOwnProduct(Long memberId, Long sellerId) throws Exception {
