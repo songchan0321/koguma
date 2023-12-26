@@ -1,5 +1,6 @@
 package com.fiveguys.koguma.data.dto.club;
 
+import com.fiveguys.koguma.data.dto.ImageDTO;
 import com.fiveguys.koguma.data.entity.ClubPost;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -22,8 +25,13 @@ public class ClubPostDTO {
     private String content;
     private String clubName;
     private String clubMemberNickname;
+    private String images;
+    private List<ImageDTO> profileImage;
     private Boolean activeFlag;
     private LocalDateTime regDate;
+    private String memberProfile;
+    private int views;
+
 
 
     public static ClubPostDTO fromEntity(ClubPost clubPost){
@@ -37,6 +45,9 @@ public class ClubPostDTO {
                 .clubMemberNickname(clubPost.getClubMemberNickname())
                 .content(clubPost.getContent())
                 .regDate(clubPost.getRegDate())
+                .images(clubPost.getImages())
+                .profileImage(clubPost.getClub().getImages().stream().map(ImageDTO::fromEntity).collect(Collectors.toList()))
+                .views(clubPost.getViews())
                 .build();
     }
 }

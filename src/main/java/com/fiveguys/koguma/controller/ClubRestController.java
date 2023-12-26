@@ -1,10 +1,7 @@
 package com.fiveguys.koguma.controller;
 
 import com.fiveguys.koguma.data.dto.*;
-import com.fiveguys.koguma.data.dto.club.CreateClubMeetUpDTO;
-import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
-import com.fiveguys.koguma.data.dto.club.ListClubByCategoryDTO;
-import com.fiveguys.koguma.data.dto.club.MeetUpStateDTO;
+import com.fiveguys.koguma.data.dto.club.*;
 import com.fiveguys.koguma.data.entity.CategoryType;
 import com.fiveguys.koguma.data.entity.MeetUpType;
 import com.fiveguys.koguma.data.entity.Member;
@@ -16,10 +13,12 @@ import com.fiveguys.koguma.service.common.LocationService;
 import com.fiveguys.koguma.service.member.MemberService;
 import com.fiveguys.koguma.util.annotation.CurrentMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +45,11 @@ public class ClubRestController {
     public ResponseEntity<Long> addClub(@RequestBody CreateClubDTO createClubDTO,
                                      @CurrentMember MemberDTO memberDTO){
 
+        LocationDTO memberRepLocation = locationService.getMemberRepLocation(memberDTO.getId());
+
+
+
+
         System.out.println("createClubDTO = " + createClubDTO);
         Long saveClubId = clubService.addClub(createClubDTO, memberDTO.getId());
         System.out.println("saveClubId = " + saveClubId);
@@ -53,44 +57,59 @@ public class ClubRestController {
         return ResponseEntity.ok(saveClubId);
     }
 
-    //// TODO: 위도 및 경도 기반 리스트 location 담당자에게 문의 필요, UI 시 작업 진행
-    @GetMapping(path = "/list")
-    public ResponseEntity<List<ClubDTO>> listClub(@CurrentMember MemberDTO memberDTO){
+//    @GetMapping(path = "/list")
+//    public ResponseEntity<List<ClubDTO>> listClub(@CurrentMember MemberDTO memberDTO){
+//
+//        LocationDTO repLo = locationService.getMemberRepLocation(memberDTO.getId());
+//
+//        if (repLo.getLatitude() != null){
+//            List<ClubDTO> clubDTOS = clubService.listClub(repLo.getLatitude(), repLo.getLongitude());
+//            return ResponseEntity.ok(clubDTOS);
+//        }
+//        return ResponseEntity.ok(clubService.listClub());
+//    }
 
-        LocationDTO repLo = locationService.getMemberRepLocation(memberDTO.getId());
-
-        if (repLo.getLatitude() != null){
-            List<ClubDTO> clubDTOS = clubService.listClub(repLo.getLatitude(), repLo.getLongitude());
-            return ResponseEntity.ok(clubDTOS);
-        }
-        return ResponseEntity.ok(clubService.listClub());
-    }
-
-    @GetMapping(path = "/all")
-    public ResponseEntity<?> listClubs(@CurrentMember MemberDTO memberDTO){
-
-        List<ClubDTO> clubDTOS = clubService.listClub();
-        for (ClubDTO clubDTO : clubDTOS) {
-            System.out.println("clubDTO = " + clubDTO);
-        }
-
-        return ResponseEntity.ok(clubDTOS);
-    }
+//    @GetMapping(path = "/all")
+//    public ResponseEntity<?> listClubs(@CurrentMember MemberDTO memberDTO){
+//
+//        List<ClubDTO> clubDTOS = clubService.listClub();
+//        for (ClubDTO clubDTO : clubDTOS) {
+//            System.out.println("clubDTO = " + clubDTO);
+//        }
+//
+//        return ResponseEntity.ok(clubDTOS);
+//    }
 
     @GetMapping(path = "/joins")
 
     public ResponseEntity<?> listMyClub(@CurrentMember MemberDTO memberDTO){
 
-        List<ClubDTO> clubDTOS = clubService.listMyClub(memberDTO.getId());
+        List<ListClubByCategoryDTO> clubDTOS = clubService.listMyClub(memberDTO.getId());
 
         return ResponseEntity.ok(clubDTOS);
     }
 
-    @GetMapping(path = "/list/category/{categoryId}")
-    public ResponseEntity<?> listClubByCategory(@PathVariable Long categoryId){
-        List<ListClubByCategoryDTO> listClubByCategoryDTOS = clubService.listClubByCategory(categoryId);
+//    @GetMapping(path = "/list/category/{categoryId}")
+//    public ResponseEntity<?> listClubByCategory(@PathVariable Long categoryId){
+//        List<ListClubByCategoryDTO> listClubByCategoryDTOS = clubService.listClubByCategory(categoryId);
+//
+//        return ResponseEntity.ok(clubService.listClubByCategory(categoryId));
+//    }
 
-        return ResponseEntity.ok(clubService.listClubByCategory(categoryId));
+    @GetMapping(path = "/list")
+    public ResponseEntity<?> listClubByCategory(@RequestParam String keyword, @RequestParam String category,
+                                                @CurrentMember MemberDTO memberDTO) throws Exception{
+
+        System.out.println("category : "+category);
+        Long categoryId = null;
+        if (category != null && !category.isEmpty()) {
+            categoryId = Long.valueOf(category);
+        }
+        LocationDTO locationDTO = locationService.getMemberRepLocation(memberDTO.getId());
+
+        List<ListClubByCategoryDTO> listClubByCategoryDTOS = clubService.listClubByCategory(locationDTO, keyword, categoryId);
+
+        return ResponseEntity.ok(listClubByCategoryDTOS);
     }
 
     @GetMapping(path = "/{clubId}")
@@ -185,7 +204,6 @@ public class ClubRestController {
 
         Long meetUpId = clubMeetUpService.addClubMeetUp(clubMeetUpDTO, clubMeetUpDTO.getClubId());
 
-
         return ResponseEntity.ok().build();
     }
 
@@ -221,7 +239,7 @@ public class ClubRestController {
 
 
 
-    @PostMapping(path = "/meet-up/join")
+    @GetMapping(path = "/meet-up/join")
     public ResponseEntity<?> joinClubMeetUp(@RequestParam Long clubMeetUpId, @RequestParam Long clubMemberId){
 
         clubMeetUpService.joinClubMeetUp(clubMeetUpId, clubMemberId);
@@ -262,8 +280,12 @@ public class ClubRestController {
 
         GetClubMemberDTO clubMember = clubService.getClubMember(clubId, memberDTO.getId());
 
+        System.out.println("clubMember.getId = " + clubMember.getId());
+        System.out.println("meetUpId = " + meetUpId);
 
-        return ResponseEntity.ok(clubMeetUpService.checkJoinMeetUp(meetUpId,clubMember.getId()));
+        boolean b = clubMeetUpService.checkJoinMeetUp(meetUpId, clubMember.getId());
+        System.out.println("checkJoinMeetUp == >>  = " + b);
+        return ResponseEntity.ok(b);
     }
 
     @GetMapping("/member/check/{clubId}")
@@ -280,5 +302,29 @@ public class ClubRestController {
         Boolean b = clubService.checkJoinRequest(clubId, memberDTO.getId());
 
         return ResponseEntity.ok(b);
+    }
+
+    @GetMapping("/meet-up/addr")
+    public ResponseEntity<?> meetUpGeoCoder(@RequestParam String address){
+        Map<String, String> stringStringMap = locationService.geoCoder(address);
+
+        System.out.println("stringStringMap = " + stringStringMap);
+
+        return null;
+    }
+
+    @GetMapping("/meet-up/join/count/{meetUpId} ")
+    public ResponseEntity<?> joinMeetUpMemberCount(@PathVariable Long meetUpId){
+
+        return ResponseEntity.ok(clubMeetUpService.countJoinMember(meetUpId));
+    }
+
+    @GetMapping("/near/map")
+    public ResponseEntity<?> nearClubMap(@CurrentMember MemberDTO memberDTO){
+
+        List<ListClubByCategoryDTO> clubDTOS = clubService.listClub();
+
+
+        return ResponseEntity.ok(clubDTOS);
     }
 }

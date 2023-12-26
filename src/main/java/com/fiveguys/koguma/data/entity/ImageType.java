@@ -13,7 +13,8 @@ public enum ImageType {
     POST("동네생활"),
     CLUB("모임"),
     PRODUCT("상품"),
-    MEMBER("회원");
+    MEMBER("회원"),
+    CLUB_POST("모임겍시글");
 
     private final String name;
 }

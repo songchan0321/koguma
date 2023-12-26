@@ -38,12 +38,16 @@ public class QClubPost extends EntityPathBase<ClubPost> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath images = createString("images");
+
     public final QMember member;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
 
     public final StringPath title = createString("title");
+
+    public final NumberPath<Integer> views = createNumber("views", Integer.class);
 
     public QClubPost(String variable) {
         this(ClubPost.class, forVariable(variable), INITS);
