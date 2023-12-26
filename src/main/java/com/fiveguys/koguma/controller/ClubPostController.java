@@ -40,6 +40,8 @@ public class ClubPostController {
 
         ClubPostDTO clubPost = clubPostService.getClubPost(clubPostId);
 
+        clubPost.setMemberProfile(memberDTO.getProfileURL());
+
         return ResponseEntity.ok(clubPost);
     }
 
@@ -55,6 +57,10 @@ public class ClubPostController {
     public ResponseEntity<?> listMyClubPost(@CurrentMember MemberDTO memberDTO){
 
         List<ClubPostDTO> clubPostDTOS = clubPostService.listMyClubPost(memberDTO.getId());
+
+        for (ClubPostDTO clubPostDTO : clubPostDTOS) {
+            System.out.println("clubPostDTO = " + clubPostDTO);
+        }
 
         return ResponseEntity.ok(clubPostDTOS);
     }
@@ -90,7 +96,7 @@ public class ClubPostController {
         return ResponseEntity.ok(clubPostCategoryDTOS);
     }
 
-    @GetMapping("/category/{categoryId}")
+    @GetMapping("/list/category/{categoryId}")
     public ResponseEntity<?> getClubPostCategory(@PathVariable Long categoryId){
         ClubPostCategoryDTO findClubPostCate = clubPostCategory.getClubPostCategory(categoryId);
         return ResponseEntity.ok(findClubPostCate);

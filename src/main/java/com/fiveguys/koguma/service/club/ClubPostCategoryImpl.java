@@ -74,6 +74,10 @@ public class ClubPostCategoryImpl implements ClubPostCategoryService{
         ClubPostCategory clubPostCategory = clubPostCategoryRepository.findById(categoryId)
                 .orElseThrow();
 
+        System.out.println("clubPostCategory = " + clubPostCategory.getName());
+        System.out.println("clubPostCategory = " + clubPostCategory.getName());
+        System.out.println("clubPostCategory = " + clubPostCategory.getName());
+
         return ClubPostCategoryDTO.fromEntity(clubPostCategory);
     }
 }
