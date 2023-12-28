@@ -38,6 +38,12 @@ public class LocationRestController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
     }
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<LocationDTO> getLocation(@PathVariable Long memberId) throws Exception {
+
+        LocationDTO locationDTO = locationService.getLocationByMember(memberId);
+        return ResponseEntity.status(HttpStatus.OK).body(locationDTO);
+    }
     @GetMapping("/list")
     public ResponseEntity<List<LocationDTO>> listLocation(@CurrentMember MemberDTO memberDTO) throws Exception {
 

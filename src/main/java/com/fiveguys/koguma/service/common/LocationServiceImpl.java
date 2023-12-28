@@ -217,6 +217,12 @@ public class LocationServiceImpl implements LocationService{
         return null;
     }
 
+    @Override
+    public LocationDTO getLocationByMember(Long memberId) {
+
+        return LocationDTO.fromEntity(locationRepository.findByMemberIdAndRepAuthLocationFlag(memberId,true));
+    }
+
     public List<Object> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable,String keyword) throws Exception {
 
         List<Object> objectByLocationDTOList = new ArrayList<>();
