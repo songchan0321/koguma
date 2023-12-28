@@ -23,5 +23,6 @@ public interface LocationService {
     void setRepLocation(Long memberId,Long locationId);
     String reverseGeoCoder(double latitude, double longitude);
     Map<String, String> geoCoder(String address);
+    LocationDTO getLocationByMember(Long memberId);
     List<?> locationFilter(CategoryType categoryType, LocationDTO locationDTO, Pageable pageable, String keyword) throws Exception;
 }
