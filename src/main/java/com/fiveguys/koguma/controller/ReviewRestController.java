@@ -80,11 +80,12 @@ public class ReviewRestController {
         }
         Map<String,Object> target = getTargetDTO(reviewDTO.getProductDTO(),memberDTO);
         MemberDTO targetDTO = (MemberDTO) target.get("targetDTO"); // 리뷰를 보내기위해 타겟 dto 가져옴
+        MemberDTO sourceDTO = (MemberDTO) myRole.get("sourceDTO");
         System.out.println("--!!!!!!!!!!!!!!!--------------");
         System.out.println("targetDTO = " + targetDTO);
         reviewDTO = reviewService.addReview(reviewDTO);
 
-        alertService.addAlert(targetDTO,"후기",targetDTO.getNickname()+"님이 리뷰를 작성했어요.","/product/get/review/"+reviewDTO.getId());
+        alertService.addAlert(targetDTO,"후기",sourceDTO.getNickname()+"님이 리뷰를 작성했어요.","/product/get/review/"+reviewDTO.getId());
         float score = reviewService.calculateScore(reviewDTO);
 //        MemberDTO target = (MemberDTO) getTargetDTO(reviewDTO.getProductDTO(),memberDTO).get("targetDTO");
         memberService.setScore(score,targetDTO);
