@@ -3,6 +3,8 @@ package com.fiveguys.koguma.data.dto;
 import com.fiveguys.koguma.data.entity.Comment;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 public class CommentDTO {
     private Long id;
@@ -11,16 +13,18 @@ public class CommentDTO {
     private CommentDTO parentDTO;
     private String content;
     private Boolean activeFlag;
+    private LocalDateTime regDate;
 
 
     @Builder
     public CommentDTO(Long id, PostDTO postDTO, MemberDTO memberDTO,
-                      CommentDTO parentDTO, String content, Boolean activeFlag){
+                      CommentDTO parentDTO, String content, LocalDateTime regDate, Boolean activeFlag){
         this.id = id;
         this.postDTO = postDTO;
         this.memberDTO = memberDTO;
         this.parentDTO = parentDTO;
         this.content = content;
+        this.regDate = regDate;
         this.activeFlag = activeFlag;
     }
 
@@ -34,6 +38,7 @@ public class CommentDTO {
                 .post(postDTO.toEntity())
                 .member(memberDTO.toEntity())
                 .content(this.content)
+
                 .activeFlag(this.activeFlag)
                 .build();
 
@@ -47,6 +52,7 @@ public class CommentDTO {
                 .postDTO(PostDTO.fromEntity(comment.getPost()))
                 .memberDTO(MemberDTO.fromEntity(comment.getMember()))
                 .content(comment.getContent())
+                .regDate(comment.getRegDate())
                 .activeFlag(comment.getActiveFlag())
                 .build();
 

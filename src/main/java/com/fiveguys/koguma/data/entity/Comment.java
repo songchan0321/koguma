@@ -4,8 +4,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,10 @@ public class Comment extends BaseTime{
 
     @Column(name = "active_flag", nullable = false)
     private Boolean activeFlag;
+
+    @CreatedDate
+    @Column(name = "reg_date")
+    private LocalDateTime regDate;
 
     @Builder
     public Comment(Long id, Post post, Member member,

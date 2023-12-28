@@ -38,8 +38,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final QPost post;
 
-    //inherited
-    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
+    public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
     public QComment(String variable) {
         this(Comment.class, forVariable(variable), INITS);

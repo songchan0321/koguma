@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -130,6 +131,21 @@ public class CommentRestController {
 
     }
 
+    @GetMapping("/counts/{postId}")
+    public ResponseEntity<Long> CommentCount(
+            @PathVariable("postId") Long postId
+    ) {
+        try {
+            long commentCount = commentService.getCommentCountByPostId(postId);
+            return new ResponseEntity<>(commentCount, HttpStatus.OK);
+        } catch (NoResultException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @GetMapping("/list/{postId}")
     public ResponseEntity<List<CommentDTO>> listComment(
             @PathVariable (name = "postId") Long postId
@@ -159,22 +175,32 @@ public class CommentRestController {
 
     }
 
-    @GetMapping("/list/reply/{commmetId}")
+    @GetMapping("/list/reply/{commentId}")
     public ResponseEntity<List<CommentDTO>> listReply(@PathVariable(name = "commentId") Long commentId) {
         try {
+            List<Comment> comments = commentService.listReply(commentId);
 
-            List<Comment> comments = (List<Comment>) commentService.getComment(commentId);
+            // Log commentId for debugging purposes
+
+
             List<CommentDTO> collect = comments.stream()
                     .map(CommentDTO::fromEntity)
                     .collect(Collectors.toList());
+            System.out.println("Collect size: " + collect.size());
 
             return new ResponseEntity<>(collect, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
+            // Log the exception for debugging purposes
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
+            // Log the exception for debugging purposes
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
 
     // TODO: 삭제 예정

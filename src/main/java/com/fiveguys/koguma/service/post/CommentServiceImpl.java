@@ -102,8 +102,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> listReply(
-            @PathVariable(name = "commentId") Long commentId) {
+    public List<Comment> listReply(Long commentId) {
         // 주어진 commentId에 해당하는 Comment를 가져옴
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(commentId);
@@ -115,8 +114,9 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> filteredComments = comments.stream()
                 .filter(comment -> comment.getParent() != null && comment.getId().equals(comment.getParent().getId()))
                 .collect(Collectors.toList());
+        System.out.println("filteredComments = " + filteredComments);
 
-        return filteredComments;
+        return comments;
     }
 
 
@@ -157,5 +157,10 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NoResultException("해당 댓글/답글 정보가 존재하지 않습니다."));
 
         return CommentDTO.fromEntity(comment);
+    }
+
+    @Override
+    public long getCommentCountByPostId(Long postId) {
+        return commentRepository.countByPostId(postId);
     }
 }

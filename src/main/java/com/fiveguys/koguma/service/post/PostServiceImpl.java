@@ -55,12 +55,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void addPost(PostDTO postDTO, MemberDTO memberDTO) {
+    public PostDTO addPost(PostDTO postDTO, MemberDTO memberDTO) {
 
         postDTO.setMemberDTO(memberDTO);
 
-        postRepository.save(postDTO.toEntity());
 
+        return PostDTO.fromEntity(postRepository.save(postDTO.toEntity()));
     }
 
 
@@ -88,11 +88,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(PostDTO postDTO, MemberDTO memberDTO) {
+    public void deletePost(Long id, MemberDTO memberDTO) {
 
-        Long postId = postDTO.getId();
 
-        Post existingPost = postRepository.findById(postId)
+
+        Post existingPost = postRepository.findById(id)
                         .orElseThrow(()-> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         //게시글 비활성화 상태 변경

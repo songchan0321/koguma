@@ -3,6 +3,7 @@ package com.fiveguys.koguma.controller;
 import com.fiveguys.koguma.data.dto.ClubMemberDTO;
 import com.fiveguys.koguma.data.dto.ClubPostCategoryDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
+import com.fiveguys.koguma.data.dto.club.ClubPostCommentDTO;
 import com.fiveguys.koguma.data.dto.club.ClubPostDTO;
 import com.fiveguys.koguma.data.dto.club.GetClubMemberDTO;
 import com.fiveguys.koguma.service.club.ClubPostCategoryImpl;
@@ -29,7 +30,10 @@ public class ClubPostController {
     @PostMapping("/add")
     public ResponseEntity<Long> addPost(@RequestBody ClubPostDTO clubPostDTO,
                                         @CurrentMember MemberDTO memberDTO){
-
+        System.out.println("clubPostDTO = " + clubPostDTO);
+        System.out.println("clubPostDTO = " + clubPostDTO);
+        System.out.println("clubPostDTO = " + clubPostDTO);
+        System.out.println("clubPostDTO = " + clubPostDTO);
 
 
         return ResponseEntity.ok(clubPostService.addClubPost(clubPostDTO, memberDTO));
@@ -52,6 +56,15 @@ public class ClubPostController {
 
         return ResponseEntity.ok(clubPostDTOS);
     }
+
+    @GetMapping("/lists/category/{categoryId}")
+    public ResponseEntity<?> listClubPostByCategory(@PathVariable Long categoryId){
+
+        List<ClubPostDTO> clubPostDTOS = clubPostService.listClubPostByCategory(categoryId);
+
+        return ResponseEntity.ok(clubPostDTOS);
+    }
+
 
     @PostMapping("/list/my")
     public ResponseEntity<?> listMyClubPost(@CurrentMember MemberDTO memberDTO){
@@ -100,6 +113,22 @@ public class ClubPostController {
     public ResponseEntity<?> getClubPostCategory(@PathVariable Long categoryId){
         ClubPostCategoryDTO findClubPostCate = clubPostCategory.getClubPostCategory(categoryId);
         return ResponseEntity.ok(findClubPostCate);
+    }
+
+    @PostMapping("/comment/add")
+    public ResponseEntity<?> addComment(@RequestBody ClubPostCommentDTO clubPostCommentDTO,
+                                        @CurrentMember MemberDTO memberDTO){
+        return ResponseEntity.ok(clubPostService.addComment(clubPostCommentDTO, memberDTO));
+    }
+
+    @GetMapping("/comment/list/{clubPostId}")
+    public ResponseEntity<?> listComment(@PathVariable Long clubPostId){
+        return ResponseEntity.ok(clubPostService.listComment(clubPostId));
+    }
+
+    @GetMapping("/comment/list/my")
+    public ResponseEntity<?> listMyComment(@CurrentMember MemberDTO memberDTO){
+        return null;
     }
 
 }
