@@ -22,7 +22,8 @@ public interface PostRepository extends JpaRepository <Post, Long> {
     Page<Post> findByTitleOrContentContaining(@Param("keyword") String keyword, Pageable pageable);
 
 
-
+    @Query("select p from Post p left join fetch p.image where p.id = :postId")
+    Post findByPostIdWithImages(@Param("postId") Long postId);
     Page<Post> findAllByOrderByIdDesc(PageRequest pageRequest);
 
     Page<Post> findAllByMemberOrderByIdDesc(Member entity, PageRequest pageRequest);

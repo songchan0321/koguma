@@ -51,7 +51,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDTO> listPostByLocation(LocationDTO locationDTO,String keyword,Long categoryId) throws Exception {
         List<Post> postList = queryRepository.findAllByDistancePost(locationDTO,keyword,categoryId);
-        return postList.stream().filter(Post::getActiveFlag).map(PostDTO::fromEntity).collect(Collectors.toList());
+        return postList.stream().filter(Post::getActiveFlag).map(PostDTO::fromEntityContainImage).collect(Collectors.toList());
     }
 
     @Override
@@ -64,13 +64,24 @@ public class PostServiceImpl implements PostService {
     }
 
 
+//    @Override
+//    public PostDTO getPost(Long id) {
+//
+//        Post post = postRepository.findById(id).orElseThrow(()->new NoResultException("해당 게시글 정보가 존재하지 않습니다."));
+//
+//        return PostDTO.fromEntity(post);
+//    }
     @Override
     public PostDTO getPost(Long id) {
-
-        Post post = postRepository.findById(id).orElseThrow(()->new NoResultException("해당 게시글 정보가 존재하지 않습니다."));
-
-        return PostDTO.fromEntity(post);
+        System.out.println("getPOst 들어옴");
+        Post post = postRepository.findByPostIdWithImages(id);
+        List<ImageDTO> imageList = post.getImage().stream().map(ImageDTO::fromEntity).collect(Collectors.toList());
+        PostDTO postDTO = PostDTO.fromEntity(post);
+        postDTO.setImageDTO(imageList);
+        return postDTO;
     }
+
+
 
     @Override
     public void updatePost(PostDTO postDTO, MemberDTO memberDTO) {
@@ -117,13 +128,19 @@ public class PostServiceImpl implements PostService {
     }
 
     //카테고리 별 검색 결과
+//    @Override
+//    public Page<Post> listCategoryBySearch(CategoryDTO categoryDTO, PageRequest pageRequest) {
+//
+//        return  postRepository.findAllByCategoryOrderByIdDesc(categoryDTO.toEntity(), pageRequest);
+//
+//    }
     @Override
-    public Page<Post> listCategoryBySearch(CategoryDTO categoryDTO, PageRequest pageRequest) {
+    public List<PostDTO> listCategoryBySearch(LocationDTO locationDTO,Long categoryId) throws Exception {
 
-        return  postRepository.findAllByCategoryOrderByIdDesc(categoryDTO.toEntity(), pageRequest);
+        List<Post> postList = queryRepository.findAllByDistancePost(locationDTO,null,categoryId);
+        return postList.stream().filter(Post::getActiveFlag).map(PostDTO::fromEntityContainImage).collect(Collectors.toList());
 
     }
-
 
 
     @Override
