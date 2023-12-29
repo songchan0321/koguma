@@ -122,7 +122,8 @@ public class QueryRepositoryImpl implements QueryRepository{
         QPost post = QPost.post;
         QImage image = QImage.image;
         JPAQuery<Post> jpaQuery = jpaQueryFactory
-                .selectFrom(post)
+                .selectDistinct(post)
+                .from(post)
                 .leftJoin(image).on(getJoinCondition(post, image))
                 .where(
                         Expressions.numberTemplate(Double.class,
