@@ -310,23 +310,23 @@ public class PostApplicationTests {
 
     }
 
-    @Test
-    @DisplayName("카테고리 별 리스트 조회")
-    public void testListCategoryBySearch() {
-
-        //given
-        Category category = categoryRepository.findById(50L).get();
-        PageRequest pageRequest = PageRequest.of(0, 10);
-
-        //when
-        Page<Post> postPage = postService.listCategoryBySearch(CategoryDTO.fromDTO(category), pageRequest);
-
-        //then
-        assertNotNull(postPage);
-        assertEquals(0, postPage.getNumber());
-        assertEquals(10, postPage.getSize());
-
-    }
+//    @Test
+//    @DisplayName("카테고리 별 리스트 조회")
+//    public void testListCategoryBySearch() {
+//
+//        //given
+//        Category category = categoryRepository.findById(50L).get();
+//        PageRequest pageRequest = PageRequest.of(0, 10);
+//
+//        //when
+//        Page<Post> postPage = postService.listCategoryBySearch(CategoryDTO.fromDTO(category), pageRequest);
+//
+//        //then
+//        assertNotNull(postPage);
+//        assertEquals(0, postPage.getNumber());
+//        assertEquals(10, postPage.getSize());
+//
+//    }
 
     @Test
     @DisplayName("게시글 작성/조회 시 카테고리 리스트")

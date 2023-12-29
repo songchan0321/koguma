@@ -120,9 +120,10 @@ public class QueryRepositoryImpl implements QueryRepository{
     @Override
     public List<Post> findAllByDistancePost(LocationDTO locationDTO, String keyword,Long categoryId) throws Exception {
         QPost post = QPost.post;
-
+        QImage image = QImage.image;
         JPAQuery<Post> jpaQuery = jpaQueryFactory
                 .selectFrom(post)
+                .leftJoin(image).on(getJoinCondition(post, image))
                 .where(
                         Expressions.numberTemplate(Double.class,
                                         "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",

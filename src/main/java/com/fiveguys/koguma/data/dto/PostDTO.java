@@ -99,10 +99,37 @@ public class PostDTO {
             builder = builder.memberDTO(MemberDTO.fromEntity(post.getMember()));
         }
 
-        if(post.getCategory() != null){
+        if (post.getCategory() != null){
             builder =builder.categoryDTO(CategoryDTO.fromDTO(post.getCategory()));
         }
 
+//        if (post.getImage()!= null){
+//            System.out.println("이미지 있음");
+//            builder.imageDTO(post.getImage().stream().map((ImageDTO::fromEntity)).collect(Collectors.toList()));
+//        }
+        return builder.build();
+    }
+    public static PostDTO fromEntityContainImage(Post post) {
+        PostDTO.PostDTOBuilder builder = PostDTO.builder()
+                .id(post.getId())
+                .categoryName(post.getCategoryName())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .postType(post.getPostType())
+                .dong(post.getDong())
+                .latitude(post.getLatitude())
+                .longitude(post.getLongitude())
+                .views(post.getViews()) // 조회수 정보 추가
+                .regDate(post.getRegDate())
+                .activeFlag(post.getActiveFlag());
+
+        if(post.getMember() != null){
+            builder = builder.memberDTO(MemberDTO.fromEntity(post.getMember()));
+        }
+
+        if (post.getCategory() != null){
+            builder =builder.categoryDTO(CategoryDTO.fromDTO(post.getCategory()));
+        }
         if (post.getImage()!= null){
             builder.imageDTO(post.getImage().stream().map((ImageDTO::fromEntity)).collect(Collectors.toList()));
         }

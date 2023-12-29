@@ -58,7 +58,7 @@ public class Post extends BaseTime{
     @Column(name = "reg_date")
     private LocalDateTime regDate;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Image> image = new ArrayList<>();
 
 

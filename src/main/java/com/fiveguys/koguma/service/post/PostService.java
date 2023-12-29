@@ -4,6 +4,7 @@ import com.fiveguys.koguma.data.dto.CategoryDTO;
 import com.fiveguys.koguma.data.dto.LocationDTO;
 import com.fiveguys.koguma.data.dto.MemberDTO;
 import com.fiveguys.koguma.data.dto.PostDTO;
+import com.fiveguys.koguma.data.entity.Location;
 import com.fiveguys.koguma.data.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +29,7 @@ public interface PostService {
 
     Page<Post> listPostByViews(Pageable pageRequest);
 
-    Page<Post> listCategoryBySearch (CategoryDTO categoryDTO, PageRequest pageRequest);
+    List<PostDTO> listCategoryBySearch (LocationDTO locationDTO, Long categoryId) throws Exception;
 
 
     Page<Post> listSearchKeyword(String keyword, PageRequest pageRequest);
