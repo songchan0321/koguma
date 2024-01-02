@@ -48,8 +48,6 @@ public class ClubServiceImpl implements ClubService{
         CategoryDTO category = categoryService.getCategory(ccd.getCategoryId());
 
 
-
-
         Club savedClub = Club.createClub(ccd.getTitle(), ccd.getContent(), ccd.getMaxCapacity(),
                 lorepo.getLatitude(), lorepo.getLongitude(),  lorepo.getDong(),
                 category.getName(), category.toEntity());
@@ -81,21 +79,7 @@ public class ClubServiceImpl implements ClubService{
         return savedClub.getId();
     }
 
-    @Override
-    public List<ClubDTO> listClub(Double latitude, Double longitude) {
 
-        //모임 리스트 조회
-        List<Club> clubs = clubRepository.findClubsByLocation(latitude, longitude);
-
-
-        System.out.println("clubs = " + clubs.get(0));
-        // Entity -> Dto로 전환
-        List<ClubDTO> clubDTOS = clubs.stream()
-                .map(ClubDTO::new)
-                .collect(Collectors.toList());
-
-        return clubDTOS;
-    }
 
     @Override
     public List<ListClubByCategoryDTO> listClub() {
@@ -117,10 +101,6 @@ public class ClubServiceImpl implements ClubService{
                 .map(ClubMember::getClub)
                 .collect(Collectors.toList());
 
-        for (Club club : clubs) {
-            System.out.println("club = " + club.getLatitude());
-            System.out.println("club = " + club.getClubMembers());
-        }
 
 
         return clubs.stream()
@@ -128,19 +108,6 @@ public class ClubServiceImpl implements ClubService{
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId) {
-//
-//        List<ListClubByCategoryDTO> collect = clubRepository.findClubsByCategoryId(categoryId).stream()
-//                .map(ListClubByCategoryDTO::fromEntity)
-//                .collect(Collectors.toList());
-//
-//
-//
-//        System.out.println("collect = " + collect.get(0));
-//
-//        return collect;
-//    }
 
     @Override
     public List<ListClubByCategoryDTO> listClubByCategory(LocationDTO locationDTO, String keyword, Long categoryId) throws Exception {
