@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -30,12 +32,6 @@ public class ClubPostController {
     @PostMapping("/add")
     public ResponseEntity<Long> addPost(@RequestBody ClubPostDTO clubPostDTO,
                                         @CurrentMember MemberDTO memberDTO){
-        System.out.println("clubPostDTO = " + clubPostDTO);
-        System.out.println("clubPostDTO = " + clubPostDTO);
-        System.out.println("clubPostDTO = " + clubPostDTO);
-        System.out.println("clubPostDTO = " + clubPostDTO);
-
-
         return ResponseEntity.ok(clubPostService.addClubPost(clubPostDTO, memberDTO));
     }
 
@@ -53,6 +49,8 @@ public class ClubPostController {
     public ResponseEntity<?> listClubPost(@PathVariable Long clubId){
 
         List<ClubPostDTO> clubPostDTOS = clubPostService.listClubPost(clubId);
+
+        Collections.reverse(clubPostDTOS);
 
         return ResponseEntity.ok(clubPostDTOS);
     }

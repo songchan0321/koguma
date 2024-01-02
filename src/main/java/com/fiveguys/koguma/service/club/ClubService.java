@@ -11,13 +11,10 @@ public interface ClubService {
 
     public Long addClub(CreateClubDTO createClubDTO, Long memberId);
 
-    public List<ClubDTO> listClub(Double latitude, Double longitude);
-
     public List<ListClubByCategoryDTO> listClub();
 
     public List<ListClubByCategoryDTO> listMyClub(Long memberId);
 
-//    public List<ListClubByCategoryDTO> listClubByCategory(Long categoryId);
     public List<ListClubByCategoryDTO> listClubByCategory(LocationDTO locationDTO,  String keyword, Long categoryId) throws Exception;
 
     public ClubDTO getClub(Long clubId);
